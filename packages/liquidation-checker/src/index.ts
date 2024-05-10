@@ -1,0 +1,1 @@
+console.log('Liquidation checker module is running...');

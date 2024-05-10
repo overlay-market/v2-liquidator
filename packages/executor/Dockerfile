@@ -1,0 +1,26 @@
+FROM node:18-alpine
+
+# Create app directory
+WORKDIR /usr/src/app
+
+# Copy the pnpm files
+COPY pnpm-lock.yaml ./
+COPY pnpm-workspace.yaml ./
+COPY packages/executor/package.json ./packages/executor/
+
+# Install global dependencies and pnpm dependencies
+RUN npm install -g pnpm
+RUN pnpm install --recursive --filter "executor" --frozen-lockfile
+
+# Copy the source code
+COPY packages/executor/ ./packages/executor/
+
+# Compile TypeScript to JavaScript
+WORKDIR /usr/src/app/packages/executor
+RUN pnpm run build
+
+# Exposure the port that the application will use
+EXPOSE 3000
+
+# Command to run the compiled application
+CMD ["node", "dist/index.js"]

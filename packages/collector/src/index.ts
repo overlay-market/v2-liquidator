@@ -1,0 +1,1 @@
+console.log('Collector module is running...');

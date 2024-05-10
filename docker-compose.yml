@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  collector:
+    build:
+      context: .
+      dockerfile: packages/collector/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+
+  liquidation-checker:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+
+  executor:
+    build:
+      context: .
+      dockerfile: packages/executor/Dockerfile
+    ports:
+      - "3002:3000"
+    environment:
+      - NODE_ENV=production
+
+  mongodb:
+    image: mongo:4.4
+    mem_limit: 350m
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    healthcheck:
+      test: "mongo --eval 'db.stats().ok'"
+      interval: 20s
+      timeout: 5s
+      retries: 10
+
+  redis-server:
+    image: redis:latest
+    mem_limit: 350m
+    ports:
+      - '6379:6379'
+    command: redis-server --requirepass ${REDIS_PASSWORD}
