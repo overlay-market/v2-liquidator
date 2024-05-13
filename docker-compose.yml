@@ -27,20 +27,6 @@ services:
     environment:
       - NODE_ENV=production
 
-  mongodb:
-    image: mongo:4.4
-    mem_limit: 350m
-    ports:
-      - '27017:27017'
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-    healthcheck:
-      test: "mongo --eval 'db.stats().ok'"
-      interval: 20s
-      timeout: 5s
-      retries: 10
-
   redis-server:
     image: redis:latest
     mem_limit: 350m
