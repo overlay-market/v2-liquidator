@@ -1,9 +1,10 @@
 import cron from 'node-cron'
-import { markets, markets_block } from './constants'
+import { EventType, PositionStatus, markets, markets_block } from './constants'
 import market_abi from './abis/market_abi.json'
 import { ethers } from 'ethers'
 import dotenv from 'dotenv'
 import Redis from 'ioredis'
+import chalk from 'chalk'
 
 dotenv.config()
 
@@ -11,26 +12,16 @@ const redis = new Redis({
   password: process.env.REDIS_PASSWORD,
 })
 
+const log = console.log
+
 let taskRunning = false
-
-enum EventType {
-  Build = 'Build',
-  Unwind = 'Unwind',
-  Liquidate = 'Liquidate',
-}
-
-enum PositionStatus {
-  New = 'New',
-  Updated = 'Updated',
-  Removed = 'Removed',
-  Error = 'Error',
-}
 
 // Process events for a given market. Count new, updated, and removed positions
 async function processEvents(marketName: string, events: ethers.Event[]) {
   let newPositions = 0
   let updatedPositions = 0
   let removedPositions = 0
+  let errorPositions = 0
 
   for (const event of events) {
     const status = await processEvent(markets[marketName], event)
@@ -45,15 +36,17 @@ async function processEvents(marketName: string, events: ethers.Event[]) {
         removedPositions++
         break
       case PositionStatus.Error:
+        errorPositions++
         break
     }
   }
 
-  console.log(`Events processed for market: ${marketName}
-  Total events: ${events.length}
-  New positions: ${newPositions}
-  Updated positions: ${updatedPositions}
-  Removed positions: ${removedPositions}`)
+  log(`Events processed for market: ${chalk.bold.blue(marketName)}
+  ${chalk.bold(`Total events:`)}      ${chalk.bold(events.length)}
+  ${chalk.bold(`New positions:`)}     ${chalk.green(newPositions)}
+  ${chalk.bold(`Updated positions:`)} ${chalk.yellow(updatedPositions)}
+  ${chalk.bold(`Removed positions:`)} ${chalk.red(removedPositions)}
+  ${chalk.bold(`Error positions:`)}   ${chalk.red(errorPositions)}`)
 }
 
 // Process a single event and update the Redis cache
@@ -62,7 +55,7 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
 
   // validate necessary arguments
   if (!event.args || !event.args[0] || !event.args[1] || !event.args[2]) {
-    console.log('Cannot process event:', event)
+    log(chalk.bold.red('Cannot process event:', event))
     return PositionStatus.Error
   }
 
@@ -105,7 +98,7 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
       return PositionStatus.Removed
 
     default:
-      console.log(`Unhandled event type: ${eventName}`)
+      log(chalk.bold.red(`Unhandled event type: ${eventName}`))
       return PositionStatus.Error
   }
 }
@@ -130,8 +123,8 @@ async function fetchEvents(marketName: string) {
   if (!startBlock || latestBlock - parseInt(startBlock) > blockStep) {
     startBlock = startBlock || markets_block[marketName]
 
-    console.log(
-      `Getting events from block: ${startBlock} to block: ${latestBlock} for market: ${marketName}`
+    log(
+      `Getting events from block: ${chalk.green(startBlock)} to block: ${chalk.green(latestBlock)} for market: ${chalk.bold.blue(marketName)}`
     )
 
     // create an array to hold promises for each block range
@@ -147,31 +140,31 @@ async function fetchEvents(marketName: string) {
     allEvents = eventsArrays.flat() // Flatten the array of arrays into a single array of events
   } else {
     // if the start block is found in Redis, get events from the last processed block to the latest block
-    console.log('Getting events from block:', startBlock, 'to block:', latestBlock)
+    log(
+      `Getting events from block: ${chalk.green(startBlock)} to block: ${chalk.green(latestBlock)} for market: ${chalk.bold.blue(marketName)}`
+    )
     allEvents = await ovlMarketContract.queryFilter('*', parseInt(startBlock), latestBlock)
   }
 
-  console.log(`Events fetched for market ${marketName}:`, allEvents.length)
   await redis.set(`LatestBlockProcessed:${marketAddress}`, (latestBlock + 1).toString())
-  // console.log('events:', JSON.stringify(allEvents))
 
   return allEvents
 }
 
 async function fetchAndProcessEventsForAllMarkets() {
   if (!process.env.RPC_URL) {
-    console.error('RPC_URL is not defined in the .env file')
+    log(chalk.bold.red('RPC_URL is not set in the environment variables. Exiting...'))
     return
   }
 
   if (taskRunning) {
-    console.log('Previous task still running. Skipping...')
+    log(chalk.bold.red('Task is already running. Skipping this run...'))
     return
   }
 
   taskRunning = true
-  console.log('Cron job started at:', new Date().toLocaleString())
-  console.log('Collector module is running...')
+  log(chalk.bold.blue('Cron job started at:', new Date().toLocaleString()))
+  log('Collector module is running...')
 
   try {
     // due to the rate limits of the RPC provider, at the first run, we will fetch events for all markets running market by market
@@ -199,7 +192,7 @@ async function fetchAndProcessEventsForAllMarkets() {
       await Promise.all(promises)
     }
 
-    console.log('All markets processed successfully')
+    log(chalk.bgGreen('All markets processed successfully!'))
   } catch (error) {
     console.error('Error during the cron job:', error)
   } finally {

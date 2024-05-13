@@ -17,3 +17,16 @@ export const markets_block: {[key: string]: string} = {
   'Ink': '29178446',
   'NodeMonkes': '16499121',
 }
+
+export enum EventType {
+  Build = 'Build',
+  Unwind = 'Unwind',
+  Liquidate = 'Liquidate',
+}
+
+export enum PositionStatus {
+  New = 'New',
+  Updated = 'Updated',
+  Removed = 'Removed',
+  Error = 'Error',
+}
