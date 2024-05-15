@@ -59,49 +59,53 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
     return PositionStatus.Error
   }
 
-  let positionId,
-    key = ''
+  let positionId = ''
+  let status: PositionStatus
 
   switch (eventName) {
     case EventType.Build:
       // event.args[0] = sender
       // event.args[1] = positionId
       positionId = ethers.BigNumber.from(event.args[1]).toString()
-      key = `${marketAddress}:${positionId}`
       const data = {
         owner: event.args[0],
         positionId,
         txHash: event.transactionHash,
       }
       await redis.hset(`positions:${marketAddress}`, positionId, JSON.stringify(data));
-      return PositionStatus.New
+      status = PositionStatus.New
+      break
 
     case EventType.Unwind:
       // event.args[0] = sender
       // event.args[1] = positionId
       // event.args[2] = fraction
       positionId = ethers.BigNumber.from(event.args[1]).toString()
-      key = `${marketAddress}:${positionId}`
       // if the position is fully unwound, remove it from the cache
       if (event.args[2] === '1000000000000000000') {
-        await redis.hdel(`positions`, key)
-        return PositionStatus.Removed
+        await redis.hdel(`positions:${marketAddress}`, positionId)
+        status = PositionStatus.Removed
       }
-      return PositionStatus.Updated
+      status = PositionStatus.Updated
+      break
 
     case EventType.Liquidate:
       // event.args[0] = sender
       // event.args[1] = owner
       // event.args[2] = positionId
       positionId = ethers.BigNumber.from(event.args[2]).toString()
-      key = `${marketAddress}:${positionId}`
-      await redis.hdel(`positions`, key)
-      return PositionStatus.Removed
+      await redis.hdel(`positions:${marketAddress}`, positionId)
+      status = PositionStatus.Removed
+      break
 
     default:
       log(chalk.bold.red(`Unhandled event type: ${eventName}`))
-      return PositionStatus.Error
+      status = PositionStatus.Error
+      break
   }
+
+  await redis.set(`LatestBlockProcessed:${marketAddress}`, (event.blockNumber + 1).toString())
+  return status
 }
 
 // Fetch events for a given market
@@ -146,8 +150,6 @@ async function fetchEvents(marketName: string) {
     )
     allEvents = await ovlMarketContract.queryFilter('*', parseInt(startBlock), latestBlock)
   }
-
-  await redis.set(`LatestBlockProcessed:${marketAddress}`, (latestBlock + 1).toString())
 
   return allEvents
 }
