@@ -71,8 +71,9 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
       const data = {
         owner: event.args[0],
         positionId,
+        txHash: event.transactionHash,
       }
-      await redis.hset(`positions`, key, JSON.stringify(data))
+      await redis.hset(`positions:${marketAddress}`, positionId, JSON.stringify(data));
       return PositionStatus.New
 
     case EventType.Unwind:
