@@ -67,12 +67,8 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
       // event.args[0] = sender
       // event.args[1] = positionId
       positionId = ethers.BigNumber.from(event.args[1]).toString()
-      const data = {
-        owner: event.args[0],
-        positionId,
-        txHash: event.transactionHash,
-      }
-      await redis.hset(`positions:${marketAddress}`, positionId, JSON.stringify(data));
+      const owner = event.args[0]
+      await redis.hset(`positions:${marketAddress}`, positionId, owner)
       status = PositionStatus.New
       break
 
