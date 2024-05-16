@@ -1,14 +1,10 @@
 import cron from 'node-cron'
+import { Worker } from 'worker_threads'
 import {
-  EventType,
-  PositionStatus,
   markets,
-  markets_block,
   multicall2_address,
   olv_state_address,
 } from './constants'
-import market_state_abi from './abis/market_state_abi.json'
-import multicall2_abi from './abis/multicall2_abi.json'
 import { ethers } from 'ethers'
 import dotenv from 'dotenv'
 import Redis from 'ioredis'
@@ -22,14 +18,11 @@ const redis = new Redis({
 
 const log = console.log
 
-const BATCH_SIZE = 400; // number of positions to check in a single multicall batch
-
 let taskRunning = false
 
 interface Position {
   positionId: string
   owner: string
-  txHash: string
 }
 
 interface MulticallResult {
@@ -49,11 +42,9 @@ async function scanPositions(marketAddress: string) {
 
   for (const [key, value] of Object.entries(entries)) {
     try {
-      const position = JSON.parse(value)
       positions.push({
         positionId: key,
-        owner: position.owner,
-        txHash: position.txHash,
+        owner: value
       })
     } catch (error) {
       console.error('Error parsing position data:', error)
@@ -61,48 +52,49 @@ async function scanPositions(marketAddress: string) {
   }
 
   // return 20k positions for now
-  return positions.slice(10000, 15000)
+  return positions
 }
 
-// check liquidatable positions for a given market
-async function checkLiquidations(marketAddress: string, positions: Position[]) {
-  const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL)
-  const ovlMarketStateContract = new ethers.Contract(olv_state_address, market_state_abi, provider)
-  const multicall2Contract = new ethers.Contract(multicall2_address, multicall2_abi, provider)
+async function distributeWorkToWorkers(marketAddress: string, positions: Position[]) {
+  const numWorkers = 10;
+  const positionsPerWorker = Math.ceil(positions.length / numWorkers);
+  let workerPromises = [];
 
-  const calls = positions.map(position => ({
-    target: ovlMarketStateContract.address,
-    callData: ovlMarketStateContract.interface.encodeFunctionData("liquidatable", [
-      marketAddress,
-      position.owner,
-      parseInt(position.positionId)
-    ])
-  }));
+  for (let i = 0; i < numWorkers; i++) {
+    const startPos = i * positionsPerWorker;
+    const endPos = Math.min(startPos + positionsPerWorker, positions.length);
+    const workerPositions = positions.slice(startPos, endPos);
 
-  const batchPromises: Promise<LiquidatableResult[]>[] = [];
+    const workerPromise = new Promise((resolve, reject) => {
+      const worker = new Worker('./dist/worker.js', {
+        workerData: {
+          positions: workerPositions,
+          marketAddress,
+          multicall2_address,
+          olv_state_address
+        }
+      });
 
-  for (let i = 0; i < positions.length; i += BATCH_SIZE) {
-    const batchPositions = positions.slice(i, i + BATCH_SIZE);
-    
-    // Add the multicall batch promise to the array
-    batchPromises.push(
-      multicall2Contract.aggregate(calls.slice(i, i + BATCH_SIZE)).then((result: MulticallResult) => {
-        return result.returnData.map((data, index) => {
-          const isLiquidatable = ovlMarketStateContract.interface.decodeFunctionResult("liquidatable", data)[0];
-          return {
-            position: batchPositions[index],
-            isLiquidatable: isLiquidatable
-          };
-        }).filter((result: LiquidatableResult) => result.isLiquidatable);
-      })
-    );
+      worker.on('message', (results) => {
+        log(chalk.bgBlue(`Worker ${i} completed with results:`, results.length));
+        resolve(results);
+      });
+      worker.on('error', (error) => {
+        log(chalk.bold.red(`Worker ${i} error:`, error.message));
+        reject(error);
+      });
+      worker.on('exit', (code) => {
+        if (code !== 0) {
+          log(chalk.bold.red(`Worker ${i} stopped with exit code ${code}`));
+          reject(new Error(`Worker ${i} stopped with exit code ${code}`));
+        }
+      });
+    });
+
+    workerPromises.push(workerPromise);
   }
 
-  const results = await Promise.all(batchPromises);
-  const liquidatableResults = results.flat();
-
-  console.log('Liquidatable positions:', JSON.stringify(liquidatableResults));
-  return liquidatableResults;
+  return Promise.all(workerPromises);
 }
 
 async function liquidationChecker() {
@@ -121,21 +113,16 @@ async function liquidationChecker() {
   log('Liquidation Checker module is running...')
 
   try {
-    const marketPromises = Object.entries(markets).map(async ([marketName, address]) => {
-      const positions = await scanPositions(address);
-      console.log('total positions for market:', marketName, positions.length);
-      return checkLiquidations(address, positions);
-    });
-
-    await Promise.all(marketPromises);
-
-    log(chalk.bgGreen('All positions scanned successfully!'))
-    // code ts to end process
-    process.exit(0)
+    const marketAddress = markets['ETH Dominance'];
+    const positions = await scanPositions(marketAddress);
+    log('total positions for market:', 'ETH Dominance', positions.length);
+  
+    await distributeWorkToWorkers(marketAddress, positions);
+    log(chalk.bgGreen('All positions scanned successfully!'));
   } catch (error) {
-    console.error('Error during the cron job:', error)
+    console.error('Error during the cron job:', error);
   } finally {
-    taskRunning = false
+    taskRunning = false;
   }
 }
 
