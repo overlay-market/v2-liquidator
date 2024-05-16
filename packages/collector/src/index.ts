@@ -68,7 +68,8 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
       // event.args[1] = positionId
       positionId = ethers.BigNumber.from(event.args[1]).toString()
       const owner = event.args[0]
-      await redis.hset(`positions:${marketAddress}`, positionId, owner)
+      await redis.hset(`positions:${marketAddress}`, positionId, owner);
+      await redis.zadd(`position_index:${marketAddress}`, positionId, positionId);
       status = PositionStatus.New
       break
 
@@ -80,9 +81,11 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
       // if the position is fully unwound, remove it from the cache
       if (event.args[2] === '1000000000000000000') {
         await redis.hdel(`positions:${marketAddress}`, positionId)
+        await redis.zrem(`position_index:${marketAddress}`, positionId);
         status = PositionStatus.Removed
+      } else {
+        status = PositionStatus.Updated;
       }
-      status = PositionStatus.Updated
       break
 
     case EventType.Liquidate:
@@ -91,6 +94,7 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
       // event.args[2] = positionId
       positionId = ethers.BigNumber.from(event.args[2]).toString()
       await redis.hdel(`positions:${marketAddress}`, positionId)
+      await redis.zrem(`position_index:${marketAddress}`, positionId);
       status = PositionStatus.Removed
       break
 
