@@ -1,5 +1,12 @@
 version: '3.8'
 services:
+  redis-server:
+    image: redis:latest
+    mem_limit: 350m
+    ports:
+      - '6379:6379'
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+
   collector:
     build:
       context: .
@@ -9,14 +16,96 @@ services:
     environment:
       - NODE_ENV=production
 
-  liquidation-checker:
+  liquidation-checker-eth-dominance:
     build:
       context: .
       dockerfile: packages/liquidation-checker/Dockerfile
-    ports:
-      - "3001:3000"
     environment:
-      - NODE_ENV=production
+      NODE_ENV: production
+      MARKET: ETH Dominance
+      RPC_URLS: ${RPC_URLS}
+      REDIS_HOST: redis-server
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    depends_on:
+      - redis-server
+
+  liquidation-checker-btc-dominance:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      NODE_ENV: production
+      MARKET: BTC Dominance
+      RPC_URLS: ${RPC_URLS}
+      REDIS_HOST: redis-server
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    depends_on:
+      - redis-server
+
+  liquidation-checker-quantum-cats:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      NODE_ENV: production
+      MARKET: Quantum Cats
+      RPC_URLS: ${RPC_URLS}
+      REDIS_HOST: redis-server
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    depends_on:
+      - redis-server
+
+  liquidation-checker-cs2-skins:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      NODE_ENV: production
+      MARKET: CS2 Skins
+      RPC_URLS: ${RPC_URLS}
+      REDIS_HOST: redis-server
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    depends_on:
+      - redis-server
+
+  liquidation-checker-bitcoin-frogs:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      NODE_ENV: production
+      MARKET: Bitcoin Frogs
+      RPC_URLS: ${RPC_URLS}
+      REDIS_HOST: redis-server
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    depends_on:
+      - redis-server
+
+  liquidation-checker-ink:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      NODE_ENV: production
+      MARKET: Ink
+      RPC_URLS: ${RPC_URLS}
+      REDIS_HOST: redis-server
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    depends_on:
+      - redis-server
+
+  liquidation-checker-nodemonkes:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      NODE_ENV: production
+      MARKET: NodeMonkes
+      RPC_URLS: ${RPC_URLS}
+      REDIS_HOST: redis-server
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    depends_on:
+      - redis-server
 
   executor:
     build:
@@ -26,10 +115,3 @@ services:
       - "3002:3000"
     environment:
       - NODE_ENV=production
-
-  redis-server:
-    image: redis:latest
-    mem_limit: 350m
-    ports:
-      - '6379:6379'
-    command: redis-server --requirepass ${REDIS_PASSWORD}
