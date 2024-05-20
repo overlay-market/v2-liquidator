@@ -33,6 +33,10 @@ cron.schedule('*/2 * * * *', fetchAndProcessEventsForAllMarkets)
 // run fetchAndProcessEventsForAllMarkets() once to fetch events for all markets
 // fetchAndProcessEventsForAllMarkets()
 ```
+Then run:
+```bash
+pnpm dev
+```
 
 ## Considerations
 
