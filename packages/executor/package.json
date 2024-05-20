@@ -15,5 +15,11 @@
     "@types/node": "^20.12.11",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "chalk": "4",
+    "dotenv": "^16.4.5",
+    "ethers": "5.7.2",
+    "ioredis": "^5.4.1"
   }
 }
