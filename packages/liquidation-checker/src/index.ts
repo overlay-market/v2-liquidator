@@ -4,6 +4,7 @@ import { markets } from './constants'
 import dotenv from 'dotenv'
 import Redis from 'ioredis'
 import chalk from 'chalk'
+import { ethers } from 'ethers'
 
 dotenv.config()
 
@@ -21,17 +22,43 @@ interface Position {
   owner: string
 }
 
+// select a healthy RPC from the list
+async function selectRpc(rpcUrls: string[], rpcIndex: number = 0) {
+  const totalUrls = rpcUrls.length;
+
+  for (let i = 0; i < totalUrls; i++) {
+    const rpcUrl = rpcUrls[(rpcIndex + i) % totalUrls];
+
+    try {
+      const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+      await provider.getBlockNumber();
+      return rpcUrl;
+    } catch (error) {
+      log(chalk.bgRed('Error checking RPC health:', rpcUrl, error));
+    }
+  }
+
+  // if no healthy URL was found, return null
+  return null;
+}
+
 // create a promise for each worker
-function createWorkerPromise(
+async function createWorkerPromise(
   marketAddress: string,
   positions: Position[],
   workerIndex: number,
   rpcUrls: string[],
   rpcIndex: number = 0
 ) {
-  return new Promise((resolve, reject) => {
-    const rpcUrl = rpcUrls[rpcIndex % rpcUrls.length]
+  const rpcUrl = await selectRpc(rpcUrls, rpcIndex);
 
+  if (!rpcUrl) {
+    const error = new Error('No healthy RPC found');
+    log(chalk.red(`Error: ${error.message}`));
+    throw error;
+  }
+
+  return new Promise((resolve, reject) => {
     const worker = new Worker('./dist/worker.js', {
       workerData: {
         positions,
@@ -42,9 +69,11 @@ function createWorkerPromise(
     })
 
     const timeoutId = setTimeout(() => {
-      worker.terminate()
-      reject(new Error('Worker timeout ' + workerIndex + ' ' + rpcUrl))
-    }, 29000) // 29 seconds
+      worker.terminate();
+      const timeoutError = new Error(`Worker timeout: ${workerIndex} at RPC ${rpcUrl}`);
+      log(chalk.red(`Error: ${timeoutError.message}`));
+      reject(timeoutError);
+    }, 29000); // 29 seconds
 
     worker.on('message', (result: number) => {
       clearTimeout(timeoutId)
@@ -54,24 +83,23 @@ function createWorkerPromise(
 
     worker.on('error', (error) => {
       clearTimeout(timeoutId)
-      console.error(`Worker ${workerIndex} error:`, error)
-      // Retry with next RPC
+      log(chalk.red(`Worker ${workerIndex} error: ${error}`));
       if (rpcUrls.length > 1) {
-        resolve(createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, rpcIndex + 1))
+        resolve(createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, rpcIndex + 1));
       } else {
-        reject(error)
+        reject(error);
       }
     })
 
     worker.on('exit', (code) => {
       clearTimeout(timeoutId)
       if (code !== 0) {
-        console.error(`Worker ${workerIndex} stopped with exit code ${code}`)
-        // Retry with next RPC
+        const exitError = new Error(`Worker ${workerIndex} stopped with exit code ${code}`);
+        log(chalk.red(`Error: ${exitError.message}`));
         if (rpcUrls.length > 1) {
-          resolve(createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, rpcIndex + 1))
+          resolve(createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, rpcIndex + 1));
         } else {
-          reject(new Error(`Worker ${workerIndex} stopped with exit code ${code}`))
+          reject(exitError);
         }
       }
     })
