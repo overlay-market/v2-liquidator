@@ -9,6 +9,7 @@ import chalk from 'chalk'
 dotenv.config()
 
 const redis = new Redis({
+  host: process.env.REDIS_HOST,
   password: process.env.REDIS_PASSWORD,
 })
 
@@ -111,7 +112,7 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
 // Fetch events for a given market
 async function fetchEvents(marketName: string) {
   const marketAddress = markets[marketName]
-  const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL)
+  const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URLS?.split(',')[0])
   const ovlMarketContract = new ethers.Contract(marketAddress, market_abi, provider)
 
   // get the latest block processed for the market
@@ -155,8 +156,8 @@ async function fetchEvents(marketName: string) {
 }
 
 async function fetchAndProcessEventsForAllMarkets() {
-  if (!process.env.RPC_URL) {
-    log(chalk.bold.red('RPC_URL is not set in the environment variables. Exiting...'))
+  if (!process.env.RPC_URLS) {
+    log(chalk.bold.red('At least one RPC_URLS must be provided'))
     return
   }
 
@@ -203,8 +204,8 @@ async function fetchAndProcessEventsForAllMarkets() {
   }
 }
 
-// Schedule the cron job to run every 5 minutes
-//cron.schedule('* * * * *', fetchAndProcessEventsForAllMarkets)
+// Schedule the cron job to run every 2 minutes
+cron.schedule('*/2 * * * *', fetchAndProcessEventsForAllMarkets)
 
 // run fetchAndProcessEventsForAllMarkets() once to fetch events for all markets
-fetchAndProcessEventsForAllMarkets()
+// fetchAndProcessEventsForAllMarkets()

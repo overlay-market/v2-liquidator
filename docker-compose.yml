@@ -1,5 +1,12 @@
 version: '3.8'
 services:
+  redis-server:
+    image: redis:latest
+    mem_limit: 350m
+    ports:
+      - '6379:6379'
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+
   collector:
     build:
       context: .
@@ -7,7 +14,12 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
+      NODE_ENV: production
+      RPC_URLS: ${RPC_URLS}
+      REDIS_HOST: redis-server
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    depends_on:
+      - redis-server
 
   liquidation-checker:
     build:
@@ -26,10 +38,3 @@ services:
       - "3002:3000"
     environment:
       - NODE_ENV=production
-
-  redis-server:
-    image: redis:latest
-    mem_limit: 350m
-    ports:
-      - '6379:6379'
-    command: redis-server --requirepass ${REDIS_PASSWORD}
