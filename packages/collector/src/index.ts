@@ -1,5 +1,5 @@
 import cron from 'node-cron'
-import { EventType, PositionStatus, markets, markets_block } from './constants'
+import { EventType, PositionStatus, markets } from './constants'
 import market_abi from './abis/market_abi.json'
 import { ethers } from 'ethers'
 import dotenv from 'dotenv'
@@ -25,7 +25,7 @@ async function processEvents(marketName: string, events: ethers.Event[]) {
   let errorPositions = 0
 
   for (const event of events) {
-    const status = await processEvent(markets[marketName], event)
+    const status = await processEvent(markets[marketName].address, event)
     switch (status) {
       case PositionStatus.New:
         newPositions++
@@ -111,7 +111,7 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
 
 // Fetch events for a given market
 async function fetchEvents(marketName: string) {
-  const marketAddress = markets[marketName]
+  const marketAddress = markets[marketName].address
   const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URLS?.split(',')[0])
   const ovlMarketContract = new ethers.Contract(marketAddress, market_abi, provider)
 
@@ -127,7 +127,7 @@ async function fetchEvents(marketName: string) {
   // if the start block is not found in Redis, get events from the block where the market was deployed to the latest block
   // or if the difference between the latest block and the start block is greater than the block step
   if (!startBlock || latestBlock - parseInt(startBlock) > blockStep) {
-    startBlock = startBlock || markets_block[marketName]
+    startBlock = startBlock || markets[marketName].init_block
 
     log(
       `Getting events from block: ${chalk.green(startBlock)} to block: ${chalk.green(latestBlock)} for market: ${chalk.bold.blue(marketName)}`
@@ -176,7 +176,7 @@ async function fetchAndProcessEventsForAllMarkets() {
     const firstRun = !(await redis.get('FirstRun'))
 
     if (firstRun) {
-      for (const [marketName, address] of Object.entries(markets)) {
+      for (const [marketName] of Object.entries(markets)) {
         const events = await fetchEvents(marketName)
         await processEvents(marketName, events)
       }
@@ -185,7 +185,7 @@ async function fetchAndProcessEventsForAllMarkets() {
     } else {
       const promises: Promise<unknown>[] = []
 
-      Object.entries(markets).forEach(([marketName, address]) => {
+      Object.entries(markets).forEach(([marketName]) => {
         promises.push(
           fetchEvents(marketName).then(async (events) => {
             await processEvents(marketName, events)
@@ -193,7 +193,14 @@ async function fetchAndProcessEventsForAllMarkets() {
         )
       })
 
-      await Promise.all(promises)
+      const results = await Promise.allSettled(promises)
+      
+      results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          const [marketName] = Object.entries(markets)[index]
+          log(chalk.bold.red(`Failed to process market: ${marketName}, Error: ${result.reason}`))
+        }
+      })
     }
 
     log(chalk.bgGreen('All markets processed successfully!'))
