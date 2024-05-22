@@ -13,6 +13,8 @@ const redis = new Redis({
   password: process.env.REDIS_PASSWORD,
 })
 
+const MAX_RETRIES = 3; // maximum number of retries for each worker
+
 const log = console.log
 
 let taskRunning = false
@@ -48,7 +50,8 @@ async function createWorkerPromise(
   positions: Position[],
   workerIndex: number,
   rpcUrls: string[],
-  rpcIndex: number = 0
+  rpcIndex: number = 0,
+  retryCount: number = 0
 ) {
   const rpcUrl = await selectRpc(rpcUrls, rpcIndex);
 
@@ -84,10 +87,10 @@ async function createWorkerPromise(
     worker.on('error', (error) => {
       clearTimeout(timeoutId)
       log(chalk.red(`Worker ${workerIndex} error: ${error}`));
-      if (rpcUrls.length > 1) {
-        resolve(createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, rpcIndex + 1));
+      if (retryCount < MAX_RETRIES) {
+        resolve(createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, rpcIndex + 1, retryCount + 1));
       } else {
-        reject(error);
+        reject(new Error(`Worker ${workerIndex} failed after ${MAX_RETRIES} retries`));
       }
     })
 
@@ -96,10 +99,10 @@ async function createWorkerPromise(
       if (code !== 0) {
         const exitError = new Error(`Worker ${workerIndex} stopped with exit code ${code}`);
         log(chalk.red(`Error: ${exitError.message}`));
-        if (rpcUrls.length > 1) {
-          resolve(createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, rpcIndex + 1));
+        if (retryCount < MAX_RETRIES) {
+          resolve(createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, rpcIndex + 1, retryCount + 1));
         } else {
-          reject(exitError);
+          reject(new Error(`Worker ${workerIndex} failed after ${MAX_RETRIES} retries`));
         }
       }
     })
