@@ -1,4 +1,11 @@
 version: '3.8'
+
+x-common-environment: &common-environment
+  NODE_ENV: production
+  RPC_URLS: ${RPC_URLS}
+  REDIS_HOST: redis-server
+  REDIS_PASSWORD: ${REDIS_PASSWORD}
+
 services:
   redis-server:
     image: redis:latest
@@ -21,11 +28,8 @@ services:
       context: .
       dockerfile: packages/liquidation-checker/Dockerfile
     environment:
-      NODE_ENV: production
+      <<: *common-environment
       MARKET: ETH Dominance
-      RPC_URLS: ${RPC_URLS}
-      REDIS_HOST: redis-server
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
     depends_on:
       - redis-server
 
@@ -34,11 +38,8 @@ services:
       context: .
       dockerfile: packages/liquidation-checker/Dockerfile
     environment:
-      NODE_ENV: production
+      <<: *common-environment
       MARKET: BTC Dominance
-      RPC_URLS: ${RPC_URLS}
-      REDIS_HOST: redis-server
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
     depends_on:
       - redis-server
 
@@ -47,11 +48,8 @@ services:
       context: .
       dockerfile: packages/liquidation-checker/Dockerfile
     environment:
-      NODE_ENV: production
+      <<: *common-environment
       MARKET: Quantum Cats
-      RPC_URLS: ${RPC_URLS}
-      REDIS_HOST: redis-server
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
     depends_on:
       - redis-server
 
@@ -60,11 +58,8 @@ services:
       context: .
       dockerfile: packages/liquidation-checker/Dockerfile
     environment:
-      NODE_ENV: production
+      <<: *common-environment
       MARKET: CS2 Skins
-      RPC_URLS: ${RPC_URLS}
-      REDIS_HOST: redis-server
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
     depends_on:
       - redis-server
 
@@ -73,11 +68,8 @@ services:
       context: .
       dockerfile: packages/liquidation-checker/Dockerfile
     environment:
-      NODE_ENV: production
+      <<: *common-environment
       MARKET: Bitcoin Frogs
-      RPC_URLS: ${RPC_URLS}
-      REDIS_HOST: redis-server
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
     depends_on:
       - redis-server
 
@@ -86,11 +78,8 @@ services:
       context: .
       dockerfile: packages/liquidation-checker/Dockerfile
     environment:
-      NODE_ENV: production
+      <<: *common-environment
       MARKET: Ink
-      RPC_URLS: ${RPC_URLS}
-      REDIS_HOST: redis-server
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
     depends_on:
       - redis-server
 
@@ -99,11 +88,8 @@ services:
       context: .
       dockerfile: packages/liquidation-checker/Dockerfile
     environment:
-      NODE_ENV: production
+      <<: *common-environment
       MARKET: NodeMonkes
-      RPC_URLS: ${RPC_URLS}
-      REDIS_HOST: redis-server
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
     depends_on:
       - redis-server
 
