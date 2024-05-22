@@ -13,7 +13,7 @@ const redis = new Redis({
   password: process.env.REDIS_PASSWORD,
 })
 
-const MAX_RETRIES = 3; // maximum number of retries for each worker
+const MAX_RETRIES = 3 // maximum number of retries for each worker
 
 const log = console.log
 
@@ -26,22 +26,22 @@ interface Position {
 
 // select a healthy RPC from the list
 async function selectRpc(rpcUrls: string[], rpcIndex: number = 0) {
-  const totalUrls = rpcUrls.length;
+  const totalUrls = rpcUrls.length
 
   for (let i = 0; i < totalUrls; i++) {
-    const rpcUrl = rpcUrls[(rpcIndex + i) % totalUrls];
+    const rpcUrl = rpcUrls[(rpcIndex + i) % totalUrls]
 
     try {
-      const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-      await provider.getBlockNumber();
-      return rpcUrl;
+      const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+      await provider.getBlockNumber()
+      return rpcUrl
     } catch (error) {
-      log(chalk.bgRed('Error checking RPC health:', rpcUrl, error));
+      log(chalk.bgRed('Error checking RPC health:', rpcUrl, error))
     }
   }
 
   // if no healthy URL was found, return null
-  return null;
+  return null
 }
 
 // create a promise for each worker
@@ -53,12 +53,12 @@ async function createWorkerPromise(
   rpcIndex: number = 0,
   retryCount: number = 0
 ) {
-  const rpcUrl = await selectRpc(rpcUrls, rpcIndex);
+  const rpcUrl = await selectRpc(rpcUrls, rpcIndex)
 
   if (!rpcUrl) {
-    const error = new Error('No healthy RPC found');
-    log(chalk.red(`Error: ${error.message}`));
-    throw error;
+    const error = new Error('No healthy RPC found')
+    log(chalk.red(`Error: ${error.message}`))
+    throw error
   }
 
   return new Promise((resolve, reject) => {
@@ -72,11 +72,11 @@ async function createWorkerPromise(
     })
 
     const timeoutId = setTimeout(() => {
-      worker.terminate();
-      const timeoutError = new Error(`Worker timeout: ${workerIndex} at RPC ${rpcUrl}`);
-      log(chalk.red(`Error: ${timeoutError.message}`));
-      reject(timeoutError);
-    }, 29000); // 29 seconds
+      worker.terminate()
+      const timeoutError = new Error(`Worker timeout: ${workerIndex} at RPC ${rpcUrl}`)
+      log(chalk.red(`Error: ${timeoutError.message}`))
+      reject(timeoutError)
+    }, 29000) // 29 seconds
 
     worker.on('message', (result: number) => {
       clearTimeout(timeoutId)
@@ -86,23 +86,51 @@ async function createWorkerPromise(
 
     worker.on('error', (error) => {
       clearTimeout(timeoutId)
-      log(chalk.red(`Worker ${workerIndex} error: ${error}`));
+      log(chalk.red(`Worker ${workerIndex} error: ${error}`))
       if (retryCount < MAX_RETRIES) {
-        resolve(createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, rpcIndex + 1, retryCount + 1));
+        log(
+          chalk.yellow(
+            `Retrying worker ${workerIndex}... attempt ${retryCount + 1} of ${MAX_RETRIES}`
+          )
+        )
+        resolve(
+          createWorkerPromise(
+            marketAddress,
+            positions,
+            workerIndex,
+            rpcUrls,
+            rpcIndex + 1,
+            retryCount + 1
+          )
+        )
       } else {
-        reject(new Error(`Worker ${workerIndex} failed after ${MAX_RETRIES} retries`));
+        reject(new Error(`Worker ${workerIndex} failed after ${MAX_RETRIES} retries`))
       }
     })
 
     worker.on('exit', (code) => {
       clearTimeout(timeoutId)
       if (code !== 0) {
-        const exitError = new Error(`Worker ${workerIndex} stopped with exit code ${code}`);
-        log(chalk.red(`Error: ${exitError.message}`));
+        const exitError = new Error(`Worker ${workerIndex} stopped with exit code ${code}`)
+        log(chalk.red(`Error: ${exitError.message}`))
         if (retryCount < MAX_RETRIES) {
-          resolve(createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, rpcIndex + 1, retryCount + 1));
+          log(
+            chalk.yellow(
+              `Retrying worker ${workerIndex}... attempt ${retryCount + 1} of ${MAX_RETRIES}`
+            )
+          )
+          resolve(
+            createWorkerPromise(
+              marketAddress,
+              positions,
+              workerIndex,
+              rpcUrls,
+              rpcIndex + 1,
+              retryCount + 1
+            )
+          )
         } else {
-          reject(new Error(`Worker ${workerIndex} failed after ${MAX_RETRIES} retries`));
+          reject(new Error(`Worker ${workerIndex} failed after ${MAX_RETRIES} retries`))
         }
       }
     })
@@ -129,7 +157,15 @@ async function distributeWorkToWorkers(marketAddress: string, positions: Positio
     workerPromises.push(createWorkerPromise(marketAddress, workerPositions, i, rpcUrls))
   }
 
-  return Promise.all(workerPromises)
+  const results = await Promise.allSettled(workerPromises)
+
+  results.forEach((result, index) => {
+    if (result.status === 'rejected') {
+      log(chalk.red(`Worker ${index} failed with error:`, result.reason))
+    }
+  })
+
+  return results
 }
 
 // fetch positions from redis
