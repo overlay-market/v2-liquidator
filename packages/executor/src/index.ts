@@ -19,6 +19,19 @@ interface Position {
   marketAddress: string
 }
 
+const MAX_RETRIES = 3
+
+async function incrementRetryCount(position: Position): Promise<number> {
+  const retryKey = `retry:${position.marketAddress}:${position.positionId}`
+  const retries = await redis.incr(retryKey)
+  return retries
+}
+
+async function resetRetryCount(position: Position) {
+  const retryKey = `retry:${position.marketAddress}:${position.positionId}`
+  await redis.del(retryKey)
+}
+
 async function liquidatePosition(position: Position) {
   const { positionId, owner, marketAddress } = position
 
@@ -53,28 +66,49 @@ async function liquidatePosition(position: Position) {
       const liquidateTx = await marketContract.connect(wallet).liquidate(owner, positionId)
       const receipt = await liquidateTx.wait()
 
-      log(
-        `${chalk.bgGreen('Position liquidated successfully! =>')} ${chalk.yellow(
-          'positionId:'
-        )} ${positionId} ${chalk.yellow('executed by:')} ${wallet.address} ${chalk.yellow(
-          'txHash:'
-        )} ${receipt.transactionHash}`
-      )
+      if (receipt.status === 1) {
+        log(
+          `${chalk.bgGreen('Position liquidated successfully! =>')} ${chalk.yellow(
+            'positionId:'
+          )} ${positionId} ${chalk.yellow('executed by:')} ${wallet.address} ${chalk.yellow(
+            'txHash:'
+          )} ${receipt.transactionHash}`
+        )
 
-      // remove position from Redis
-      await redis.hdel(`positions:${marketAddress}`, positionId)
-      await redis.zrem(`position_index:${marketAddress}`, positionId)
+        // remove position from Redis
+        await redis.hdel(`positions:${marketAddress}`, positionId)
+        await redis.zrem(`position_index:${marketAddress}`, positionId)
+        await resetRetryCount(position)
 
-      return
+        return
+      } else {
+        log(
+          `${chalk.bgRed('Transaction failed! =>')} ${chalk.yellow(
+            'positionId:'
+          )} ${positionId} ${chalk.yellow('executed by:')} ${wallet.address}`
+        )
+      }
+
+      // if we reach here, the transaction failed, break the loop
+      break
     }
 
     log(chalk.bold.red('No private keys available to liquidate position'))
   } catch (error) {
-    log(chalk.bgRed('Error liquidating position:'), error)
-    log(chalk.bgBlue('Retrying in 10 seconds...'))
-    // simple retry mechanism
-    await new Promise((resolve) => setTimeout(resolve, 10000))
-    await liquidatePosition(position)
+    log(`${chalk.bgRed('Transaction failed! =>')} ${chalk.yellow('positionId:')} ${positionId}`)
+    log(chalk.red(error))
+  }
+
+  // increment retry count and check if it exceeds the max retries
+  const retries = await incrementRetryCount(position);
+
+  if (retries > MAX_RETRIES) {
+    log(chalk.bold.red(`Position ${position.positionId} exceeded max retries, removing from queue`));
+    await redis.hdel(`positions:${marketAddress}`, position.positionId)
+    await redis.zrem(`position_index:${marketAddress}`, position.positionId)
+  } else {
+    log(chalk.bgBlue(`Re-queuing position ${position.positionId} for retry ${retries} of ${MAX_RETRIES}`))
+    await redis.lpush('liquidatable_positions', JSON.stringify(position))
   }
 }
 
