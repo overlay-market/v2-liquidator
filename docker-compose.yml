@@ -5,6 +5,9 @@ x-common-environment: &common-environment
   RPC_URLS: ${RPC_URLS}
   REDIS_HOST: redis-server
   REDIS_PASSWORD: ${REDIS_PASSWORD}
+  MULTICALL_BATCH_SIZE: ${MULTICALL_BATCH_SIZE}
+  RPC_FIRST_PROBABILITY: ${RPC_FIRST_PROBABILITY}
+  WORKERS_AMOUNT: ${WORKERS_AMOUNT}
 
 services:
   redis-server:
@@ -24,82 +27,100 @@ services:
     depends_on:
       - redis-server
 
-  # liquidation-checker-eth-dominance:
-  #   build:
-  #     context: .
-  #     dockerfile: packages/liquidation-checker/Dockerfile
-  #   environment:
-  #     <<: *common-environment
-  #     MARKET: ETH Dominance
-  #   depends_on:
-  #     - redis-server
+  liquidation-checker-eth-dominance:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: ETH Dominance
+      POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_ETH_DOMINANCE}
+    depends_on:
+      - redis-server
 
-  # liquidation-checker-btc-dominance:
-  #   build:
-  #     context: .
-  #     dockerfile: packages/liquidation-checker/Dockerfile
-  #   environment:
-  #     <<: *common-environment
-  #     MARKET: BTC Dominance
-  #   depends_on:
-  #     - redis-server
+  liquidation-checker-btc-dominance:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: BTC Dominance
+      POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_BTC_DOMINANCE}
+    depends_on:
+      - redis-server
 
-  # liquidation-checker-quantum-cats:
-  #   build:
-  #     context: .
-  #     dockerfile: packages/liquidation-checker/Dockerfile
-  #   environment:
-  #     <<: *common-environment
-  #     MARKET: Quantum Cats
-  #   depends_on:
-  #     - redis-server
+  liquidation-checker-quantum-cats:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Quantum Cats
+      POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_QUANTUM_CATS}
+    depends_on:
+      - redis-server
 
-  # liquidation-checker-cs2-skins:
-  #   build:
-  #     context: .
-  #     dockerfile: packages/liquidation-checker/Dockerfile
-  #   environment:
-  #     <<: *common-environment
-  #     MARKET: CS2 Skins
-  #   depends_on:
-  #     - redis-server
+  liquidation-checker-cs2-skins:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: CS2 Skins
+      POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_CS2_SKINS}
+    depends_on:
+      - redis-server
 
-  # liquidation-checker-bitcoin-frogs:
-  #   build:
-  #     context: .
-  #     dockerfile: packages/liquidation-checker/Dockerfile
-  #   environment:
-  #     <<: *common-environment
-  #     MARKET: Bitcoin Frogs
-  #   depends_on:
-  #     - redis-server
+  liquidation-checker-bitcoin-frogs:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Bitcoin Frogs
+      POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_BITCOIN_FROGS}
+    depends_on:
+      - redis-server
 
-  # liquidation-checker-ink:
-  #   build:
-  #     context: .
-  #     dockerfile: packages/liquidation-checker/Dockerfile
-  #   environment:
-  #     <<: *common-environment
-  #     MARKET: Ink
-  #   depends_on:
-  #     - redis-server
+  liquidation-checker-ink:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Ink
+      POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_INK}
+    depends_on:
+      - redis-server
 
-  # liquidation-checker-nodemonkes:
-  #   build:
-  #     context: .
-  #     dockerfile: packages/liquidation-checker/Dockerfile
-  #   environment:
-  #     <<: *common-environment
-  #     MARKET: NodeMonkes
-  #   depends_on:
-  #     - redis-server
+  liquidation-checker-nodemonkes:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: NodeMonkes
+      POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_NODEMONKES}
+    depends_on:
+      - redis-server
 
-  # executor:
-  #   build:
-  #     context: .
-  #     dockerfile: packages/executor/Dockerfile
-  #   environment:
-  #     <<: *common-environment
-  #   depends_on:
-  #     - redis-server
+  executor-1:
+    build:
+      context: .
+      dockerfile: packages/executor/Dockerfile
+    environment:
+      <<: *common-environment
+      PRIVATE_KEYS: ${PRIVATE_KEYS_1}
+    depends_on:
+      - redis-server
+
+  executor-2:
+    build:
+      context: .
+      dockerfile: packages/executor/Dockerfile
+    environment:
+      <<: *common-environment
+      PRIVATE_KEYS: ${PRIVATE_KEYS_2}
+    depends_on:
+      - redis-server
     
