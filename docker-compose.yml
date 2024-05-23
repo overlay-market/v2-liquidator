@@ -1,4 +1,11 @@
 version: '3.8'
+
+x-common-environment: &common-environment
+  NODE_ENV: production
+  RPC_URLS: ${RPC_URLS}
+  REDIS_HOST: redis-server
+  REDIS_PASSWORD: ${REDIS_PASSWORD}
+
 services:
   redis-server:
     image: redis:latest
@@ -21,14 +28,75 @@ services:
     depends_on:
       - redis-server
 
-  liquidation-checker:
+  liquidation-checker-eth-dominance:
     build:
       context: .
       dockerfile: packages/liquidation-checker/Dockerfile
-    ports:
-      - "3001:3000"
     environment:
-      - NODE_ENV=production
+      <<: *common-environment
+      MARKET: ETH Dominance
+    depends_on:
+      - redis-server
+
+  liquidation-checker-btc-dominance:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: BTC Dominance
+    depends_on:
+      - redis-server
+
+  liquidation-checker-quantum-cats:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Quantum Cats
+    depends_on:
+      - redis-server
+
+  liquidation-checker-cs2-skins:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: CS2 Skins
+    depends_on:
+      - redis-server
+
+  liquidation-checker-bitcoin-frogs:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Bitcoin Frogs
+    depends_on:
+      - redis-server
+
+  liquidation-checker-ink:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Ink
+    depends_on:
+      - redis-server
+
+  liquidation-checker-nodemonkes:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: NodeMonkes
+    depends_on:
+      - redis-server
 
   executor:
     build:

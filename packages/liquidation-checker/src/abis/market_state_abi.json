@@ -1,0 +1,1134 @@
+[
+  {
+    "type": "constructor",
+    "inputs": [
+      {
+        "name": "_factory",
+        "type": "address",
+        "internalType": "contract IOverlayV1Factory"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "ask",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "fractionOfCapOi",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "ask_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "bid",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "fractionOfCapOi",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "bid_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "capOi",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "capOi_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "circuitBreakerLevel",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "circuitBreakerLevel_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "collateral",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "collateral_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "cost",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "cost_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "costEstimate",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "collateral",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "leverage",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "isLong",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "cost_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "data",
+    "inputs": [
+      {
+        "name": "feed",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "data_",
+        "type": "tuple",
+        "internalType": "struct Oracle.Data",
+        "components": [
+          {
+            "name": "timestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "microWindow",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "macroWindow",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "priceOverMicroWindow",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "priceOverMacroWindow",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "priceOneMacroWindowAgo",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "reserveOverMicroWindow",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "hasReserve",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "debt",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "debt_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "debtEstimate",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "collateral",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "leverage",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "isLong",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "debt_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "factory",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract IOverlayV1Factory"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "fractionOfCapOi",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "oi",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "fractionOfCapOi_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "fundingRate",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "fundingRate_",
+        "type": "int256",
+        "internalType": "int256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "liquidatable",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "liquidatable_",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "liquidationFee",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "liquidationFee_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "liquidationPrice",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "liquidationPrice_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "liquidationPriceEstimate",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "collateral",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "leverage",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "isLong",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "liquidationPrice_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "maintenanceMargin",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "maintenanceMargin_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "maintenanceMarginEstimate",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "collateral",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "leverage",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "isLong",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "maintenanceMargin_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "marginExcessBeforeLiquidation",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "excess_",
+        "type": "int256",
+        "internalType": "int256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "market",
+    "inputs": [
+      {
+        "name": "feed",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "market_",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "marketState",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "state_",
+        "type": "tuple",
+        "internalType": "struct IOverlayV1State.MarketState",
+        "components": [
+          {
+            "name": "bid",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "ask",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "mid",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "volumeBid",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "volumeAsk",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "oiLong",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "oiShort",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "capOi",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "circuitBreakerLevel",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "fundingRate",
+            "type": "int256",
+            "internalType": "int256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "mid",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "mid_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "minted",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "minted_",
+        "type": "int256",
+        "internalType": "int256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "notional",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "notional_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "oi",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "oi_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "oiEstimate",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "collateral",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "leverage",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "isLong",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "oi_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "ois",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "oiLong_",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "oiShort_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "position",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "position_",
+        "type": "tuple",
+        "internalType": "struct Position.Info",
+        "components": [
+          {
+            "name": "notionalInitial",
+            "type": "uint96",
+            "internalType": "uint96"
+          },
+          {
+            "name": "debtInitial",
+            "type": "uint96",
+            "internalType": "uint96"
+          },
+          {
+            "name": "midTick",
+            "type": "int24",
+            "internalType": "int24"
+          },
+          {
+            "name": "entryTick",
+            "type": "int24",
+            "internalType": "int24"
+          },
+          {
+            "name": "isLong",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "liquidated",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "oiShares",
+            "type": "uint240",
+            "internalType": "uint240"
+          },
+          {
+            "name": "fractionRemaining",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "positionEstimate",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "collateral",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "leverage",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "isLong",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "position_",
+        "type": "tuple",
+        "internalType": "struct Position.Info",
+        "components": [
+          {
+            "name": "notionalInitial",
+            "type": "uint96",
+            "internalType": "uint96"
+          },
+          {
+            "name": "debtInitial",
+            "type": "uint96",
+            "internalType": "uint96"
+          },
+          {
+            "name": "midTick",
+            "type": "int24",
+            "internalType": "int24"
+          },
+          {
+            "name": "entryTick",
+            "type": "int24",
+            "internalType": "int24"
+          },
+          {
+            "name": "isLong",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "liquidated",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "oiShares",
+            "type": "uint240",
+            "internalType": "uint240"
+          },
+          {
+            "name": "fractionRemaining",
+            "type": "uint16",
+            "internalType": "uint16"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "prices",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "bid_",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "ask_",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "mid_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "tradingFee",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "tradingFee_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "value",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "owner",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "value_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "volumeAsk",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "fractionOfCapOi",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "volumeAsk_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "volumeBid",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      },
+      {
+        "name": "fractionOfCapOi",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "volumeBid_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "volumes",
+    "inputs": [
+      {
+        "name": "market",
+        "type": "address",
+        "internalType": "contract IOverlayV1Market"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "volumeBid_",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "volumeAsk_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  }
+]
