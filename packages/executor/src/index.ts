@@ -1,1 +1,3 @@
-console.log('Executor module is running...');
+import { liquidablePositionsListener } from "./executorHandler";
+
+liquidablePositionsListener()
