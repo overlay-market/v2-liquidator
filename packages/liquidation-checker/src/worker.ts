@@ -3,8 +3,8 @@ import { ethers } from 'ethers'
 import { multicall2_address, olv_state_address } from './constants'
 import market_state_abi from './abis/market_state_abi.json'
 import multicall2_abi from './abis/multicall2_abi.json'
-import { Redis } from 'ioredis'
 import chalk from 'chalk'
+import redis from './redisHandler'
 
 interface Position {
   positionId: string
@@ -20,11 +20,6 @@ interface LiquidatableResult {
   position: Position
   isLiquidatable: boolean
 }
-
-const redis = new Redis({
-  host: process.env.REDIS_HOST,
-  password: process.env.REDIS_PASSWORD,
-})
 
 const checkLiquidations = async (
   positions: Position[],

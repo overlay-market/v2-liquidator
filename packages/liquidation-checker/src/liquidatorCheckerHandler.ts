@@ -1,16 +1,11 @@
 import { Worker } from 'worker_threads'
 import { markets } from './constants'
 import dotenv from 'dotenv'
-import Redis from 'ioredis'
 import chalk from 'chalk'
 import { selectRpc } from './rpcHandler'
+import redis from './redisHandler'
 
 dotenv.config()
-
-const redis = new Redis({
-  host: process.env.REDIS_HOST,
-  password: process.env.REDIS_PASSWORD,
-})
 
 const MAX_RETRIES = 3 // maximum number of retries for each worker
 

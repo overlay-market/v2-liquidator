@@ -2,16 +2,11 @@ import { EventType, PositionStatus, markets } from './constants'
 import market_abi from './abis/market_abi.json'
 import { ethers } from 'ethers'
 import dotenv from 'dotenv'
-import Redis from 'ioredis'
 import chalk from 'chalk'
 import { startAnvil, stopAnvil } from './anvilForkHandler'
+import redis from './redisHandler'
 
 dotenv.config()
-
-const redis = new Redis({
-  host: process.env.REDIS_HOST,
-  password: process.env.REDIS_PASSWORD,
-})
 
 const log = console.log
 
