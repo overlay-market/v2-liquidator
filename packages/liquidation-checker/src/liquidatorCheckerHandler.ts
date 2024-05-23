@@ -3,7 +3,7 @@ import { markets } from './constants'
 import dotenv from 'dotenv'
 import Redis from 'ioredis'
 import chalk from 'chalk'
-import { ethers } from 'ethers'
+import { selectRpc } from './rpcHandler'
 
 dotenv.config()
 
@@ -23,36 +23,15 @@ interface Position {
   owner: string
 }
 
-// select a healthy RPC from the list
-async function selectRpc(rpcUrls: string[], rpcIndex: number = 0) {
-  const totalUrls = rpcUrls.length
-
-  for (let i = 0; i < totalUrls; i++) {
-    const rpcUrl = rpcUrls[(rpcIndex + i) % totalUrls]
-
-    try {
-      const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-      await provider.getBlockNumber()
-      return rpcUrl
-    } catch (error) {
-      log(chalk.bgRed('Error checking RPC health:', rpcUrl, error))
-    }
-  }
-
-  // if no healthy URL was found, return null
-  return null
-}
-
 // create a promise for each worker
 async function createWorkerPromise(
   marketAddress: string,
   positions: Position[],
   workerIndex: number,
   rpcUrls: string[],
-  rpcIndex: number = 0,
   retryCount: number = 0
 ) {
-  const rpcUrl = await selectRpc(rpcUrls, rpcIndex)
+  const rpcUrl = await selectRpc(rpcUrls)
 
   if (!rpcUrl) {
     const error = new Error('No healthy RPC found')
@@ -92,16 +71,7 @@ async function createWorkerPromise(
             `Retrying worker ${workerIndex}... attempt ${retryCount + 1} of ${MAX_RETRIES}`
           )
         )
-        resolve(
-          createWorkerPromise(
-            marketAddress,
-            positions,
-            workerIndex,
-            rpcUrls,
-            rpcIndex + 1,
-            retryCount + 1
-          )
-        )
+        resolve(createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, retryCount + 1))
       } else {
         reject(new Error(`Worker ${workerIndex} failed after ${MAX_RETRIES} retries`))
       }
@@ -119,14 +89,7 @@ async function createWorkerPromise(
             )
           )
           resolve(
-            createWorkerPromise(
-              marketAddress,
-              positions,
-              workerIndex,
-              rpcUrls,
-              rpcIndex + 1,
-              retryCount + 1
-            )
+            createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, retryCount + 1)
           )
         } else {
           reject(new Error(`Worker ${workerIndex} failed after ${MAX_RETRIES} retries`))
