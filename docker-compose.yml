@@ -7,7 +7,6 @@ x-common-environment: &common-environment
   REDIS_PASSWORD: ${REDIS_PASSWORD}
   MULTICALL_BATCH_SIZE: ${MULTICALL_BATCH_SIZE}
   RPC_FIRST_PROBABILITY: ${RPC_FIRST_PROBABILITY}
-  WORKERS_AMOUNT: ${WORKERS_AMOUNT}
 
 services:
   redis-server:
@@ -16,6 +15,7 @@ services:
     ports:
       - '6379:6379'
     command: redis-server --requirepass ${REDIS_PASSWORD}
+    restart: unless-stopped
 
   collector:
     build:
@@ -26,6 +26,7 @@ services:
       FORK_RPC_URL: ${FORK_RPC_URL}
     depends_on:
       - redis-server
+    restart: unless-stopped
 
   liquidation-checker-eth-dominance:
     build:
@@ -35,8 +36,10 @@ services:
       <<: *common-environment
       MARKET: ETH Dominance
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_ETH_DOMINANCE}
+      WORKERS_AMOUNT: ${WORKERS_AMOUNT_ETH_DOMINANCE}
     depends_on:
       - redis-server
+    restart: unless-stopped
 
   liquidation-checker-btc-dominance:
     build:
@@ -46,8 +49,10 @@ services:
       <<: *common-environment
       MARKET: BTC Dominance
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_BTC_DOMINANCE}
+      WORKERS_AMOUNT: ${WORKERS_AMOUNT_BTC_DOMINANCE}
     depends_on:
       - redis-server
+    restart: unless-stopped
 
   liquidation-checker-quantum-cats:
     build:
@@ -57,8 +62,10 @@ services:
       <<: *common-environment
       MARKET: Quantum Cats
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_QUANTUM_CATS}
+      WORKERS_AMOUNT: ${WORKERS_AMOUNT_QUANTUM_CATS}
     depends_on:
       - redis-server
+    restart: unless-stopped
 
   liquidation-checker-cs2-skins:
     build:
@@ -68,8 +75,10 @@ services:
       <<: *common-environment
       MARKET: CS2 Skins
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_CS2_SKINS}
+      WORKERS_AMOUNT: ${WORKERS_AMOUNT_CS2_SKINS}
     depends_on:
       - redis-server
+    restart: unless-stopped
 
   liquidation-checker-bitcoin-frogs:
     build:
@@ -79,8 +88,10 @@ services:
       <<: *common-environment
       MARKET: Bitcoin Frogs
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_BITCOIN_FROGS}
+      WORKERS_AMOUNT: ${WORKERS_AMOUNT_BITCOIN_FROGS}
     depends_on:
       - redis-server
+    restart: unless-stopped
 
   liquidation-checker-ink:
     build:
@@ -90,8 +101,10 @@ services:
       <<: *common-environment
       MARKET: Ink
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_INK}
+      WORKERS_AMOUNT: ${WORKERS_AMOUNT_INK}
     depends_on:
       - redis-server
+    restart: unless-stopped
 
   liquidation-checker-nodemonkes:
     build:
@@ -101,8 +114,10 @@ services:
       <<: *common-environment
       MARKET: NodeMonkes
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_NODEMONKES}
+      WORKERS_AMOUNT: ${WORKERS_AMOUNT_NODEMONKES}
     depends_on:
       - redis-server
+    restart: unless-stopped
 
   executor-1:
     build:
@@ -113,6 +128,7 @@ services:
       PRIVATE_KEYS: ${PRIVATE_KEYS_1}
     depends_on:
       - redis-server
+    restart: unless-stopped
 
   executor-2:
     build:
@@ -123,4 +139,5 @@ services:
       PRIVATE_KEYS: ${PRIVATE_KEYS_2}
     depends_on:
       - redis-server
+    restart: unless-stopped
     
