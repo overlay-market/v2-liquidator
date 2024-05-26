@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import chalk from 'chalk'
 import { startAnvil, stopAnvil } from './anvilForkHandler'
 import redis from './redisHandler'
+import { ChainableCommander } from 'ioredis'
 
 dotenv.config()
 
@@ -19,9 +20,11 @@ async function processEvents(marketName: string, events: ethers.Event[]) {
   let updatedPositions = 0
   let removedPositions = 0
   let errorPositions = 0
+  // create a pipeline to execute multiple commands in a single step
+  const pipeline = redis.pipeline()
 
   for (const event of events) {
-    const status = await processEvent(markets[marketName].address, event)
+    const status = await processEvent(pipeline, markets[marketName].address, event)
     switch (status) {
       case PositionStatus.New:
         newPositions++
@@ -38,6 +41,9 @@ async function processEvents(marketName: string, events: ethers.Event[]) {
     }
   }
 
+  // execute all operations in the pipeline
+  await pipeline.exec()
+
   log(`Events processed for market: ${chalk.bold.blue(marketName)}
   ${chalk.bold(`Total events:`)}      ${chalk.bold(events.length)}
   ${chalk.bold(`New positions:`)}     ${chalk.green(newPositions)}
@@ -47,7 +53,7 @@ async function processEvents(marketName: string, events: ethers.Event[]) {
 }
 
 // Process a single event and update the Redis cache
-async function processEvent(marketAddress: string, event: ethers.Event) {
+async function processEvent(pipeline: ChainableCommander, marketAddress: string, event: ethers.Event) {
   const eventName = event.event
 
   // validate necessary arguments
@@ -65,8 +71,8 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
       // event.args[1] = positionId
       positionId = ethers.BigNumber.from(event.args[1]).toString()
       const owner = event.args[0]
-      await redis.hset(`positions:${marketAddress}`, positionId, owner)
-      await redis.zadd(`position_index:${marketAddress}`, positionId, positionId)
+      pipeline.hset(`positions:${marketAddress}`, positionId, owner)
+      pipeline.zadd(`position_index:${marketAddress}`, positionId, positionId)
       status = PositionStatus.New
       break
 
@@ -77,8 +83,8 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
       positionId = ethers.BigNumber.from(event.args[1]).toString()
       // if the position is fully unwound, remove it from the cache
       if (event.args[2] === '1000000000000000000') {
-        await redis.hdel(`positions:${marketAddress}`, positionId)
-        await redis.zrem(`position_index:${marketAddress}`, positionId)
+        pipeline.hdel(`positions:${marketAddress}`, positionId)
+        pipeline.zrem(`position_index:${marketAddress}`, positionId)
         status = PositionStatus.Removed
       } else {
         status = PositionStatus.Updated
@@ -90,8 +96,8 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
       // event.args[1] = owner
       // event.args[2] = positionId
       positionId = ethers.BigNumber.from(event.args[2]).toString()
-      await redis.hdel(`positions:${marketAddress}`, positionId)
-      await redis.zrem(`position_index:${marketAddress}`, positionId)
+      pipeline.hdel(`positions:${marketAddress}`, positionId)
+      pipeline.zrem(`position_index:${marketAddress}`, positionId)
       status = PositionStatus.Removed
       break
 
@@ -101,7 +107,7 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
       break
   }
 
-  await redis.set(`LatestBlockProcessed:${marketAddress}`, (event.blockNumber + 1).toString())
+  pipeline.set(`LatestBlockProcessed:${marketAddress}`, (event.blockNumber + 1).toString())
   return status
 }
 
