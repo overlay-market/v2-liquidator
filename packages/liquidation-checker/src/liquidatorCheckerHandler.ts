@@ -132,12 +132,11 @@ async function fetchPositions(
   endIndex: number
 ): Promise<Position[]> {
   const positionIds = await redis.zrange(`position_index:${marketAddress}`, currentIndex, endIndex)
-  const positions: Position[] = await Promise.all(
-    positionIds.map(async (id) => ({
-      positionId: id,
-      owner: (await redis.hget(`positions:${marketAddress}`, id)) as string,
-    }))
-  )
+  const owners = await redis.hmget(`positions:${marketAddress}`, ...positionIds)
+  const positions: Position[] = positionIds.map((id, index) => ({
+    positionId: id,
+    owner: owners[index] as string,
+  }))
   return positions
 }
 
