@@ -8,6 +8,7 @@ import redis from './redisHandler'
 dotenv.config()
 
 const MAX_RETRIES = 3 // maximum number of retries for each worker
+const WORKER_TIMEOUT_MS = 15000
 
 const log = console.log
 
@@ -25,7 +26,7 @@ async function createWorkerPromise(
   workerIndex: number,
   rpcUrls: string[],
   retryCount: number = 0
-) {
+): Promise<number> {
   const rpcUrl = await selectRpc(rpcUrls)
 
   if (!rpcUrl) {
@@ -49,7 +50,7 @@ async function createWorkerPromise(
       const timeoutError = new Error(`Worker timeout: ${workerIndex} at RPC ${rpcUrl}`)
       log(chalk.red(`Error: ${timeoutError.message}`))
       reject(timeoutError)
-    }, 29000) // 29 seconds
+    }, WORKER_TIMEOUT_MS)
 
     worker.on('message', (result: number) => {
       clearTimeout(timeoutId)
@@ -66,7 +67,11 @@ async function createWorkerPromise(
             `Retrying worker ${workerIndex}... attempt ${retryCount + 1} of ${MAX_RETRIES}`
           )
         )
-        resolve(createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, retryCount + 1))
+        setTimeout(() => {
+          resolve(
+            createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, retryCount + 1)
+          )
+        }, 1000 * Math.pow(2, retryCount)) // Exponential backoff
       } else {
         reject(new Error(`Worker ${workerIndex} failed after ${MAX_RETRIES} retries`))
       }
@@ -83,9 +88,11 @@ async function createWorkerPromise(
               `Retrying worker ${workerIndex}... attempt ${retryCount + 1} of ${MAX_RETRIES}`
             )
           )
-          resolve(
-            createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, retryCount + 1)
-          )
+          setTimeout(() => {
+            resolve(
+              createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, retryCount + 1)
+            )
+          }, 1000 * Math.pow(2, retryCount)) // Exponential backoff
         } else {
           reject(new Error(`Worker ${workerIndex} failed after ${MAX_RETRIES} retries`))
         }
@@ -96,7 +103,7 @@ async function createWorkerPromise(
 
 // distribute work to workers
 async function distributeWorkToWorkers(marketAddress: string, positions: Position[]) {
-  const WORKERS_AMOUNT = parseInt(process.env.WORKERS_AMOUNT ?? '4')
+  const WORKERS_AMOUNT = parseInt(process.env.WORKERS_AMOUNT ?? '2')
 
   const rpcUrls = process.env.RPC_URLS?.split(',') ?? []
   if (rpcUrls.length === 0) {
@@ -132,6 +139,9 @@ async function fetchPositions(
   endIndex: number
 ): Promise<Position[]> {
   const positionIds = await redis.zrange(`position_index:${marketAddress}`, currentIndex, endIndex)
+  if (positionIds.length === 0) {
+    return []
+  }
   const owners = await redis.hmget(`positions:${marketAddress}`, ...positionIds)
   const positions: Position[] = positionIds.map((id, index) => ({
     positionId: id,
