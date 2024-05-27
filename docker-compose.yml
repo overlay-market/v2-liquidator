@@ -37,6 +37,7 @@ services:
       MARKET: ETH Dominance
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_ETH_DOMINANCE}
       WORKERS_AMOUNT: ${WORKERS_AMOUNT_ETH_DOMINANCE}
+      CRON_SCHEDULE: ${CRON_SCHEDULE_ETH_DOMINANCE}
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -50,6 +51,7 @@ services:
       MARKET: BTC Dominance
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_BTC_DOMINANCE}
       WORKERS_AMOUNT: ${WORKERS_AMOUNT_BTC_DOMINANCE}
+      CRON_SCHEDULE: ${CRON_SCHEDULE_BTC_DOMINANCE}
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -63,6 +65,7 @@ services:
       MARKET: Quantum Cats
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_QUANTUM_CATS}
       WORKERS_AMOUNT: ${WORKERS_AMOUNT_QUANTUM_CATS}
+      CRON_SCHEDULE: ${CRON_SCHEDULE_QUANTUM_CATS}
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -76,6 +79,7 @@ services:
       MARKET: CS2 Skins
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_CS2_SKINS}
       WORKERS_AMOUNT: ${WORKERS_AMOUNT_CS2_SKINS}
+      CRON_SCHEDULE: ${CRON_SCHEDULE_CS2_SKINS}
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -89,6 +93,7 @@ services:
       MARKET: Bitcoin Frogs
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_BITCOIN_FROGS}
       WORKERS_AMOUNT: ${WORKERS_AMOUNT_BITCOIN_FROGS}
+      CRON_SCHEDULE: ${CRON_SCHEDULE_BITCOIN_FROGS}
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -102,6 +107,7 @@ services:
       MARKET: Ink
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_INK}
       WORKERS_AMOUNT: ${WORKERS_AMOUNT_INK}
+      CRON_SCHEDULE: ${CRON_SCHEDULE_INK}
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -115,6 +121,7 @@ services:
       MARKET: NodeMonkes
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_NODEMONKES}
       WORKERS_AMOUNT: ${WORKERS_AMOUNT_NODEMONKES}
+      CRON_SCHEDULE: ${CRON_SCHEDULE_NODEMONKES}
     depends_on:
       - redis-server
     restart: unless-stopped

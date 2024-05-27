@@ -1,13 +1,12 @@
 import cron from 'node-cron'
 import { liquidationChecker } from './liquidatorCheckerHandler'
+import dotenv from 'dotenv';
 
-// generate a random delay between 0 and 30 seconds
-const randomDelay = Math.floor(Math.random() * 30000)
+dotenv.config();
 
-setTimeout(() => {
-  cron.schedule('*/30 * * * * *', liquidationChecker)
-  liquidationChecker()
-}, randomDelay)
+const cronSchedule = process.env.CRON_SCHEDULE || '*/30 * * * * *';
+
+cron.schedule(cronSchedule, liquidationChecker);
 
 // run liquidationChecker() once to fetch events for all markets
 // liquidationChecker()
