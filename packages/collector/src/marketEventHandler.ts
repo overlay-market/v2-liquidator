@@ -125,7 +125,7 @@ async function fetchEvents(marketName: string) {
   // current block step to fetch events
   const blockStep = 45000 // adjust as per your RPC limitations
 
-  let allEvents: ethers.Event[] = []
+  let events: ethers.Event[] = []
 
   // if the start block is not found in Redis, get events from the block where the market was deployed to the latest block
   // or if the difference between the latest block and the start block is greater than the block step
@@ -139,16 +139,23 @@ async function fetchEvents(marketName: string) {
     )
 
     // create an array to hold promises for each block range
-    const promises = []
+    let promises = []
     for (let block = parseInt(startBlock); block < latestBlock; block += blockStep + 1) {
       const fromBlock = block
       const toBlock = Math.min(block + blockStep, latestBlock)
       promises.push(ovlMarketContract.queryFilter('*', fromBlock, toBlock))
-    }
 
-    // execute all promises in parallel
-    const eventsArrays = await Promise.all(promises)
-    allEvents = eventsArrays.flat() // Flatten the array of arrays into a single array of events
+      if (promises.length === 100) {
+        // execute 100 promises in parallel
+        log(`Fetching events for market: ${chalk.bold.blue(marketName)} from block: ${fromBlock} to block: ${toBlock}`)
+        const eventsArrays = await Promise.all(promises)
+        events = events.concat(eventsArrays.flat()) // Flatten the array of arrays into a single array of events
+
+        await processEvents(marketName, events)
+        events = []
+        promises = []
+      }
+    }
   } else {
     // if the start block is found in Redis, get events from the last processed block to the latest block
     log(
@@ -156,10 +163,9 @@ async function fetchEvents(marketName: string) {
         latestBlock
       )} for market: ${chalk.bold.blue(marketName)}`
     )
-    allEvents = await ovlMarketContract.queryFilter('*', parseInt(startBlock), latestBlock)
+    events = await ovlMarketContract.queryFilter('*', parseInt(startBlock), latestBlock)
+    await processEvents(marketName, events)
   }
-
-  return allEvents
 }
 
 export async function fetchAndProcessEventsForAllMarkets() {
@@ -187,8 +193,7 @@ export async function fetchAndProcessEventsForAllMarkets() {
       startAnvil()
 
       for (const [marketName] of Object.entries(markets)) {
-        const events = await fetchEvents(marketName)
-        await processEvents(marketName, events)
+        await fetchEvents(marketName)
       }
 
       await redis.set('FirstRun', 'false')
@@ -200,9 +205,7 @@ export async function fetchAndProcessEventsForAllMarkets() {
 
       Object.entries(markets).forEach(([marketName]) => {
         promises.push(
-          fetchEvents(marketName).then(async (events) => {
-            await processEvents(marketName, events)
-          })
+          fetchEvents(marketName)
         )
       })
 
