@@ -81,8 +81,8 @@ async function processEvent(pipeline: ChainableCommander, marketAddress: string,
       // event.args[1] = positionId
       // event.args[2] = fraction
       positionId = ethers.BigNumber.from(event.args[1]).toString()
-      // if the position is fully unwound, remove it from the cache
-      if (event.args[2] === '1000000000000000000') {
+      const fraction = ethers.BigNumber.from(event.args[2]).toString()
+      if (fraction === '1000000000000000000') {
         pipeline.hdel(`positions:${marketAddress}`, positionId)
         pipeline.zrem(`position_index:${marketAddress}`, positionId)
         status = PositionStatus.Removed
