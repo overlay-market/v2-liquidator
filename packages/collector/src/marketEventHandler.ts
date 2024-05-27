@@ -145,7 +145,7 @@ async function fetchEvents(marketName: string) {
       const toBlock = Math.min(block + blockStep, latestBlock)
       promises.push(ovlMarketContract.queryFilter('*', fromBlock, toBlock))
 
-      if (promises.length === 100) {
+      if (promises.length === 100 || toBlock === latestBlock) {
         // execute 100 promises in parallel
         log(`Fetching events for market: ${chalk.bold.blue(marketName)} from block: ${fromBlock} to block: ${toBlock}`)
         const eventsArrays = await Promise.all(promises)
