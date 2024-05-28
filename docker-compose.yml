@@ -24,9 +24,15 @@ services:
     environment:
       <<: *common-environment
       FORK_RPC_URL: ${FORK_RPC_URL}
+      NODE_OPTIONS: --max_old_space_size=256
     depends_on:
       - redis-server
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
 
   liquidation-checker-eth-dominance:
     build:
@@ -38,9 +44,15 @@ services:
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_ETH_DOMINANCE}
       WORKERS_AMOUNT: ${WORKERS_AMOUNT_ETH_DOMINANCE}
       CRON_SCHEDULE: ${CRON_SCHEDULE_ETH_DOMINANCE}
+      NODE_OPTIONS: --max_old_space_size=1024
     depends_on:
       - redis-server
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.8'
+          memory: 1024M
 
   liquidation-checker-btc-dominance:
     build:
@@ -52,9 +64,15 @@ services:
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_BTC_DOMINANCE}
       WORKERS_AMOUNT: ${WORKERS_AMOUNT_BTC_DOMINANCE}
       CRON_SCHEDULE: ${CRON_SCHEDULE_BTC_DOMINANCE}
+      NODE_OPTIONS: --max_old_space_size=1024
     depends_on:
       - redis-server
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.8'
+          memory: 1024M
 
   liquidation-checker-quantum-cats:
     build:
@@ -66,9 +84,15 @@ services:
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_QUANTUM_CATS}
       WORKERS_AMOUNT: ${WORKERS_AMOUNT_QUANTUM_CATS}
       CRON_SCHEDULE: ${CRON_SCHEDULE_QUANTUM_CATS}
+      NODE_OPTIONS: --max_old_space_size=512
     depends_on:
       - redis-server
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   liquidation-checker-cs2-skins:
     build:
@@ -80,9 +104,15 @@ services:
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_CS2_SKINS}
       WORKERS_AMOUNT: ${WORKERS_AMOUNT_CS2_SKINS}
       CRON_SCHEDULE: ${CRON_SCHEDULE_CS2_SKINS}
+      NODE_OPTIONS: --max_old_space_size=768
     depends_on:
       - redis-server
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
 
   liquidation-checker-bitcoin-frogs:
     build:
@@ -94,9 +124,15 @@ services:
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_BITCOIN_FROGS}
       WORKERS_AMOUNT: ${WORKERS_AMOUNT_BITCOIN_FROGS}
       CRON_SCHEDULE: ${CRON_SCHEDULE_BITCOIN_FROGS}
+      NODE_OPTIONS: --max_old_space_size=512
     depends_on:
       - redis-server
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   liquidation-checker-ink:
     build:
@@ -108,9 +144,15 @@ services:
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_INK}
       WORKERS_AMOUNT: ${WORKERS_AMOUNT_INK}
       CRON_SCHEDULE: ${CRON_SCHEDULE_INK}
+      NODE_OPTIONS: --max_old_space_size=512
     depends_on:
       - redis-server
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   liquidation-checker-nodemonkes:
     build:
@@ -122,9 +164,15 @@ services:
       POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_NODEMONKES}
       WORKERS_AMOUNT: ${WORKERS_AMOUNT_NODEMONKES}
       CRON_SCHEDULE: ${CRON_SCHEDULE_NODEMONKES}
+      NODE_OPTIONS: --max_old_space_size=512
     depends_on:
       - redis-server
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   executor-1:
     build:
@@ -133,9 +181,15 @@ services:
     environment:
       <<: *common-environment
       PRIVATE_KEYS: ${PRIVATE_KEYS_1}
+      NODE_OPTIONS: --max_old_space_size=256
     depends_on:
       - redis-server
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
 
   executor-2:
     build:
@@ -144,7 +198,13 @@ services:
     environment:
       <<: *common-environment
       PRIVATE_KEYS: ${PRIVATE_KEYS_2}
+      NODE_OPTIONS: --max_old_space_size=256
     depends_on:
       - redis-server
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
     
