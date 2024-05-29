@@ -79,6 +79,7 @@ async function createWorkerPromise(
 
     worker.on('exit', (code) => {
       clearTimeout(timeoutId)
+      worker.unref()
       if (code !== 0) {
         const exitError = new Error(`Worker ${workerIndex} stopped with exit code ${code}`)
         log(chalk.red(`Error: ${exitError.message}`))
@@ -117,8 +118,9 @@ async function distributeWorkToWorkers(marketAddress: string, positions: Positio
   for (let i = 0; i < WORKERS_AMOUNT; i++) {
     const startPos = i * positionsPerWorker
     const endPos = Math.min(startPos + positionsPerWorker, positions.length)
-    const workerPositions = positions.slice(startPos, endPos)
-    workerPromises.push(createWorkerPromise(marketAddress, workerPositions, i, rpcUrls))
+    workerPromises.push(
+      createWorkerPromise(marketAddress, positions.slice(startPos, endPos), i, rpcUrls)
+    )
   }
 
   const results = await Promise.allSettled(workerPromises)
@@ -138,15 +140,34 @@ async function fetchPositions(
   currentIndex: number,
   endIndex: number
 ): Promise<Position[]> {
-  const positionIds = await redis.zrange(`position_index:${marketAddress}`, currentIndex, endIndex)
+  const pipeline = redis.pipeline()
+
+  pipeline.zrange(`position_index:${marketAddress}`, currentIndex, endIndex)
+  const results = await pipeline.exec()
+  if (!results || results.length === 0 || results[0][1] === null) {
+    return []
+  }
+  const positionIds = results[0][1] as string[]
   if (positionIds.length === 0) {
     return []
   }
-  const owners = await redis.hmget(`positions:${marketAddress}`, ...positionIds)
+
+  const ownerPipeline = redis.pipeline()
+  ownerPipeline.hmget(`positions:${marketAddress}`, ...positionIds)
+  const ownerResults = await ownerPipeline.exec()
+  if (!ownerResults || ownerResults.length === 0 || ownerResults[0][1] === null) {
+    return []
+  }
+
+  const owners = ownerResults[0][1] as string[]
   const positions: Position[] = positionIds.map((id, index) => ({
     positionId: id,
-    owner: owners[index] as string,
+    owner: owners[index],
   }))
+
+  positionIds.length = 0;
+  owners.length = 0;
+
   return positions
 }
 
