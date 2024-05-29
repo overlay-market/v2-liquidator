@@ -31,7 +31,11 @@ export const markets: Record<string, Market> = {
   'NodeMonkes': {
     address: '0xef898dbf4F4D75bdfbDd85F781A6C1BF8EDaF0AE',
     init_block: '16499121',
-  }
+  },
+  'EvIndex': {
+    address: '0x770E3A8afC5c01855b5bD8EB5b96b23bd7Af1e43',
+    init_block: '48459493',
+  },
 }
 
 export const markets_block: {[key: string]: string} = {
@@ -42,6 +46,7 @@ export const markets_block: {[key: string]: string} = {
   'Bitcoin Frogs': '16498932',
   'Ink': '29178446',
   'NodeMonkes': '16499121',
+  'EvIndex': '48459493',
 }
 
 export enum EventType {

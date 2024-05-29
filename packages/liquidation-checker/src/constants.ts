@@ -6,6 +6,7 @@ export const markets: {[key: string]: string} = {
   'Bitcoin Frogs': '0xC7f3240d983fcAB7A571bE484d2b4dA43B95efEe',
   'Ink': '0xe060ea13b2e710cefc5124bb790db4823b0f602a',
   'NodeMonkes': '0xef898dbf4F4D75bdfbDd85F781A6C1BF8EDaF0AE',
+  'EvIndex': '0x770E3A8afC5c01855b5bD8EB5b96b23bd7Af1e43',
 }
 
 export const markets_block: {[key: string]: string} = {
@@ -16,6 +17,7 @@ export const markets_block: {[key: string]: string} = {
   'Bitcoin Frogs': '16498932',
   'Ink': '29178446',
   'NodeMonkes': '16499121',
+  'EvIndex': '48459493',
 }
 
 export enum EventType {
