@@ -5,8 +5,6 @@ x-common-environment: &common-environment
   RPC_URLS: ${RPC_URLS}
   REDIS_HOST: redis-server
   REDIS_PASSWORD: ${REDIS_PASSWORD}
-  MULTICALL_BATCH_SIZE: ${MULTICALL_BATCH_SIZE}
-  RPC_FIRST_PROBABILITY: ${RPC_FIRST_PROBABILITY}
 
 services:
   redis-server:
@@ -24,7 +22,7 @@ services:
     environment:
       <<: *common-environment
       FORK_RPC_URL: ${FORK_RPC_URL}
-      NODE_OPTIONS: --max_old_space_size=256
+      NODE_OPTIONS: --max_old_space_size=409
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -32,7 +30,7 @@ services:
       resources:
         limits:
           cpus: '0.5'
-          memory: 256M
+          memory: 512M
 
   liquidation-checker-eth-dominance:
     build:
@@ -41,10 +39,7 @@ services:
     environment:
       <<: *common-environment
       MARKET: ETH Dominance
-      POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_ETH_DOMINANCE}
-      WORKERS_AMOUNT: ${WORKERS_AMOUNT_ETH_DOMINANCE}
-      CRON_SCHEDULE: ${CRON_SCHEDULE_ETH_DOMINANCE}
-      NODE_OPTIONS: --max_old_space_size=1024
+      NODE_OPTIONS: --max_old_space_size=819
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -61,10 +56,7 @@ services:
     environment:
       <<: *common-environment
       MARKET: BTC Dominance
-      POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_BTC_DOMINANCE}
-      WORKERS_AMOUNT: ${WORKERS_AMOUNT_BTC_DOMINANCE}
-      CRON_SCHEDULE: ${CRON_SCHEDULE_BTC_DOMINANCE}
-      NODE_OPTIONS: --max_old_space_size=1024
+      NODE_OPTIONS: --max_old_space_size=819
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -81,10 +73,7 @@ services:
     environment:
       <<: *common-environment
       MARKET: Quantum Cats
-      POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_QUANTUM_CATS}
-      WORKERS_AMOUNT: ${WORKERS_AMOUNT_QUANTUM_CATS}
-      CRON_SCHEDULE: ${CRON_SCHEDULE_QUANTUM_CATS}
-      NODE_OPTIONS: --max_old_space_size=512
+      NODE_OPTIONS: --max_old_space_size=409
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -101,10 +90,7 @@ services:
     environment:
       <<: *common-environment
       MARKET: CS2 Skins
-      POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_CS2_SKINS}
-      WORKERS_AMOUNT: ${WORKERS_AMOUNT_CS2_SKINS}
-      CRON_SCHEDULE: ${CRON_SCHEDULE_CS2_SKINS}
-      NODE_OPTIONS: --max_old_space_size=768
+      NODE_OPTIONS: --max_old_space_size=614
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -121,10 +107,7 @@ services:
     environment:
       <<: *common-environment
       MARKET: Bitcoin Frogs
-      POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_BITCOIN_FROGS}
-      WORKERS_AMOUNT: ${WORKERS_AMOUNT_BITCOIN_FROGS}
-      CRON_SCHEDULE: ${CRON_SCHEDULE_BITCOIN_FROGS}
-      NODE_OPTIONS: --max_old_space_size=512
+      NODE_OPTIONS: --max_old_space_size=409
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -141,10 +124,7 @@ services:
     environment:
       <<: *common-environment
       MARKET: Ink
-      POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_INK}
-      WORKERS_AMOUNT: ${WORKERS_AMOUNT_INK}
-      CRON_SCHEDULE: ${CRON_SCHEDULE_INK}
-      NODE_OPTIONS: --max_old_space_size=512
+      NODE_OPTIONS: --max_old_space_size=409
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -161,10 +141,7 @@ services:
     environment:
       <<: *common-environment
       MARKET: NodeMonkes
-      POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_NODEMONKES}
-      WORKERS_AMOUNT: ${WORKERS_AMOUNT_NODEMONKES}
-      CRON_SCHEDULE: ${CRON_SCHEDULE_NODEMONKES}
-      NODE_OPTIONS: --max_old_space_size=512
+      NODE_OPTIONS: --max_old_space_size=409
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -181,10 +158,7 @@ services:
     environment:
       <<: *common-environment
       MARKET: EvIndex
-      POSITIONS_PER_RUN: ${POSITIONS_PER_RUN_EVINDEX}
-      WORKERS_AMOUNT: ${WORKERS_AMOUNT_EVINDEX}
-      CRON_SCHEDULE: ${CRON_SCHEDULE_EVINDEX}
-      NODE_OPTIONS: --max_old_space_size=512
+      NODE_OPTIONS: --max_old_space_size=409
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -201,7 +175,7 @@ services:
     environment:
       <<: *common-environment
       PRIVATE_KEYS: ${PRIVATE_KEYS_1}
-      NODE_OPTIONS: --max_old_space_size=256
+      NODE_OPTIONS: --max_old_space_size=204
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -218,7 +192,7 @@ services:
     environment:
       <<: *common-environment
       PRIVATE_KEYS: ${PRIVATE_KEYS_2}
-      NODE_OPTIONS: --max_old_space_size=256
+      NODE_OPTIONS: --max_old_space_size=204
     depends_on:
       - redis-server
     restart: unless-stopped

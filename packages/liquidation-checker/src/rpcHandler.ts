@@ -1,11 +1,11 @@
 import { ethers } from 'ethers'
 import chalk from 'chalk'
 import dotenv from 'dotenv'
+import { config } from './config'
 
 dotenv.config()
 
-// probability of using the primary RPC, defaulting to 0.75
-const primaryRpcProbability = parseFloat(process.env.RPC_FIRST_PROBABILITY ?? '0.75')
+const primaryRpcProbability = config[process.env.MARKET || 'default'].rpc_first_probability
 
 export async function checkRpc(rpcUrl: string) {
   const provider = new ethers.providers.JsonRpcProvider(rpcUrl)

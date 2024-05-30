@@ -43,7 +43,7 @@ async function processEvents(marketName: string, events: ethers.Event[]) {
 
   // execute all operations in the pipeline
   await pipeline.exec()
-
+  events.length = 0; // clear the events array
   log(`Events processed for market: ${chalk.bold.blue(marketName)}
   ${chalk.bold(`Total events:`)}      ${chalk.bold(events.length)}
   ${chalk.bold(`New positions:`)}     ${chalk.green(newPositions)}
@@ -145,7 +145,7 @@ async function fetchEvents(marketName: string) {
       const toBlock = Math.min(block + blockStep, latestBlock)
       promises.push(ovlMarketContract.queryFilter('*', fromBlock, toBlock))
 
-      if (promises.length === 100 || toBlock === latestBlock) {
+      if (promises.length === 50 || toBlock === latestBlock) {
         // execute 100 promises in parallel
         log(`Fetching events for market: ${chalk.bold.blue(marketName)} from block: ${fromBlock} to block: ${toBlock}`)
         const eventsArrays = await Promise.all(promises)
@@ -201,22 +201,9 @@ export async function fetchAndProcessEventsForAllMarkets() {
       stopAnvil()
       useFork = false
     } else {
-      const promises: Promise<unknown>[] = []
-
-      Object.entries(markets).forEach(([marketName]) => {
-        promises.push(
-          fetchEvents(marketName)
-        )
-      })
-
-      const results = await Promise.allSettled(promises)
-
-      results.forEach((result, index) => {
-        if (result.status === 'rejected') {
-          const [marketName] = Object.entries(markets)[index]
-          log(chalk.bold.red(`Failed to process market: ${marketName}, Error: ${result.reason}`))
-        }
-      })
+      for (const [marketName] of Object.entries(markets)) {
+        await fetchEvents(marketName)
+      }
     }
 
     log(chalk.bgGreen('All markets processed successfully!'))

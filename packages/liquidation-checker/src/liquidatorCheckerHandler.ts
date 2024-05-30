@@ -4,11 +4,15 @@ import dotenv from 'dotenv'
 import chalk from 'chalk'
 import { selectRpc } from './rpcHandler'
 import redis from './redisHandler'
+import { config } from './config'
 
 dotenv.config()
 
 const MAX_RETRIES = 3 // maximum number of retries for each worker
 const WORKER_TIMEOUT_MS = 15000
+const MULTICALL_BATCH_SIZE = config[process.env.MARKET || 'default'].multicall_batch_size
+const POSITIONS_PER_RUN = config[process.env.MARKET || 'default'].positions_per_run
+const WORKERS_AMOUNT = config[process.env.MARKET || 'default'].workers
 
 const log = console.log
 
@@ -40,7 +44,7 @@ async function createWorkerPromise(
       workerData: {
         positions,
         marketAddress,
-        batchSize: parseInt(process.env.MULTICALL_BATCH_SIZE ?? '100'),
+        batchSize: MULTICALL_BATCH_SIZE,
         rpcUrl,
       },
     })
@@ -104,8 +108,6 @@ async function createWorkerPromise(
 
 // distribute work to workers
 async function distributeWorkToWorkers(marketAddress: string, positions: Position[]) {
-  const WORKERS_AMOUNT = parseInt(process.env.WORKERS_AMOUNT ?? '2')
-
   const rpcUrls = process.env.RPC_URLS?.split(',') ?? []
   if (rpcUrls.length === 0) {
     throw new Error('At least one RPC_URLS must be provided')
@@ -186,9 +188,6 @@ export async function liquidationChecker() {
     log(chalk.bold.red('Task is already running. Skipping this run...'))
     return
   }
-
-  // number of positions to process per run
-  const POSITIONS_PER_RUN = parseInt(process.env.POSITIONS_PER_RUN ?? '30000')
 
   taskRunning = true
   log(chalk.bold.blue('Cron job started at:', new Date().toLocaleString()))
