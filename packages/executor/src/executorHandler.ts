@@ -1,15 +1,10 @@
 import market_abi from './abis/market_abi.json'
 import dotenv from 'dotenv'
-import Redis from 'ioredis'
 import chalk from 'chalk'
 import { ethers } from 'ethers'
+import redis from './redisHandler'
 
 dotenv.config()
-
-const redis = new Redis({
-  host: process.env.REDIS_HOST,
-  password: process.env.REDIS_PASSWORD,
-})
 
 const log = console.log
 
@@ -79,6 +74,10 @@ async function liquidatePosition(position: Position) {
         await redis.hdel(`positions:${marketAddress}`, positionId)
         await redis.zrem(`position_index:${marketAddress}`, positionId)
         await resetRetryCount(position)
+
+        // track on redis total liquidated positions by executor
+        await redis.incr(`total_liquidated_positions:${wallet.address}`)
+        log(chalk.green(`Total liquidated positions by ${wallet.address}:`), await redis.get(`total_liquidated_positions:${wallet.address}`))
 
         return
       } else {

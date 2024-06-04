@@ -31,16 +31,27 @@ We will use docker compose to run all the modules and Redis.
 ## How to run
 
 1. Install docker and docker-compose
-2. Run `docker-compose up`
+2. Set the environment variables in the `.env` file
+3. Run `docker-compose build` to build the images
+4. Run `docker-compose up` to run the modules
 
 ## How to develop
 
 1. Install node.js, docker, redis and pnpm
 2. Run `pnpm install`
 3. Set the environment variables in the `.env` file for each module
-4. Set the redis to run in localhost. You can do this by running `docker run -p 6379:6379 redis` or installing redis in your machine.
+4. Set redis to run in localhost. You can do this by running `docker run -p 6379:6379 redis` or installing redis in your machine.
 5. You can test the modules separately by running `pnpm dev` in each module
 
 ## Environment variables
-REDIS_PASSWORD - The password of the redis server (if required)
-RPC_URL - The RPC URL of the arbitrum network
+- `RPC_URLS`: Comma separated list of RPC urls
+- `REDIS_PASSWORD`: Redis password
+- `REDIS_HOST`: Redis host
+- `MULTICALL_BATCH_SIZE`: Number of calls to make in a single multicall request
+- `FORK_RPC_URL`: RPC url to use for forking
+- `PRIVATE_KEYS_1`: Comma separated list of private keys for the first account
+- `PRIVATE_KEYS_2`: Comma separated list of private keys for the second account
+- `RPC_FIRST_PROBABILITY`: Probability of using the first RPC url in LiquidationChecker module
+- `POSITIONS_PER_RUN_*`: Number of positions to check in each cron run
+- `WORKERS_AMOUNT_*`: Number of workers to run in parallel for each cron job
+- `CRON_SCHEDULE_*`: Cron schedule for each cron job

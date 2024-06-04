@@ -13,20 +13,24 @@ services:
     ports:
       - '6379:6379'
     command: redis-server --requirepass ${REDIS_PASSWORD}
+    restart: unless-stopped
 
   collector:
     build:
       context: .
       dockerfile: packages/collector/Dockerfile
-    ports:
-      - "3000:3000"
     environment:
-      NODE_ENV: production
-      RPC_URLS: ${RPC_URLS}
-      REDIS_HOST: redis-server
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      <<: *common-environment
+      FORK_RPC_URL: ${FORK_RPC_URL}
+      NODE_OPTIONS: --max_old_space_size=409
     depends_on:
       - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   liquidation-checker-eth-dominance:
     build:
@@ -35,8 +39,15 @@ services:
     environment:
       <<: *common-environment
       MARKET: ETH Dominance
+      NODE_OPTIONS: --max_old_space_size=819
     depends_on:
       - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.8'
+          memory: 1024M
 
   liquidation-checker-btc-dominance:
     build:
@@ -45,8 +56,15 @@ services:
     environment:
       <<: *common-environment
       MARKET: BTC Dominance
+      NODE_OPTIONS: --max_old_space_size=819
     depends_on:
       - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.8'
+          memory: 1024M
 
   liquidation-checker-quantum-cats:
     build:
@@ -55,8 +73,15 @@ services:
     environment:
       <<: *common-environment
       MARKET: Quantum Cats
+      NODE_OPTIONS: --max_old_space_size=409
     depends_on:
       - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   liquidation-checker-cs2-skins:
     build:
@@ -65,8 +90,15 @@ services:
     environment:
       <<: *common-environment
       MARKET: CS2 Skins
+      NODE_OPTIONS: --max_old_space_size=614
     depends_on:
       - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
 
   liquidation-checker-bitcoin-frogs:
     build:
@@ -75,8 +107,15 @@ services:
     environment:
       <<: *common-environment
       MARKET: Bitcoin Frogs
+      NODE_OPTIONS: --max_old_space_size=409
     depends_on:
       - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   liquidation-checker-ink:
     build:
@@ -85,8 +124,15 @@ services:
     environment:
       <<: *common-environment
       MARKET: Ink
+      NODE_OPTIONS: --max_old_space_size=409
     depends_on:
       - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   liquidation-checker-nodemonkes:
     build:
@@ -95,14 +141,64 @@ services:
     environment:
       <<: *common-environment
       MARKET: NodeMonkes
+      NODE_OPTIONS: --max_old_space_size=409
     depends_on:
       - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
-  executor:
+  liquidation-checker-evindex:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: EvIndex
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  executor-1:
     build:
       context: .
       dockerfile: packages/executor/Dockerfile
-    ports:
-      - "3002:3000"
     environment:
-      - NODE_ENV=production
+      <<: *common-environment
+      PRIVATE_KEYS: ${PRIVATE_KEYS_1}
+      NODE_OPTIONS: --max_old_space_size=204
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+  executor-2:
+    build:
+      context: .
+      dockerfile: packages/executor/Dockerfile
+    environment:
+      <<: *common-environment
+      PRIVATE_KEYS: ${PRIVATE_KEYS_2}
+      NODE_OPTIONS: --max_old_space_size=204
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+    

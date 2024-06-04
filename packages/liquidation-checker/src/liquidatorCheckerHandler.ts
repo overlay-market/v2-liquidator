@@ -1,18 +1,18 @@
 import { Worker } from 'worker_threads'
 import { markets } from './constants'
 import dotenv from 'dotenv'
-import Redis from 'ioredis'
 import chalk from 'chalk'
-import { ethers } from 'ethers'
+import { selectRpc } from './rpcHandler'
+import redis from './redisHandler'
+import { config } from './config'
 
 dotenv.config()
 
-const redis = new Redis({
-  host: process.env.REDIS_HOST,
-  password: process.env.REDIS_PASSWORD,
-})
-
 const MAX_RETRIES = 3 // maximum number of retries for each worker
+const WORKER_TIMEOUT_MS = 15000
+const MULTICALL_BATCH_SIZE = config[process.env.MARKET || 'default'].multicall_batch_size
+const POSITIONS_PER_RUN = config[process.env.MARKET || 'default'].positions_per_run
+const WORKERS_AMOUNT = config[process.env.MARKET || 'default'].workers
 
 const log = console.log
 
@@ -23,36 +23,15 @@ interface Position {
   owner: string
 }
 
-// select a healthy RPC from the list
-async function selectRpc(rpcUrls: string[], rpcIndex: number = 0) {
-  const totalUrls = rpcUrls.length
-
-  for (let i = 0; i < totalUrls; i++) {
-    const rpcUrl = rpcUrls[(rpcIndex + i) % totalUrls]
-
-    try {
-      const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-      await provider.getBlockNumber()
-      return rpcUrl
-    } catch (error) {
-      log(chalk.bgRed('Error checking RPC health:', rpcUrl, error))
-    }
-  }
-
-  // if no healthy URL was found, return null
-  return null
-}
-
 // create a promise for each worker
 async function createWorkerPromise(
   marketAddress: string,
   positions: Position[],
   workerIndex: number,
   rpcUrls: string[],
-  rpcIndex: number = 0,
   retryCount: number = 0
-) {
-  const rpcUrl = await selectRpc(rpcUrls, rpcIndex)
+): Promise<number> {
+  const rpcUrl = await selectRpc(rpcUrls)
 
   if (!rpcUrl) {
     const error = new Error('No healthy RPC found')
@@ -65,7 +44,7 @@ async function createWorkerPromise(
       workerData: {
         positions,
         marketAddress,
-        batchSize: parseInt(process.env.MULTICALL_BATCH_SIZE ?? '100'),
+        batchSize: MULTICALL_BATCH_SIZE,
         rpcUrl,
       },
     })
@@ -75,7 +54,7 @@ async function createWorkerPromise(
       const timeoutError = new Error(`Worker timeout: ${workerIndex} at RPC ${rpcUrl}`)
       log(chalk.red(`Error: ${timeoutError.message}`))
       reject(timeoutError)
-    }, 29000) // 29 seconds
+    }, WORKER_TIMEOUT_MS)
 
     worker.on('message', (result: number) => {
       clearTimeout(timeoutId)
@@ -92,16 +71,11 @@ async function createWorkerPromise(
             `Retrying worker ${workerIndex}... attempt ${retryCount + 1} of ${MAX_RETRIES}`
           )
         )
-        resolve(
-          createWorkerPromise(
-            marketAddress,
-            positions,
-            workerIndex,
-            rpcUrls,
-            rpcIndex + 1,
-            retryCount + 1
+        setTimeout(() => {
+          resolve(
+            createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, retryCount + 1)
           )
-        )
+        }, 1000 * Math.pow(2, retryCount)) // Exponential backoff
       } else {
         reject(new Error(`Worker ${workerIndex} failed after ${MAX_RETRIES} retries`))
       }
@@ -109,6 +83,7 @@ async function createWorkerPromise(
 
     worker.on('exit', (code) => {
       clearTimeout(timeoutId)
+      worker.unref()
       if (code !== 0) {
         const exitError = new Error(`Worker ${workerIndex} stopped with exit code ${code}`)
         log(chalk.red(`Error: ${exitError.message}`))
@@ -118,16 +93,11 @@ async function createWorkerPromise(
               `Retrying worker ${workerIndex}... attempt ${retryCount + 1} of ${MAX_RETRIES}`
             )
           )
-          resolve(
-            createWorkerPromise(
-              marketAddress,
-              positions,
-              workerIndex,
-              rpcUrls,
-              rpcIndex + 1,
-              retryCount + 1
+          setTimeout(() => {
+            resolve(
+              createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, retryCount + 1)
             )
-          )
+          }, 1000 * Math.pow(2, retryCount)) // Exponential backoff
         } else {
           reject(new Error(`Worker ${workerIndex} failed after ${MAX_RETRIES} retries`))
         }
@@ -138,8 +108,6 @@ async function createWorkerPromise(
 
 // distribute work to workers
 async function distributeWorkToWorkers(marketAddress: string, positions: Position[]) {
-  const WORKERS_AMOUNT = parseInt(process.env.WORKERS_AMOUNT ?? '4')
-
   const rpcUrls = process.env.RPC_URLS?.split(',') ?? []
   if (rpcUrls.length === 0) {
     throw new Error('At least one RPC_URLS must be provided')
@@ -152,8 +120,9 @@ async function distributeWorkToWorkers(marketAddress: string, positions: Positio
   for (let i = 0; i < WORKERS_AMOUNT; i++) {
     const startPos = i * positionsPerWorker
     const endPos = Math.min(startPos + positionsPerWorker, positions.length)
-    const workerPositions = positions.slice(startPos, endPos)
-    workerPromises.push(createWorkerPromise(marketAddress, workerPositions, i, rpcUrls))
+    workerPromises.push(
+      createWorkerPromise(marketAddress, positions.slice(startPos, endPos), i, rpcUrls)
+    )
   }
 
   const results = await Promise.allSettled(workerPromises)
@@ -173,13 +142,34 @@ async function fetchPositions(
   currentIndex: number,
   endIndex: number
 ): Promise<Position[]> {
-  const positionIds = await redis.zrange(`position_index:${marketAddress}`, currentIndex, endIndex)
-  const positions: Position[] = await Promise.all(
-    positionIds.map(async (id) => ({
-      positionId: id,
-      owner: (await redis.hget(`positions:${marketAddress}`, id)) as string,
-    }))
-  )
+  const pipeline = redis.pipeline()
+
+  pipeline.zrange(`position_index:${marketAddress}`, currentIndex, endIndex)
+  const results = await pipeline.exec()
+  if (!results || results.length === 0 || results[0][1] === null) {
+    return []
+  }
+  const positionIds = results[0][1] as string[]
+  if (positionIds.length === 0) {
+    return []
+  }
+
+  const ownerPipeline = redis.pipeline()
+  ownerPipeline.hmget(`positions:${marketAddress}`, ...positionIds)
+  const ownerResults = await ownerPipeline.exec()
+  if (!ownerResults || ownerResults.length === 0 || ownerResults[0][1] === null) {
+    return []
+  }
+
+  const owners = ownerResults[0][1] as string[]
+  const positions: Position[] = positionIds.map((id, index) => ({
+    positionId: id,
+    owner: owners[index],
+  }))
+
+  positionIds.length = 0;
+  owners.length = 0;
+
   return positions
 }
 
@@ -198,9 +188,6 @@ export async function liquidationChecker() {
     log(chalk.bold.red('Task is already running. Skipping this run...'))
     return
   }
-
-  // number of positions to process per run
-  const POSITIONS_PER_RUN = parseInt(process.env.POSITIONS_PER_RUN ?? '30000')
 
   taskRunning = true
   log(chalk.bold.blue('Cron job started at:', new Date().toLocaleString()))

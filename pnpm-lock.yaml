@@ -13,6 +13,9 @@ importers:
       chalk:
         specifier: '4'
         version: 4.1.2
+      child_process:
+        specifier: ^1.0.2
+        version: 1.0.2
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -40,6 +43,19 @@ importers:
         version: 5.4.5
 
   packages/executor:
+    dependencies:
+      chalk:
+        specifier: '4'
+        version: 4.1.2
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      ethers:
+        specifier: 5.7.2
+        version: 5.7.2
+      ioredis:
+        specifier: ^5.4.1
+        version: 5.4.1
     devDependencies:
       '@types/node':
         specifier: ^20.12.11
@@ -500,6 +516,10 @@ packages:
     dependencies:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
+    dev: false
+
+  /child_process@1.0.2:
+    resolution: {integrity: sha512-Wmza/JzL0SiWz7kl6MhIKT5ceIlnFPJX+lwUGj7Clhy5MMldsSoJR0+uvRzOS5Kv45Mq7t1PoE8TsOA9bzvb6g==}
     dev: false
 
   /cluster-key-slot@1.1.2:

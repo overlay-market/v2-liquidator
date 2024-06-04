@@ -3,8 +3,8 @@ import { ethers } from 'ethers'
 import { multicall2_address, olv_state_address } from './constants'
 import market_state_abi from './abis/market_state_abi.json'
 import multicall2_abi from './abis/multicall2_abi.json'
-import { Redis } from 'ioredis'
 import chalk from 'chalk'
+import redis from './redisHandler'
 
 interface Position {
   positionId: string
@@ -20,11 +20,6 @@ interface LiquidatableResult {
   position: Position
   isLiquidatable: boolean
 }
-
-const redis = new Redis({
-  host: process.env.REDIS_HOST,
-  password: process.env.REDIS_PASSWORD,
-})
 
 const checkLiquidations = async (
   positions: Position[],
@@ -68,17 +63,22 @@ const checkLiquidations = async (
             })
             .filter((result: LiquidatableResult) => result.isLiquidatable)
         })
+        .catch((error: Error) => {
+          console.error(chalk.bold.red(`Error processing batch from ${i} to ${i + batchSize}:`), error)
+          return []
+        })
     )
   }
 
-  const results = await Promise.all(batchPromises)
-  const liquidatableResults = results.flat()
+  const results = await Promise.allSettled(batchPromises)
+  const liquidatableResults = results
+    .filter((result) => result.status === 'fulfilled')
+    .flatMap((result) => (result as PromiseFulfilledResult<LiquidatableResult[]>).value)
 
   for (const result of liquidatableResults) {
     const { positionId, owner } = result.position
 
     const isNew = await redis.sadd('unique_positions', `${marketAddress}:${positionId}`)
-    // If the position is new, add it to the liquidatable_positions list to avoid duplicates
     if (isNew) {
       console.log(
         `${chalk.green('Liquidatable position found => ')} ${chalk.yellow(
@@ -101,7 +101,7 @@ const checkLiquidations = async (
   }
 
   // return the amount of liquidatable positions
-  return liquidatableResults ? liquidatableResults.length : 0
+  return liquidatableResults.length
 }
 
 checkLiquidations(

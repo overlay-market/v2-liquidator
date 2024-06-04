@@ -2,19 +2,17 @@ import { EventType, PositionStatus, markets } from './constants'
 import market_abi from './abis/market_abi.json'
 import { ethers } from 'ethers'
 import dotenv from 'dotenv'
-import Redis from 'ioredis'
 import chalk from 'chalk'
+import { startAnvil, stopAnvil } from './anvilForkHandler'
+import redis from './redisHandler'
+import { ChainableCommander } from 'ioredis'
 
 dotenv.config()
-
-const redis = new Redis({
-  host: process.env.REDIS_HOST,
-  password: process.env.REDIS_PASSWORD,
-})
 
 const log = console.log
 
 let taskRunning = false
+let useFork = false
 
 // Process events for a given market. Count new, updated, and removed positions
 async function processEvents(marketName: string, events: ethers.Event[]) {
@@ -22,9 +20,11 @@ async function processEvents(marketName: string, events: ethers.Event[]) {
   let updatedPositions = 0
   let removedPositions = 0
   let errorPositions = 0
+  // create a pipeline to execute multiple commands in a single step
+  const pipeline = redis.pipeline()
 
   for (const event of events) {
-    const status = await processEvent(markets[marketName].address, event)
+    const status = await processEvent(pipeline, markets[marketName].address, event)
     switch (status) {
       case PositionStatus.New:
         newPositions++
@@ -41,6 +41,9 @@ async function processEvents(marketName: string, events: ethers.Event[]) {
     }
   }
 
+  // execute all operations in the pipeline
+  await pipeline.exec()
+  events.length = 0; // clear the events array
   log(`Events processed for market: ${chalk.bold.blue(marketName)}
   ${chalk.bold(`Total events:`)}      ${chalk.bold(events.length)}
   ${chalk.bold(`New positions:`)}     ${chalk.green(newPositions)}
@@ -50,7 +53,7 @@ async function processEvents(marketName: string, events: ethers.Event[]) {
 }
 
 // Process a single event and update the Redis cache
-async function processEvent(marketAddress: string, event: ethers.Event) {
+async function processEvent(pipeline: ChainableCommander, marketAddress: string, event: ethers.Event) {
   const eventName = event.event
 
   // validate necessary arguments
@@ -68,8 +71,8 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
       // event.args[1] = positionId
       positionId = ethers.BigNumber.from(event.args[1]).toString()
       const owner = event.args[0]
-      await redis.hset(`positions:${marketAddress}`, positionId, owner);
-      await redis.zadd(`position_index:${marketAddress}`, positionId, positionId);
+      pipeline.hset(`positions:${marketAddress}`, positionId, owner)
+      pipeline.zadd(`position_index:${marketAddress}`, positionId, positionId)
       status = PositionStatus.New
       break
 
@@ -78,13 +81,13 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
       // event.args[1] = positionId
       // event.args[2] = fraction
       positionId = ethers.BigNumber.from(event.args[1]).toString()
-      // if the position is fully unwound, remove it from the cache
-      if (event.args[2] === '1000000000000000000') {
-        await redis.hdel(`positions:${marketAddress}`, positionId)
-        await redis.zrem(`position_index:${marketAddress}`, positionId);
+      const fraction = ethers.BigNumber.from(event.args[2]).toString()
+      if (fraction === '1000000000000000000') {
+        pipeline.hdel(`positions:${marketAddress}`, positionId)
+        pipeline.zrem(`position_index:${marketAddress}`, positionId)
         status = PositionStatus.Removed
       } else {
-        status = PositionStatus.Updated;
+        status = PositionStatus.Updated
       }
       break
 
@@ -93,8 +96,8 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
       // event.args[1] = owner
       // event.args[2] = positionId
       positionId = ethers.BigNumber.from(event.args[2]).toString()
-      await redis.hdel(`positions:${marketAddress}`, positionId)
-      await redis.zrem(`position_index:${marketAddress}`, positionId);
+      pipeline.hdel(`positions:${marketAddress}`, positionId)
+      pipeline.zrem(`position_index:${marketAddress}`, positionId)
       status = PositionStatus.Removed
       break
 
@@ -104,14 +107,15 @@ async function processEvent(marketAddress: string, event: ethers.Event) {
       break
   }
 
-  await redis.set(`LatestBlockProcessed:${marketAddress}`, (event.blockNumber + 1).toString())
+  pipeline.set(`LatestBlockProcessed:${marketAddress}`, (event.blockNumber + 1).toString())
   return status
 }
 
 // Fetch events for a given market
 async function fetchEvents(marketName: string) {
   const marketAddress = markets[marketName].address
-  const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URLS?.split(',')[0])
+  const rpcUrl = useFork ? 'http://localhost:8545' : process.env.RPC_URLS?.split(',')[0]
+  const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
   const ovlMarketContract = new ethers.Contract(marketAddress, market_abi, provider)
 
   // get the latest block processed for the market
@@ -121,7 +125,7 @@ async function fetchEvents(marketName: string) {
   // current block step to fetch events
   const blockStep = 45000 // adjust as per your RPC limitations
 
-  let allEvents: ethers.Event[] = []
+  let events: ethers.Event[] = []
 
   // if the start block is not found in Redis, get events from the block where the market was deployed to the latest block
   // or if the difference between the latest block and the start block is greater than the block step
@@ -129,29 +133,39 @@ async function fetchEvents(marketName: string) {
     startBlock = startBlock || markets[marketName].init_block
 
     log(
-      `Getting events from block: ${chalk.green(startBlock)} to block: ${chalk.green(latestBlock)} for market: ${chalk.bold.blue(marketName)}`
+      `Getting events from block: ${chalk.green(startBlock)} to block: ${chalk.green(
+        latestBlock
+      )} for market: ${chalk.bold.blue(marketName)}`
     )
 
     // create an array to hold promises for each block range
-    const promises = []
+    let promises = []
     for (let block = parseInt(startBlock); block < latestBlock; block += blockStep + 1) {
       const fromBlock = block
       const toBlock = Math.min(block + blockStep, latestBlock)
       promises.push(ovlMarketContract.queryFilter('*', fromBlock, toBlock))
-    }
 
-    // execute all promises in parallel
-    const eventsArrays = await Promise.all(promises)
-    allEvents = eventsArrays.flat() // Flatten the array of arrays into a single array of events
+      if (promises.length === 50 || toBlock === latestBlock) {
+        // execute 100 promises in parallel
+        log(`Fetching events for market: ${chalk.bold.blue(marketName)} from block: ${fromBlock} to block: ${toBlock}`)
+        const eventsArrays = await Promise.all(promises)
+        events = events.concat(eventsArrays.flat()) // Flatten the array of arrays into a single array of events
+
+        await processEvents(marketName, events)
+        events = []
+        promises = []
+      }
+    }
   } else {
     // if the start block is found in Redis, get events from the last processed block to the latest block
     log(
-      `Getting events from block: ${chalk.green(startBlock)} to block: ${chalk.green(latestBlock)} for market: ${chalk.bold.blue(marketName)}`
+      `Getting events from block: ${chalk.green(startBlock)} to block: ${chalk.green(
+        latestBlock
+      )} for market: ${chalk.bold.blue(marketName)}`
     )
-    allEvents = await ovlMarketContract.queryFilter('*', parseInt(startBlock), latestBlock)
+    events = await ovlMarketContract.queryFilter('*', parseInt(startBlock), latestBlock)
+    await processEvents(marketName, events)
   }
-
-  return allEvents
 }
 
 export async function fetchAndProcessEventsForAllMarkets() {
@@ -175,31 +189,21 @@ export async function fetchAndProcessEventsForAllMarkets() {
     const firstRun = !(await redis.get('FirstRun'))
 
     if (firstRun) {
+      useFork = true
+      startAnvil()
+
       for (const [marketName] of Object.entries(markets)) {
-        const events = await fetchEvents(marketName)
-        await processEvents(marketName, events)
+        await fetchEvents(marketName)
       }
 
       await redis.set('FirstRun', 'false')
+
+      stopAnvil()
+      useFork = false
     } else {
-      const promises: Promise<unknown>[] = []
-
-      Object.entries(markets).forEach(([marketName]) => {
-        promises.push(
-          fetchEvents(marketName).then(async (events) => {
-            await processEvents(marketName, events)
-          })
-        )
-      })
-
-      const results = await Promise.allSettled(promises)
-      
-      results.forEach((result, index) => {
-        if (result.status === 'rejected') {
-          const [marketName] = Object.entries(markets)[index]
-          log(chalk.bold.red(`Failed to process market: ${marketName}, Error: ${result.reason}`))
-        }
-      })
+      for (const [marketName] of Object.entries(markets)) {
+        await fetchEvents(marketName)
+      }
     }
 
     log(chalk.bgGreen('All markets processed successfully!'))
