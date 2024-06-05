@@ -55,3 +55,9 @@ We will use docker compose to run all the modules and Redis.
 - `POSITIONS_PER_RUN_*`: Number of positions to check in each cron run
 - `WORKERS_AMOUNT_*`: Number of workers to run in parallel for each cron job
 - `CRON_SCHEDULE_*`: Cron schedule for each cron job
+
+## How to add a new market
+- add the address and deploy block of the market smart contract in the `constants.ts` file in the `collector` module
+- add the address of the market smart contract in the `constants.ts` file in the `liquidationChecker` module
+- add the configuration for the market in the `config.ts` file in the `liquidationChecker` module
+- create a new `liquidationChecker` intance in the docker-compose file
