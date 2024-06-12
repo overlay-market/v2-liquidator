@@ -63,6 +63,13 @@ export const config: Record<string, MarketConfig> = {
     multicall_batch_size: 300,
     rpc_first_probability: 0.70,
   },
+  AiIndex: {
+    positions_per_run: 1000,
+    workers: 1,
+    cron_schedule: '3,33 * * * * *',
+    multicall_batch_size: 300,
+    rpc_first_probability: 0.70,
+  },
   dafault: {
     positions_per_run: 1000,
     workers: 1,
