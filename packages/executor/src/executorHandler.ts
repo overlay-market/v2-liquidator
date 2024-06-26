@@ -77,7 +77,18 @@ async function liquidatePosition(position: Position) {
 
         // track on redis total liquidated positions by executor
         await redis.incr(`total_liquidated_positions:${wallet.address}`)
-        log(chalk.green(`Total liquidated positions by ${wallet.address}:`), await redis.get(`total_liquidated_positions:${wallet.address}`))
+        const totalLiquidatedPositions = await redis.get(`total_liquidated_positions:${wallet.address}`)
+        log(chalk.green(`Total liquidated positions by ${wallet.address}:`), totalLiquidatedPositions)
+
+        // add event to Redis
+        const eventMessage = `✅ **Position Liquidated** ✅
+            - Position Id: ${positionId}
+            - Market: \`${marketAddress}\`
+            - Executed By: \`${wallet.address}\`
+            - Total Liquidated Positions by Executor: ${totalLiquidatedPositions}
+            - Transaction Hash: [\`${receipt.transactionHash}\`](https://sepolia.arbiscan.io/tx/${receipt.transactionHash})
+        `
+        await redis.lpush('liquidator_events', JSON.stringify({ type: 'success', message: eventMessage }))
 
         return
       } else {
