@@ -29,6 +29,7 @@ interface LiquidatorStats {
   liquidatablePositionsFound: number
   dataByMarket: { [key: string]: MarketData }
   dataByExecutor: { [key: string]: ExecutorData }
+  prevTimestamp: string
 }
 
 async function sendTelegramMessage(message: string) {
@@ -89,20 +90,25 @@ async function getLiquidatorStats(): Promise<LiquidatorStats> {
     }
   }
 
+  const prevTimestamp = await redis.get('liquidator_report_timestamp') || ''
+
   return {
     totalLiquidatedPositions: parseInt(totalLiquidatedPositions),
     liquidatedPositions: parseInt(liquidatedPositions),
     liquidatablePositionsFound: parseInt(liquidatablePositionsFound),
     dataByMarket,
     dataByExecutor,
+    prevTimestamp,
   }
 }
 
 function createLiquidatorReportMessage(stats: LiquidatorStats): string {
-  let message = `📋 *Liquidator Report* 📋\n\n`
+  let message = `📋 *Liquidator Report* 📋\n`
+  message += `from: ${stats.prevTimestamp ? new Date(parseInt(stats.prevTimestamp)).toUTCString() : 'N/A'}\n`
+  message += `to: ${new Date().toUTCString()}\n\n`
   message += `*Total Liquidated Positions*: ${stats.totalLiquidatedPositions}\n`
   message += `*Liquidated Positions*: ${stats.liquidatedPositions}\n`
-  message += `*Liquidatable Positions Found*: ${stats.liquidatablePositionsFound}\n\n`
+  message += `*Positions Found*: ${stats.liquidatablePositionsFound}\n\n`
 
   message += `🚀 *Data by Market* 🚀\n\n`
   for (const market of Object.keys(stats.dataByMarket)) {
@@ -110,7 +116,7 @@ function createLiquidatorReportMessage(stats: LiquidatorStats): string {
     message += `Ⓜ️ *${markets[market]}*\n`
     message += `Total Liquidated Positions: ${data.totalLiquidatedPositions}\n`
     message += `Liquidated Positions: ${data.liquidatedPositions}\n`
-    message += `Liquidatable Positions Found: ${data.liquidatablePositionsFound}\n\n`
+    message += `Positions Found: ${data.liquidatablePositionsFound}\n\n`
   }
 
   message += `📝 *Data by Executor* 📝\n\n`
@@ -133,6 +139,8 @@ async function resetAllData() {
 
   await redis.set('liquidated_positions', '0')
   await redis.set('liquidatable_positions_found', '0')
+
+  await redis.set('liquidator_report_timestamp', Date.now().toString())
 
   for (const market of Object.keys(markets)) {
     await redis.set(`liquidated_positions:${market}`, '0')
