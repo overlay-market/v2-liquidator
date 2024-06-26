@@ -106,9 +106,15 @@ importers:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
+      ethers:
+        specifier: 5.7.2
+        version: 5.7.2
       ioredis:
         specifier: ^5.4.1
         version: 5.4.1
+      node-cron:
+        specifier: ^3.0.3
+        version: 3.0.3
       node-telegram-bot-api:
         specifier: ^0.66.0
         version: 0.66.0(request@2.88.2)
@@ -116,6 +122,9 @@ importers:
       '@types/node':
         specifier: ^20.12.11
         version: 20.12.11
+      '@types/node-cron':
+        specifier: ^3.0.11
+        version: 3.0.11
       '@types/node-telegram-bot-api':
         specifier: ^0.64.7
         version: 0.64.7
