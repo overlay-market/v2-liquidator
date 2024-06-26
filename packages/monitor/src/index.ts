@@ -1,3 +1,7 @@
-import { liquidatorEventsListener } from "./monitorHandler";
+import cron from "node-cron";
+import { config } from "./config";
+import { sendLiquidatorReport } from "./monitorHandler";
 
-liquidatorEventsListener()
+// Schedule the cron job
+cron.schedule(config.cron_schedule, sendLiquidatorReport);
+// sendLiquidatorReport()
