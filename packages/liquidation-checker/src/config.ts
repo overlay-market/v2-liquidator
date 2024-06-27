@@ -70,6 +70,13 @@ export const config: Record<string, MarketConfig> = {
     multicall_batch_size: 300,
     rpc_first_probability: 0.70,
   },
+  EthSol: {
+    positions_per_run: 1000,
+    workers: 1,
+    cron_schedule: '8,38 * * * * *',
+    multicall_batch_size: 300,
+    rpc_first_probability: 0.70,
+  },
   dafault: {
     positions_per_run: 1000,
     workers: 1,

@@ -8,6 +8,7 @@ export const markets: {[key: string]: string} = {
   'NodeMonkes': '0xef898dbf4F4D75bdfbDd85F781A6C1BF8EDaF0AE',
   'EvIndex': '0x770E3A8afC5c01855b5bD8EB5b96b23bd7Af1e43',
   'AiIndex': '0xad90fFf9D159e18CEc2048Dd6881e29886e4899E',
+  'EthSol': '0x3966f792517E2Df998C48301163c2A95BFd3efF8',
 }
 
 export const markets_block: {[key: string]: string} = {
@@ -20,6 +21,7 @@ export const markets_block: {[key: string]: string} = {
   'NodeMonkes': '16499121',
   'EvIndex': '48459493',
   'AiIndex': '54018512',
+  'EthSol': '58877180',
 }
 
 export enum EventType {
