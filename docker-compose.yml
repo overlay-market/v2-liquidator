@@ -236,3 +236,10 @@ services:
           cpus: '0.5'
           memory: 256M
     
+  dozzle:
+    image: amir20/dozzle:latest
+    ports:
+      - "9999:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
