@@ -235,6 +235,25 @@ services:
         limits:
           cpus: '0.5'
           memory: 256M
+
+  fork:
+    build:
+      context: .
+      dockerfile: packages/fork/Dockerfile
+    environment:
+      <<: *common-environment
+      FORK_RPC_URL: ${FORK_RPC_URL}
+      NODE_OPTIONS: --max_old_space_size=204
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    ports:
+      - '8545:8545'
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
     
   dozzle:
     image: amir20/dozzle:latest
