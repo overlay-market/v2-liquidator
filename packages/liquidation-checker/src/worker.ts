@@ -5,6 +5,7 @@ import market_state_abi from './abis/market_state_abi.json'
 import multicall2_abi from './abis/multicall2_abi.json'
 import chalk from 'chalk'
 import redis from './redisHandler'
+import { USE_MULTICALL } from './config'
 
 interface Position {
   positionId: string
@@ -31,43 +32,71 @@ const checkLiquidations = async (
   const ovlMarketStateContract = new ethers.Contract(olv_state_address, market_state_abi, provider)
   const multicall2Contract = new ethers.Contract(multicall2_address, multicall2_abi, provider)
 
-  const calls = positions.map((position) => ({
-    target: ovlMarketStateContract.address,
-    callData: ovlMarketStateContract.interface.encodeFunctionData('liquidatable', [
-      marketAddress,
-      position.owner,
-      parseInt(position.positionId),
-    ]),
-  }))
+  const calls = USE_MULTICALL
+    ? positions.map((position) => ({
+        target: ovlMarketStateContract.address,
+        callData: ovlMarketStateContract.interface.encodeFunctionData('liquidatable', [
+          marketAddress,
+          position.owner,
+          parseInt(position.positionId),
+        ]),
+      }))
+    : []
 
   const batchPromises: Promise<LiquidatableResult[]>[] = []
 
-  for (let i = 0; i < positions.length; i += batchSize) {
-    const batchPositions = positions.slice(i, i + batchSize)
+  if (USE_MULTICALL) {
+    for (let i = 0; i < positions.length; i += batchSize) {
+      const batchPositions = positions.slice(i, i + batchSize)
 
-    // Add the multicall batch promise to the array
-    batchPromises.push(
-      multicall2Contract
-        .aggregate(calls.slice(i, i + batchSize))
-        .then((result: MulticallResult) => {
-          return result.returnData
-            .map((data, index) => {
-              const isLiquidatable = ovlMarketStateContract.interface.decodeFunctionResult(
-                'liquidatable',
-                data
-              )[0]
-              return {
-                position: batchPositions[index],
-                isLiquidatable: isLiquidatable,
-              }
-            })
-            .filter((result: LiquidatableResult) => result.isLiquidatable)
-        })
-        .catch((error: Error) => {
-          console.error(chalk.bold.red(`Error processing batch from ${i} to ${i + batchSize}:`), error)
-          return []
-        })
-    )
+      // Add the multicall batch promise to the array
+      batchPromises.push(
+        multicall2Contract
+          .aggregate(calls.slice(i, i + batchSize))
+          .then((result: MulticallResult) => {
+            return result.returnData
+              .map((data, index) => {
+                const isLiquidatable = ovlMarketStateContract.interface.decodeFunctionResult(
+                  'liquidatable',
+                  data
+                )[0]
+                return {
+                  position: batchPositions[index],
+                  isLiquidatable: isLiquidatable,
+                }
+              })
+              .filter((result: LiquidatableResult) => result.isLiquidatable)
+          })
+          .catch((error: Error) => {
+            console.error(
+              chalk.bold.red(`Error processing batch from ${i} to ${i + batchSize}:`),
+              error
+            )
+            return []
+          })
+      )
+    }
+  } else {
+    for (const position of positions) {
+      batchPromises.push(
+        ovlMarketStateContract
+          .liquidatable(marketAddress, position.owner, parseInt(position.positionId))
+          .then((isLiquidatable: boolean) => {
+            return isLiquidatable
+              ? [
+                  {
+                    position,
+                    isLiquidatable,
+                  },
+                ]
+              : []
+          })
+          .catch((error: Error) => {
+            console.error(chalk.bold.red('Error processing position:'), error)
+            return []
+          })
+      )
+    }
   }
 
   const results = await Promise.allSettled(batchPromises)
