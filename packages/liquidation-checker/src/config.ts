@@ -6,8 +6,6 @@ export interface MarketConfig {
   rpc_first_probability: number
 }
 
-export const USE_MULTICALL = false
-
 export const config: Record<string, MarketConfig> = {
   'ETH Dominance': {
     positions_per_run: 6000,

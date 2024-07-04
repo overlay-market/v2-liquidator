@@ -1,20 +1,14 @@
 import { parentPort, workerData } from 'worker_threads'
 import { ethers } from 'ethers'
-import { multicall2_address, olv_state_address } from './constants'
-import market_state_abi from './abis/market_state_abi.json'
-import multicall2_abi from './abis/multicall2_abi.json'
+import { olv_state_address } from './constants'
+import { multicall_liquidatable } from './constants'
+import multicall_liquidatable_abi from './abis/multicall_liquidatable_abi.json'
 import chalk from 'chalk'
 import redis from './redisHandler'
-import { USE_MULTICALL } from './config'
 
 interface Position {
   positionId: string
   owner: string
-}
-
-interface MulticallResult {
-  blockNumber: number
-  returnData: string[]
 }
 
 interface LiquidatableResult {
@@ -29,74 +23,43 @@ const checkLiquidations = async (
   rpcUrl: string
 ) => {
   const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-  const ovlMarketStateContract = new ethers.Contract(olv_state_address, market_state_abi, provider)
-  const multicall2Contract = new ethers.Contract(multicall2_address, multicall2_abi, provider)
-
-  const calls = USE_MULTICALL
-    ? positions.map((position) => ({
-        target: ovlMarketStateContract.address,
-        callData: ovlMarketStateContract.interface.encodeFunctionData('liquidatable', [
-          marketAddress,
-          position.owner,
-          parseInt(position.positionId),
-        ]),
-      }))
-    : []
+  const multicallLiquidatableContract = new ethers.Contract(
+    multicall_liquidatable,
+    multicall_liquidatable_abi,
+    provider
+  )
 
   const batchPromises: Promise<LiquidatableResult[]>[] = []
 
-  if (USE_MULTICALL) {
-    for (let i = 0; i < positions.length; i += batchSize) {
-      const batchPositions = positions.slice(i, i + batchSize)
+  for (let i = 0; i < positions.length; i += batchSize) {
+    const batchPositions = positions.slice(i, i + batchSize)
 
-      // Add the multicall batch promise to the array
-      batchPromises.push(
-        multicall2Contract
-          .aggregate(calls.slice(i, i + batchSize))
-          .then((result: MulticallResult) => {
-            return result.returnData
-              .map((data, index) => {
-                const isLiquidatable = ovlMarketStateContract.interface.decodeFunctionResult(
-                  'liquidatable',
-                  data
-                )[0]
-                return {
-                  position: batchPositions[index],
-                  isLiquidatable: isLiquidatable,
-                }
-              })
-              .filter((result: LiquidatableResult) => result.isLiquidatable)
-          })
-          .catch((error: Error) => {
-            console.error(
-              chalk.bold.red(`Error processing batch from ${i} to ${i + batchSize}:`),
-              error
-            )
-            return []
-          })
-      )
-    }
-  } else {
-    for (const position of positions) {
-      batchPromises.push(
-        ovlMarketStateContract
-          .liquidatable(marketAddress, position.owner, parseInt(position.positionId))
-          .then((isLiquidatable: boolean) => {
-            return isLiquidatable
-              ? [
-                  {
-                    position,
-                    isLiquidatable,
-                  },
-                ]
-              : []
-          })
-          .catch((error: Error) => {
-            console.error(chalk.bold.red('Error processing position:'), error)
-            return []
-          })
-      )
-    }
+    const calls = batchPositions.map((position) => ({
+      market: marketAddress,
+      owner: position.owner,
+      id: parseInt(position.positionId),
+    }))
+
+    // Add the multicall batch promise to the array
+    batchPromises.push(
+      multicallLiquidatableContract
+        .multiCallLiquidatable(olv_state_address, calls)
+        .then((result: boolean[]) => {
+          return result
+            .map((isLiquidatable, index) => ({
+              position: batchPositions[index],
+              isLiquidatable,
+            }))
+            .filter((result: LiquidatableResult) => result.isLiquidatable)
+        })
+        .catch((error: Error) => {
+          console.error(
+            chalk.bold.red(`Error processing batch from ${i} to ${i + batchSize}:`),
+            error
+          )
+          return []
+        })
+    )
   }
 
   const results = await Promise.allSettled(batchPromises)

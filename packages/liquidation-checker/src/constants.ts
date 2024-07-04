@@ -37,6 +37,5 @@ export enum PositionStatus {
   Error = 'Error',
 }
 
-export const multicall_address = '0x2B718b475e385eD29F56775a66aAB1F5cC6B2A0A'
-export const multicall2_address = '0xA115146782b7143fAdB3065D86eACB54c169d092'
 export const olv_state_address = '0x2878837ea173e8bd40db7cee360b15c1c27deb5a'
+export const multicall_liquidatable = '0x1C37F94ECe34002d52Df6Ff4F2c0Eba9a82133bF'

@@ -1,0 +1,21 @@
+[
+  {
+    "type": "function",
+    "name": "multiCallLiquidatable",
+    "inputs": [
+      { "name": "positionStateContract", "type": "address", "internalType": "address" },
+      {
+        "name": "calls",
+        "type": "tuple[]",
+        "internalType": "struct MultiCallLiquidatable.LiquidatableCall[]",
+        "components": [
+          { "name": "market", "type": "address", "internalType": "contract IOverlayV1Market" },
+          { "name": "owner", "type": "address", "internalType": "address" },
+          { "name": "id", "type": "uint256", "internalType": "uint256" }
+        ]
+      }
+    ],
+    "outputs": [{ "name": "results", "type": "bool[]", "internalType": "bool[]" }],
+    "stateMutability": "view"
+  }
+]
