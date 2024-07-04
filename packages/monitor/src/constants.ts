@@ -10,11 +10,6 @@ export const markets: { [key: string]: string } = {
   '0xad90fFf9D159e18CEc2048Dd6881e29886e4899E': 'AiIndex',
 }
 
-export const executorAddresses = [
-  '0xAA26EBdCe83a5fC137355C3F1Ef28358cdBde693',
-  '0x043539595f87e879B53789486987B1be4b43441c',
-]
-
 export const rpcURL = 'https://arbitrum-sepolia-rpc.publicnode.com'
 
 export const OVTokenAddress = '0x3E27fAe625f25291bFda517f74bf41DC40721dA2'

@@ -3,7 +3,7 @@ import chalk from 'chalk'
 import redis from './redisHandler'
 import { ethers } from 'ethers'
 import TelegramBot from 'node-telegram-bot-api'
-import { markets, executorAddresses, rpcURL, OVTokenAddress, erc20ABI} from './constants'
+import { markets, rpcURL, OVTokenAddress, erc20ABI} from './constants'
 
 dotenv.config()
 
@@ -17,7 +17,6 @@ if (process.env.TELEGRAM_BOT_TOKEN) {
 } else {
   log(chalk.bold.red('TELEGRAM_BOT_TOKEN must be provided'))
 }
-
 
 interface MarketData {
   totalLiquidatedPositions: number
@@ -40,6 +39,7 @@ interface LiquidatorStats {
   dataByMarket: { [key: string]: MarketData }
   dataByExecutor: { [key: string]: ExecutorData }
   prevTimestamp: string
+  executorAddresses: string[]
 }
 
 async function sendTelegramMessage(message: string) {
@@ -79,6 +79,9 @@ async function getLiquidatorStats(): Promise<LiquidatorStats> {
 
   const dataByExecutor: { [key: string]: ExecutorData } = {}
 
+  const keys = await redis.keys('ov_balance:*');
+  const executorAddresses = keys.map(key => key.split(':')[1]);
+
   for (const executor of executorAddresses) {
     const totalLiquidatedPositionsByExecutor =
       (await redis.get(`total_liquidated_positions:${executor}`)) || '0'
@@ -108,6 +111,7 @@ async function getLiquidatorStats(): Promise<LiquidatorStats> {
     dataByMarket,
     dataByExecutor,
     prevTimestamp,
+    executorAddresses
   }
 }
 
@@ -129,7 +133,7 @@ function createLiquidatorReportMessage(stats: LiquidatorStats): string {
   }
 
   message += `📝 *Data by Executor* 📝\n\n`
-  for (const executor of executorAddresses) {
+  for (const executor of stats.executorAddresses) {
     const data = stats.dataByExecutor[executor]
     message += `🖋️ *Executor*: \`${executor}\`\n`
     message += `Total Liquidated Positions: ${data.totalLiquidatedPositions}\n`
@@ -143,7 +147,7 @@ function createLiquidatorReportMessage(stats: LiquidatorStats): string {
   return message
 }
 
-async function resetAllData() {
+async function resetAllData(executorAddresses: string[]) {
   console.log(chalk.blue('Resetting data...'))
 
   await redis.set('liquidated_positions', '0')
@@ -175,7 +179,7 @@ export async function sendLiquidatorReport() {
     return
   }
 
-  await resetAllData()
+  await resetAllData(stats.executorAddresses)
 
   log(chalk.green('Liquidator report sent successfully'))
 }
