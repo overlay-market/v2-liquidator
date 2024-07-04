@@ -210,6 +210,7 @@ services:
       <<: *common-environment
       PRIVATE_KEYS: ${PRIVATE_KEYS_1}
       NODE_OPTIONS: --max_old_space_size=204
+      RPC_URLS: ${FORK_RPC_URL}
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -227,6 +228,7 @@ services:
       <<: *common-environment
       PRIVATE_KEYS: ${PRIVATE_KEYS_2}
       NODE_OPTIONS: --max_old_space_size=204
+      RPC_URLS: ${FORK_RPC_URL}
     depends_on:
       - redis-server
     restart: unless-stopped

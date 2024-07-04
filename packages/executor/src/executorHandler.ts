@@ -33,7 +33,7 @@ async function liquidatePosition(position: Position) {
   try {
     const privateKeys = process.env.PRIVATE_KEYS?.split(',') ?? []
 
-    const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URLS?.split(',')[0])
+    const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL)
     const marketContract = new ethers.Contract(marketAddress, market_abi, provider)
 
     for (const privateKey of privateKeys) {
@@ -112,8 +112,8 @@ async function liquidatePosition(position: Position) {
 }
 
 export async function liquidablePositionsListener() {
-  if (!process.env.RPC_URLS) {
-    log(chalk.bold.red('At least one RPC_URLS must be provided'))
+  if (!process.env.RPC_URL) {
+    log(chalk.bold.red('At least one RPC_URL must be provided'))
     return
   }
 
