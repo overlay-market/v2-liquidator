@@ -9,6 +9,16 @@ dotenv.config()
 
 const log = console.log
 
+let bot: TelegramBot
+
+if (process.env.TELEGRAM_BOT_TOKEN) {
+  bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN)
+  log(chalk.green('Telegram bot initialized'))
+} else {
+  log(chalk.bold.red('TELEGRAM_BOT_TOKEN must be provided'))
+}
+
+
 interface MarketData {
   totalLiquidatedPositions: number
   liquidatedPositions: number
@@ -38,7 +48,6 @@ async function sendTelegramMessage(message: string) {
     return
   }
 
-  const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: false })
   await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, message, { parse_mode: 'MarkdownV2' })
 }
 
