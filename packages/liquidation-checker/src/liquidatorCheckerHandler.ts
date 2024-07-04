@@ -202,6 +202,12 @@ export async function liquidationChecker() {
   )
 
   try {
+    const forkRunning = await redis.get('forkRunning')
+    if (forkRunning !== 'true') {
+      log(chalk.bold.red('Anvil is not running. Skipping this run...'))
+      return
+    }
+
     const totalPositions = await redis.zcard(`position_index:${marketAddress}`)
 
     const currentIndexKey = `current-index:${marketAddress}`
