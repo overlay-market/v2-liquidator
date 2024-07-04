@@ -43,13 +43,13 @@ async function processEvents(marketName: string, events: ethers.Event[]) {
 
   // execute all operations in the pipeline
   await pipeline.exec()
-  events.length = 0; // clear the events array
   log(`Events processed for market: ${chalk.bold.blue(marketName)}
   ${chalk.bold(`Total events:`)}      ${chalk.bold(events.length)}
   ${chalk.bold(`New positions:`)}     ${chalk.green(newPositions)}
   ${chalk.bold(`Updated positions:`)} ${chalk.yellow(updatedPositions)}
   ${chalk.bold(`Removed positions:`)} ${chalk.red(removedPositions)}
   ${chalk.bold(`Error positions:`)}   ${chalk.red(errorPositions)}`)
+  events.length = 0; // clear the events array
 }
 
 // Process a single event and update the Redis cache
@@ -201,6 +201,11 @@ export async function fetchAndProcessEventsForAllMarkets() {
       stopAnvil()
       useFork = false
     } else {
+      const forkRunning = await redis.get('forkRunning')
+      if (forkRunning !== 'true') {
+        log(chalk.bold.red('Anvil is not running. Skipping this run...'))
+        return
+      }
       for (const [marketName] of Object.entries(markets)) {
         await fetchEvents(marketName)
       }
