@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.10;
 
 import "@overlay-protocol/v1-core/contracts/interfaces/IOverlayV1Market.sol";
 
@@ -28,7 +28,7 @@ contract MultiCallLiquidatable {
     {
         require(positionStateContract != address(0), "Invalid position state contract address");
         require(calls.length > 0, "Calls array cannot be empty");
-        
+
         IOverlayV1PositionState positionState = IOverlayV1PositionState(positionStateContract);
         results = new bool[](calls.length);
         for (uint256 i = 0; i < calls.length; i++) {
