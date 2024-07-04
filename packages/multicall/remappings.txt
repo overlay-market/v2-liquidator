@@ -1,1 +1,2 @@
-@overlay-protocol/=node_modules/@overlay-protocol/
+@overlay-protocol/v1-core/contracts=node_modules/@overlay-protocol/v1-core/contracts
+@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/

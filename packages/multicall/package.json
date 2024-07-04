@@ -1,0 +1,16 @@
+{
+  "name": "multicall",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "4.5.0",
+    "@overlay-protocol/v1-core": "^1.0.0"
+  }
+}
