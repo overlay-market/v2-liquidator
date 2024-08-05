@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "collector:dev": "NODE_ENV=dev pnpm --filter collector run dev"
   },
   "keywords": [],
   "author": "",
