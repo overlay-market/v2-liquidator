@@ -6,11 +6,7 @@ const log = console.log
 
 let anvilProcess: ReturnType<typeof spawn> | null = null
 
-export function startAnvil() {
-  if (!process.env.FORK_RPC_URL) {
-    throw new Error('FORK_RPC_URL is not set')
-  }
-
+export function startAnvil(forkUrl: string) {
   log(chalk.bold.blue('Starting Anvil...'))
 
   try {
@@ -19,7 +15,7 @@ export function startAnvil() {
 
     anvilProcess = spawn(
       'anvil',
-      ['--fork-url', process.env.FORK_RPC_URL, '--port=8545', '--host=0.0.0.0'],
+      ['--fork-url', forkUrl, '--port=8545', '--host=0.0.0.0'],
       {
         stdio: ['ignore', out, err], // Redirect stdout and stderr to anvil.log
       }
@@ -32,7 +28,7 @@ export function startAnvil() {
     })
 
     log(chalk.bold.blue('Waiting for Anvil to be fully up and running...'))
-    execSync('sleep 5') // Sleep for 5 seconds (adjust if necessary)
+    execSync('sleep 10') // Sleep for 5 seconds (adjust if necessary)
   } catch (error) {
     log(chalk.bold.red('Error starting Anvil:', error))
     if (anvilProcess) {
