@@ -235,6 +235,31 @@ services:
         limits:
           cpus: '0.5'
           memory: 256M
+
+  monitor:
+    build:
+      context: .
+      dockerfile: packages/monitor/Dockerfile
+    environment:
+      <<: *common-environment
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+  dozzle:
+    image: amir20/dozzle:latest
+    ports:
+      - "9999:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
     
   dozzle:
     image: amir20/dozzle:latest
