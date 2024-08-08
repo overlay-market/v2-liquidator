@@ -1,19 +1,13 @@
 import { ethers } from 'ethers'
 import chalk from 'chalk'
-import dotenv from 'dotenv'
-import { config } from './config'
 
-dotenv.config()
-
-const primaryRpcProbability = config[process.env.MARKET || 'default'].rpc_first_probability
-
-export async function checkRpc(rpcUrl: string) {
+export async function checkRpc(rpcUrl: string): Promise<string> {
   const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
   await provider.getBlockNumber()
   return rpcUrl
 }
 
-export async function checkRpcList(rpcUrls: string[]) {
+export async function checkRpcList(rpcUrls: string[]): Promise<string | null> {
   for (const url of rpcUrls) {
     try {
       return await checkRpc(url)
@@ -24,9 +18,9 @@ export async function checkRpcList(rpcUrls: string[]) {
   return null
 }
 
-export async function selectRpc(rpcUrls: string[]) {
+export async function selectRpc(rpcUrls: string[], primaryRpcProbability: number): Promise<string> {
   const totalUrls = rpcUrls.length
-  if (totalUrls === 0) return null
+  if (totalUrls === 0) throw new Error('No RPC URLs provided')
 
   // determine if taking the first rpc or selecting from the others
   const takeFirstRpc = Math.random() < primaryRpcProbability
@@ -40,7 +34,7 @@ export async function selectRpc(rpcUrls: string[]) {
       // try the rest if the first fails
       const result = await checkRpcList(rpcUrls.slice(1))
       if (result) return result
-      throw new Error('no healthy rpc found after checking all')
+      throw new Error('No healthy RPC found after checking all')
     }
   } else {
     // try the rest of the rpcs first
@@ -51,7 +45,7 @@ export async function selectRpc(rpcUrls: string[]) {
       return await checkRpc(rpcUrls[0])
     } catch (error) {
       console.log(chalk.bgRed('error checking first rpc health:', rpcUrls[0], error))
-      throw new Error('no healthy rpc found after checking all')
+      throw new Error('No healthy RPC found after checking all')
     }
   }
 }
