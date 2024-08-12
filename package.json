@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "collector:dev": "NODE_ENV=dev pnpm --filter collector run dev",
-    "liquidation-checker:dev": "NODE_ENV=prod pnpm --filter liquidation-checker run dev"
+    "liquidation-checker:dev": "NODE_ENV=dev pnpm --filter liquidation-checker run dev",
+    "executor:dev": "NODE_ENV=dev pnpm --filter executor run dev"
   },
   "keywords": [],
   "author": "",
