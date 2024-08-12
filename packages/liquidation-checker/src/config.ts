@@ -30,8 +30,8 @@ export const networkConfig: Record<Networks, NetworkConfig> = {
   },
   [Networks.BERACHAIN]: {
     rpcUrls: process.env.BERACHAIN_RPC_URLS?.split(',') || ['https://bartio.rpc.berachain.com/'],
-    multicall2_address: '',
-    ovl_state_address: '',
+    multicall2_address: '0xDe9D8f9d9d2B276Dd5B921211AcB918d33Ed0B6C',
+    ovl_state_address: '0xDD711dA03Ef569dfE8dd466845e36d9Fc91E1e45',
     multicall_batch_size: 300,
     rpc_first_probability: 1,
   },
@@ -56,7 +56,7 @@ export const config: Record<string, MarketConfig> = {
         positions_per_run: 5000,
       },
       [Networks.MOVEMENT]: {
-        address: '0xeab2fbdc9d43e785eb4065c8447d872735729aac',
+        address: '0xb021eb4489c230234567ca6789e53403310db090',
         positions_per_run: 50,
       }
     },
@@ -68,6 +68,14 @@ export const config: Record<string, MarketConfig> = {
       [Networks.ARBITRUM]: {
         address: '0x553de578e68a4faa55d4522665cb2d2d53390d22',
         positions_per_run: 4000,
+      },
+      [Networks.MOVEMENT]: {
+        address: '0xeab2fbdc9d43e785eb4065c8447d872735729aac',
+        positions_per_run: 50,
+      },
+      [Networks.BERACHAIN]: {
+        address: '0xd9b217fa8a9e8ef1c8558128029564e9a50f284d',
+        positions_per_run: 50,
       },
     },
   },
