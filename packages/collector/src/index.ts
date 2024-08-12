@@ -35,6 +35,6 @@ if (process.env.NODE_ENV === 'dev') {
   start()
 } else {
   log(chalk.bold.green('Running in prod mode'))
-  // Schedule the cron job to run every 2 minutes
-  cron.schedule('*/2 * * * *', start)
+  // Schedule the cron job to run every 10 minutes
+  cron.schedule('*/10 * * * *', start)
 }

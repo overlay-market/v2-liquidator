@@ -49,7 +49,7 @@ export const networkConfig: Record<Networks, NetworkConfig> = {
 export const config: Record<string, MarketConfig> = {
   'ETH Dominance': {
     workers: 1,
-    cron_schedule: '5,35 * * * * *',
+    cron_schedule: '0 */2 * * * *',
     networks: {
       [Networks.ARBITRUM]: {
         address: '0x3a204d03e9B1fEE01b8989333665b6c46Cc1f79E',
@@ -63,7 +63,7 @@ export const config: Record<string, MarketConfig> = {
   },
   'BTC Dominance': {
     workers: 1,
-    cron_schedule: '9,39 * * * * *',
+    cron_schedule: '5 */2 * * * *',
     networks: {
       [Networks.ARBITRUM]: {
         address: '0x553de578e68a4faa55d4522665cb2d2d53390d22',
@@ -81,7 +81,7 @@ export const config: Record<string, MarketConfig> = {
   },
   'Quantum Cats': {
     workers: 1,
-    cron_schedule: '13,43 * * * * *',
+    cron_schedule: '10 */2 * * * *',
     networks: {
       [Networks.ARBITRUM]: {
         address: '0x4EDFB4057F3a448B2704dF1A3665Db4AE6371B69',
@@ -91,7 +91,7 @@ export const config: Record<string, MarketConfig> = {
   },
   'CS2 Skins': {
     workers: 1,
-    cron_schedule: '17,47 * * * * *',
+    cron_schedule: '15 */2 * * * *',
     networks: {
       [Networks.ARBITRUM]: {
         address: '0x6aa41b8f2f858723aafcf388a90d34d1cb1162d9',
@@ -101,7 +101,7 @@ export const config: Record<string, MarketConfig> = {
   },
   'Bitcoin Frogs': {
     workers: 1,
-    cron_schedule: '21,51 * * * * *',
+    cron_schedule: '20 */2 * * * *',
     networks: {
       [Networks.ARBITRUM]: {
         address: '0xC7f3240d983fcAB7A571bE484d2b4dA43B95efEe',
@@ -111,7 +111,7 @@ export const config: Record<string, MarketConfig> = {
   },
   Ink: {
     workers: 1,
-    cron_schedule: '25,55 * * * * *',
+    cron_schedule: '25 */2 * * * *',
     networks: {
       [Networks.ARBITRUM]: {
         address: '0xe060ea13b2e710cefc5124bb790db4823b0f602a',
@@ -121,7 +121,7 @@ export const config: Record<string, MarketConfig> = {
   },
   NodeMonkes: {
     workers: 1,
-    cron_schedule: '29,59 * * * * *',
+    cron_schedule: '30 */2 * * * *',
     networks: {
       [Networks.ARBITRUM]: {
         address: '0xef898dbf4F4D75bdfbDd85F781A6C1BF8EDaF0AE',
@@ -131,7 +131,7 @@ export const config: Record<string, MarketConfig> = {
   },
   EvIndex: {
     workers: 1,
-    cron_schedule: '1,31 * * * * *',
+    cron_schedule: '35 */2 * * * *',
     networks: {
       [Networks.ARBITRUM]: {
         address: '0x770E3A8afC5c01855b5bD8EB5b96b23bd7Af1e43',
@@ -141,7 +141,7 @@ export const config: Record<string, MarketConfig> = {
   },
   AiIndex: {
     workers: 1,
-    cron_schedule: '3,33 * * * * *',
+    cron_schedule: '40 */2 * * * *',
     networks: {
       [Networks.ARBITRUM]: {
         address: '0xad90fFf9D159e18CEc2048Dd6881e29886e4899E',
@@ -151,7 +151,7 @@ export const config: Record<string, MarketConfig> = {
   },
   EthSol: {
     workers: 1,
-    cron_schedule: '8,38 * * * * *',
+    cron_schedule: '45 */2 * * * *',
     networks: {
       [Networks.ARBITRUM]: {
         address: '0x3966f792517E2Df998C48301163c2A95BFd3efF8',
