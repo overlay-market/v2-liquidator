@@ -108,11 +108,6 @@ async function liquidatePosition(position: Position) {
 }
 
 export async function liquidablePositionsListener() {
-  if (!process.env.RPC_URLS) {
-    log(chalk.bold.red('At least one RPC_URLS must be provided'))
-    return
-  }
-
   if (!process.env.PRIVATE_KEYS) {
     log(chalk.bold.red('At least one private key is required'))
     return
