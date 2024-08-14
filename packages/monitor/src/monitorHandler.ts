@@ -3,7 +3,8 @@ import chalk from 'chalk'
 import redis from './redisHandler'
 import { ethers } from 'ethers'
 import TelegramBot from 'node-telegram-bot-api'
-import { markets, rpcURL, OVTokenAddress, erc20ABI} from './constants'
+import { rpcURL, OVTokenAddress, erc20ABI} from './constants'
+import axios from 'axios';
 
 dotenv.config()
 
@@ -42,6 +43,25 @@ interface LiquidatorStats {
   executorAddresses: string[]
 }
 
+async function fetchMarkets(): Promise<{ [key: string]: string }> {
+  try {
+    const response = await axios.get('https://api.overlay.market/sepolia-charts/v1/charts/markets');
+    const marketsArray = response.data;
+
+    const markets: { [key: string]: string } = {};
+    for (const market of marketsArray) {
+      if (market.address && market.name) {
+        markets[market.address.toLowerCase()] = market.name.replace('-', '\\-');
+      }
+    }
+
+    return markets;
+  } catch (error) {
+    console.error('Error fetching markets:', error);
+    return {};
+  }
+}
+
 async function sendTelegramMessage(message: string) {
   if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_CHAT_ID) {
     log(chalk.bold.red('TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID must be provided'))
@@ -51,11 +71,11 @@ async function sendTelegramMessage(message: string) {
   await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, message, { parse_mode: 'MarkdownV2' })
 }
 
-async function getLiquidatorStats(): Promise<LiquidatorStats> {
+async function getLiquidatorStats(markets: { [key: string]: string }): Promise<LiquidatorStats> {
   const totalLiquidatedPositions = (await redis.get('total_liquidated_positions')) || '0'
   const liquidatedPositions = (await redis.get('liquidated_positions')) || '0'
   const liquidatablePositionsFound = (await redis.get('liquidatable_positions_found')) || '0'
-
+  
   // get data by market
   const dataByMarket: { [key: string]: MarketData } = {}
 
@@ -115,7 +135,7 @@ async function getLiquidatorStats(): Promise<LiquidatorStats> {
   }
 }
 
-function createLiquidatorReportMessage(stats: LiquidatorStats): string {
+function createLiquidatorReportMessage(stats: LiquidatorStats, markets: { [key: string]: string }): string {
   let message = `📋 *Liquidator Report* 📋\n`
   message += `from: ${stats.prevTimestamp ? new Date(parseInt(stats.prevTimestamp)).toUTCString() : 'N/A'}\n`
   message += `to: ${new Date().toUTCString()}\n\n`
@@ -147,7 +167,7 @@ function createLiquidatorReportMessage(stats: LiquidatorStats): string {
   return message
 }
 
-async function resetAllData(executorAddresses: string[]) {
+async function resetAllData(executorAddresses: string[], markets: { [key: string]: string }) {
   console.log(chalk.blue('Resetting data...'))
 
   await redis.set('liquidated_positions', '0')
@@ -168,8 +188,9 @@ async function resetAllData(executorAddresses: string[]) {
 export async function sendLiquidatorReport() {
   log(chalk.blue('Creating liquidator report...'))
 
-  const stats = await getLiquidatorStats()
-  const message = createLiquidatorReportMessage(stats)
+  const markets = await fetchMarkets()
+  const stats = await getLiquidatorStats(markets)
+  const message = createLiquidatorReportMessage(stats, markets)
   
   try {
     log(chalk.blue('Sending liquidator report...'))
@@ -179,7 +200,7 @@ export async function sendLiquidatorReport() {
     return
   }
 
-  await resetAllData(stats.executorAddresses)
+  await resetAllData(stats.executorAddresses, markets)
 
   log(chalk.green('Liquidator report sent successfully'))
 }
