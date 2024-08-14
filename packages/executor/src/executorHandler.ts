@@ -101,6 +101,7 @@ async function liquidatePosition(position: Position) {
     log(chalk.bold.red(`Position ${position.positionId} exceeded max retries, removing from queue`));
     await redis.hdel(`positions:${network}:${marketAddress}`, position.positionId)
     await redis.zrem(`position_index:${network}:${marketAddress}`, position.positionId)
+    await resetRetryCount(position)
   } else {
     log(chalk.bgBlue(`Re-queuing position ${position.positionId} for retry ${retries} of ${MAX_RETRIES}`))
     await redis.lpush('liquidatable_positions', JSON.stringify(position))
