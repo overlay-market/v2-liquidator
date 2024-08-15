@@ -98,6 +98,46 @@ importers:
         specifier: ^5.4.5
         version: 5.4.5
 
+  packages/monitor:
+    dependencies:
+      axios:
+        specifier: ^1.7.4
+        version: 1.7.4
+      chalk:
+        specifier: '4'
+        version: 4.1.2
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
+      ethers:
+        specifier: 5.7.2
+        version: 5.7.2
+      ioredis:
+        specifier: ^5.4.1
+        version: 5.4.1
+      node-cron:
+        specifier: ^3.0.3
+        version: 3.0.3
+      node-telegram-bot-api:
+        specifier: ^0.66.0
+        version: 0.66.0(request@2.88.2)
+    devDependencies:
+      '@types/node':
+        specifier: ^20.12.11
+        version: 20.12.11
+      '@types/node-cron':
+        specifier: ^3.0.11
+        version: 3.0.11
+      '@types/node-telegram-bot-api':
+        specifier: ^0.64.7
+        version: 0.64.7
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@types/node@20.12.11)(typescript@5.4.5)
+      typescript:
+        specifier: ^5.4.5
+        version: 5.4.5
+
 packages:
 
   '@cspotcode/source-map-support@0.8.1':
