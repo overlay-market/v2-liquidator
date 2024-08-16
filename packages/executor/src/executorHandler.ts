@@ -76,13 +76,13 @@ async function liquidatePosition(position: Position) {
         // add counter to track total liquidated positions
         await redis.incr(`total_liquidated_positions`)
         // add counter to track total liquidated positions
-        await redis.incr(`total_liquidated_positions:${marketAddress}`)
+        await redis.incr(`total_liquidated_positions:${network}:${marketAddress}`)
         // add total liquidated positions by executor by session
         await redis.incr(`liquidated_positions:${wallet.address}`)
         // add total liquidated positions by session
         await redis.incr(`liquidated_positions`)
         // add total liquidated positions by session
-        await redis.incr(`liquidated_positions:${marketAddress}`)
+        await redis.incr(`liquidated_positions:${network}:${marketAddress}`)
 
 
         return

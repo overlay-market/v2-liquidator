@@ -124,7 +124,7 @@ const checkLiquidations = async (
       )
       // add counter for liquidatable positions
       await redis.incr(`liquidatable_positions_found`)
-      await redis.incr(`liquidatable_positions_found:${marketAddress}`)
+      await redis.incr(`liquidatable_positions_found:${result.network}:${marketAddress}`)
     } else {
       console.log('Position already found in the liquidatable_positions list')
     }
