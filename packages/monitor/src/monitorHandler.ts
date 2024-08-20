@@ -81,10 +81,10 @@ async function getLiquidatorStats(markets: { [key: string]: string }): Promise<L
 
   for (const market of Object.keys(markets)) {
     const totalLiquidatedPositionsByMarket =
-      (await redis.get(`total_liquidated_positions:${market}`)) || '0'
-    const liquidatedPositionsByMarket = (await redis.get(`liquidated_positions:${market}`)) || '0'
+      (await redis.get(`total_liquidated_positions:${market.toLowerCase()}`)) || '0'
+    const liquidatedPositionsByMarket = (await redis.get(`liquidated_positions:${market.toLowerCase()}`)) || '0'
     const liquidatablePositionsFoundByMarket =
-      (await redis.get(`liquidatable_positions_found:${market}`)) || '0'
+      (await redis.get(`liquidatable_positions_found:${market.toLowerCase()}`)) || '0'
 
     dataByMarket[market] = {
       totalLiquidatedPositions: parseInt(totalLiquidatedPositionsByMarket),
