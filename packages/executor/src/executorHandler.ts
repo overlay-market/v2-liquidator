@@ -122,6 +122,12 @@ async function liquidatePosition(position: Position) {
 }
 
 export async function liquidablePositionsListener() {
+  const firstRun = !(await redis.get('FirstRun'))
+  if (firstRun) {
+    log(chalk.bold.red('Waiting for collector to finish first run'))
+    return
+  }
+  
   if (!process.env.RPC_URLS) {
     log(chalk.bold.red('At least one RPC_URLS must be provided'))
     return
