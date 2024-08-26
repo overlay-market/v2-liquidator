@@ -31,7 +31,7 @@ export const networkConfig: Record<Networks, NetworkConfig> = {
   [Networks.BERACHAIN]: {
     rpcUrls: process.env.BERACHAIN_RPC_URLS?.split(',') || ['https://bartio.rpc.berachain.com/'],
     multicall2_address: '0xDe9D8f9d9d2B276Dd5B921211AcB918d33Ed0B6C',
-    ovl_state_address: '0xDD711dA03Ef569dfE8dd466845e36d9Fc91E1e45',
+    ovl_state_address: '0x4f69Dfb24958fCf69b70BcA73c3E74F2c82BB405',
     multicall_batch_size: 300,
     rpc_first_probability: 1,
   },
@@ -51,32 +51,36 @@ export const config: Record<string, MarketConfig> = {
     workers: 1,
     cron_schedule: '0 */2 * * * *',
     networks: {
-      // [Networks.ARBITRUM]: {
-      //   address: '0x3a204d03e9B1fEE01b8989333665b6c46Cc1f79E',
-      //   positions_per_run: 5000,
+      [Networks.ARBITRUM]: {
+        address: '0x3a204d03e9B1fEE01b8989333665b6c46Cc1f79E',
+        positions_per_run: 5000,
+      },
+      // [Networks.MOVEMENT]: {
+      //   address: '0xB021EB4489c230234567Ca6789e53403310Db090',
+      //   positions_per_run: 50,
       // },
-      [Networks.MOVEMENT]: {
-        address: '0xB021EB4489c230234567Ca6789e53403310Db090',
-        positions_per_run: 500,
-      }
+      [Networks.BERACHAIN]: {
+        address: '0x09E8641df1E963d0bB1267e51579fC2B4E3E60cd',
+        positions_per_run: 50,
+      },
     },
   },
   'BTC Dominance': {
     workers: 1,
     cron_schedule: '5 */2 * * * *',
     networks: {
-      // [Networks.ARBITRUM]: {
-      //   address: '0x553de578e68a4faa55d4522665cb2d2d53390d22',
-      //   positions_per_run: 4000,
-      // },
-      [Networks.MOVEMENT]: {
-        address: '0xeab2fbdc9d43e785eb4065c8447d872735729aac',
-        positions_per_run: 500,
+      [Networks.ARBITRUM]: {
+        address: '0x553de578e68a4faa55d4522665cb2d2d53390d22',
+        positions_per_run: 4000,
       },
-      // [Networks.BERACHAIN]: {
-      //   address: '0xd9b217fa8a9e8ef1c8558128029564e9a50f284d',
-      //   positions_per_run: 50,
+      // [Networks.MOVEMENT]: {
+      //   address: '0xeab2fbdc9d43e785eb4065c8447d872735729aac',
+      //   positions_per_run: 500,
       // },
+      [Networks.BERACHAIN]: {
+        address: '0xd9b217fa8a9e8ef1c8558128029564e9a50f284d',
+        positions_per_run: 50,
+      },
     },
   },
   'Quantum Cats': {
@@ -86,6 +90,10 @@ export const config: Record<string, MarketConfig> = {
       [Networks.ARBITRUM]: {
         address: '0x4EDFB4057F3a448B2704dF1A3665Db4AE6371B69',
         positions_per_run: 1000,
+      },
+      [Networks.BERACHAIN]: {
+        address: '0xB2599445Aeb2fa97d5d8D02E70FFb938F3D803Ee',
+        positions_per_run: 50,
       },
     },
   },
@@ -97,6 +105,10 @@ export const config: Record<string, MarketConfig> = {
         address: '0x6aa41b8f2f858723aafcf388a90d34d1cb1162d9',
         positions_per_run: 2500,
       },
+      [Networks.BERACHAIN]: {
+        address: '0x49c4ad8B75e118a9b7Bd1b89E7AF029f3cB1c237',
+        positions_per_run: 50,
+      },
     },
   },
   'Bitcoin Frogs': {
@@ -106,6 +118,10 @@ export const config: Record<string, MarketConfig> = {
       [Networks.ARBITRUM]: {
         address: '0xC7f3240d983fcAB7A571bE484d2b4dA43B95efEe',
         positions_per_run: 1200,
+      },
+      [Networks.BERACHAIN]: {
+        address: '0x3178aa08845c986CC62d8aAAAc0ec1FB381d01b3',
+        positions_per_run: 50,
       },
     },
   },
@@ -117,6 +133,10 @@ export const config: Record<string, MarketConfig> = {
         address: '0xe060ea13b2e710cefc5124bb790db4823b0f602a',
         positions_per_run: 1000,
       },
+      [Networks.BERACHAIN]: {
+        address: '0x67D54a54d07600eA7AC68A3d5C8B5F5c28510F7d',
+        positions_per_run: 50,
+      },
     },
   },
   NodeMonkes: {
@@ -126,6 +146,10 @@ export const config: Record<string, MarketConfig> = {
       [Networks.ARBITRUM]: {
         address: '0xef898dbf4F4D75bdfbDd85F781A6C1BF8EDaF0AE',
         positions_per_run: 1000,
+      },
+      [Networks.BERACHAIN]: {
+        address: '0x3D47247220D89AD623767De2045Dc5e0c5920610',
+        positions_per_run: 50,
       },
     },
   },
@@ -147,6 +171,10 @@ export const config: Record<string, MarketConfig> = {
         address: '0xad90fFf9D159e18CEc2048Dd6881e29886e4899E',
         positions_per_run: 1000,
       },
+      [Networks.BERACHAIN]: {
+        address: '0x1C66ae94C7dD18935F1E723d6395dAC27905Ab0c',
+        positions_per_run: 50,
+      },
     },
   },
   EthSol: {
@@ -156,6 +184,10 @@ export const config: Record<string, MarketConfig> = {
       [Networks.ARBITRUM]: {
         address: '0x3966f792517E2Df998C48301163c2A95BFd3efF8',
         positions_per_run: 1000,
+      },
+      [Networks.BERACHAIN]: {
+        address: '0x9d32d77C2213A5FF7b6E52669D32752CC092Ff40',
+        positions_per_run: 50,
       },
     },
   },

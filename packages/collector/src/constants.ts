@@ -79,9 +79,41 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
     fork_rpc_url: process.env.BERACHAIN_FORK_RPC_URL?.split(',')[0] || 'https://bartio.rpc.berachain.com/',
     markets: {
       'BTC Dominance': {
-        address: '0x796CC71ad083e27675530d9acb1ad1632c66eE5a',
-        init_block: '1839362',
+        address: '0xd9b217fa8A9E8Ef1c8558128029564e9A50F284D',
+        init_block: '2643774',
       },
+      'ETH Dominance': {
+        address: '0x09E8641df1E963d0bB1267e51579fC2B4E3E60cd',
+        init_block: '2979993',
+      },
+      'Quantum Cats': {
+        address: '0xB2599445Aeb2fa97d5d8D02E70FFb938F3D803Ee',
+        init_block: '2980020',
+      },
+      'CS2 Skins': {
+        address: '0x49c4ad8B75e118a9b7Bd1b89E7AF029f3cB1c237',
+        init_block: '2987238',
+      },
+      'Bitcoin Frogs': {
+        address: '0x3178aa08845c986CC62d8aAAAc0ec1FB381d01b3',
+        init_block: '2980047',
+      },
+      'Ink': {
+        address: '0x67D54a54d07600eA7AC68A3d5C8B5F5c28510F7d',
+        init_block: '2980066',
+      },
+      'NodeMonkes': {
+        address: '0x3D47247220D89AD623767De2045Dc5e0c5920610',
+        init_block: '2980095',
+      },
+      'AiIndex': {
+        address: '0x1C66ae94C7dD18935F1E723d6395dAC27905Ab0c',
+        init_block: '2979948',
+      },
+      'EthSol': {
+        address: '0x9d32d77C2213A5FF7b6E52669D32752CC092Ff40',
+        init_block: '2980119',
+      }
     },
     enabled: true,
     blockStep: 5000,
