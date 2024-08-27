@@ -1,243 +1,269 @@
-import { Worker } from 'worker_threads'
 import { markets } from './constants'
 import dotenv from 'dotenv'
 import chalk from 'chalk'
 import { selectRpc } from './rpcHandler'
 import redis from './redisHandler'
 import { config } from './config'
+import { ethers } from 'ethers'
+import { multicall2_address, olv_state_address } from './constants'
+import market_state_abi from './abis/market_state_abi.json'
+import multicall2_abi from './abis/multicall2_abi.json'
 
 dotenv.config()
-
-const MAX_RETRIES = 3 // maximum number of retries for each worker
-const WORKER_TIMEOUT_MS = 15000
-const MULTICALL_BATCH_SIZE = config[process.env.MARKET || 'default'].multicall_batch_size
-const POSITIONS_PER_RUN = config[process.env.MARKET || 'default'].positions_per_run
-const WORKERS_AMOUNT = config[process.env.MARKET || 'default'].workers
-
-const log = console.log
-
-let taskRunning = false
 
 interface Position {
   positionId: string
   owner: string
 }
 
-// create a promise for each worker
-async function createWorkerPromise(
-  marketAddress: string,
-  positions: Position[],
-  workerIndex: number,
-  rpcUrls: string[],
-  retryCount: number = 0
-): Promise<number> {
-  const rpcUrl = await selectRpc(rpcUrls)
+interface MulticallResult {
+  blockNumber: number
+  returnData: string[]
+}
 
-  if (!rpcUrl) {
-    const error = new Error('No healthy RPC found')
-    log(chalk.red(`Error: ${error.message}`))
-    throw error
+interface LiquidatableResult {
+  position: Position
+  isLiquidatable: boolean
+}
+
+const log = console.log
+
+export class LiquidatorCheckerHandler {
+  private MAX_RETRIES = 3 // maximum number of retries for each worker
+  private MULTICALL_BATCH_SIZE!: number
+  private POSITIONS_PER_RUN!: number
+
+  constructor() {
+    if (!process.env.MARKET || !markets[process.env.MARKET]) {
+      log(chalk.bold.red('MARKET must be provided'))
+      return
+    }
+
+    this.MULTICALL_BATCH_SIZE = config[process.env.MARKET || 'default'].multicall_batch_size
+    this.POSITIONS_PER_RUN = config[process.env.MARKET || 'default'].positions_per_run
   }
 
-  return new Promise((resolve, reject) => {
-    const worker = new Worker('./dist/worker.js', {
-      workerData: {
+  async checkLiquidations(
+    positions: Position[],
+    marketAddress: string,
+    batchSize: number,
+    rpcUrl: string
+  ) {
+    const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+    const ovlMarketStateContract = new ethers.Contract(
+      olv_state_address,
+      market_state_abi,
+      provider
+    )
+    const multicall2Contract = new ethers.Contract(multicall2_address, multicall2_abi, provider)
+
+    const calls = positions.map((position) => ({
+      target: ovlMarketStateContract.address,
+      callData: ovlMarketStateContract.interface.encodeFunctionData('liquidatable', [
+        marketAddress,
+        position.owner,
+        parseInt(position.positionId),
+      ]),
+    }))
+
+    const batchPromises: Promise<LiquidatableResult[]>[] = []
+
+    for (let i = 0; i < positions.length; i += batchSize) {
+      const batchPositions = positions.slice(i, i + batchSize)
+
+      // Add the multicall batch promise to the array
+      batchPromises.push(
+        multicall2Contract
+          .aggregate(calls.slice(i, i + batchSize))
+          .then((result: MulticallResult) => {
+            return result.returnData
+              .map((data, index) => {
+                const isLiquidatable = ovlMarketStateContract.interface.decodeFunctionResult(
+                  'liquidatable',
+                  data
+                )[0]
+                return {
+                  position: batchPositions[index],
+                  isLiquidatable: isLiquidatable,
+                }
+              })
+              .filter((result: LiquidatableResult) => result.isLiquidatable)
+          })
+          .catch((error: Error) => {
+            console.error(
+              chalk.bold.red(`Error processing batch from ${i} to ${i + batchSize}:`),
+              error
+            )
+            return []
+          })
+      )
+
+      batchPositions.length = 0
+    }
+
+    calls.length = 0
+
+    const results = await Promise.allSettled(batchPromises)
+    const liquidatableResults = results
+      .filter((result) => result.status === 'fulfilled')
+      .flatMap((result) => (result as PromiseFulfilledResult<LiquidatableResult[]>).value)
+    results.length = 0
+
+    for (const result of liquidatableResults) {
+      const { positionId, owner } = result.position
+
+      const isNew = await redis.sadd('unique_positions', `${marketAddress}:${positionId}`)
+      if (isNew) {
+        console.log(
+          `${chalk.green('Liquidatable position found => ')} ${chalk.yellow(
+            'positionId:'
+          )} ${positionId} ${chalk.yellow('owner:')} ${owner} ${chalk.yellow(
+            'market:'
+          )} ${marketAddress}`
+        )
+        await redis.lpush(
+          'liquidatable_positions',
+          JSON.stringify({
+            positionId,
+            owner,
+            marketAddress,
+          })
+        )
+        // add counter for liquidatable positions
+        await redis.incr(`liquidatable_positions_found`)
+        await redis.incr(`liquidatable_positions_found:${marketAddress.toLowerCase()}`)
+      } else {
+        console.log('Position already found in the liquidatable_positions list')
+      }
+    }
+
+    // return the amount of liquidatable positions
+    return liquidatableResults.length
+  }
+
+  // distribute work to a single checkLiquidations call
+  async distributeWork(marketAddress: string, positions: Position[]) {
+    const rpcUrls = process.env.RPC_URLS?.split(',') ?? []
+    if (rpcUrls.length === 0) {
+      throw new Error('At least one RPC_URLS must be provided')
+    }
+
+    // Seleccionamos el RPC saludable
+    const rpcUrl = await selectRpc(rpcUrls)
+    if (!rpcUrl) {
+      throw new Error('No healthy RPC found')
+    }
+
+    // Llamada directa a checkLiquidations sin usar workers
+    try {
+      const liquidatableCount = await this.checkLiquidations(
         positions,
         marketAddress,
-        batchSize: MULTICALL_BATCH_SIZE,
-        rpcUrl,
-      },
-    })
-
-    const timeoutId = setTimeout(() => {
-      worker.terminate()
-      const timeoutError = new Error(`Worker timeout: ${workerIndex} at RPC ${rpcUrl}`)
-      log(chalk.red(`Error: ${timeoutError.message}`))
-      reject(timeoutError)
-    }, WORKER_TIMEOUT_MS)
-
-    worker.on('message', (result: number) => {
-      clearTimeout(timeoutId)
-      log(chalk.bgBlue(`Worker ${workerIndex} completed with results:`, result))
-      resolve(result)
-    })
-
-    worker.on('error', (error) => {
-      clearTimeout(timeoutId)
-      log(chalk.red(`Worker ${workerIndex} error: ${error}`))
-      if (retryCount < MAX_RETRIES) {
-        log(
-          chalk.yellow(
-            `Retrying worker ${workerIndex}... attempt ${retryCount + 1} of ${MAX_RETRIES}`
-          )
-        )
-        setTimeout(() => {
-          resolve(
-            createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, retryCount + 1)
-          )
-        }, 1000 * Math.pow(2, retryCount)) // Exponential backoff
-      } else {
-        reject(new Error(`Worker ${workerIndex} failed after ${MAX_RETRIES} retries`))
-      }
-    })
-
-    worker.on('exit', (code) => {
-      clearTimeout(timeoutId)
-      worker.unref()
-      if (code !== 0) {
-        const exitError = new Error(`Worker ${workerIndex} stopped with exit code ${code}`)
-        log(chalk.red(`Error: ${exitError.message}`))
-        if (retryCount < MAX_RETRIES) {
-          log(
-            chalk.yellow(
-              `Retrying worker ${workerIndex}... attempt ${retryCount + 1} of ${MAX_RETRIES}`
-            )
-          )
-          setTimeout(() => {
-            resolve(
-              createWorkerPromise(marketAddress, positions, workerIndex, rpcUrls, retryCount + 1)
-            )
-          }, 1000 * Math.pow(2, retryCount)) // Exponential backoff
-        } else {
-          reject(new Error(`Worker ${workerIndex} failed after ${MAX_RETRIES} retries`))
-        }
-      }
-    })
-  })
-}
-
-// distribute work to workers
-async function distributeWorkToWorkers(marketAddress: string, positions: Position[]) {
-  const rpcUrls = process.env.RPC_URLS?.split(',') ?? []
-  if (rpcUrls.length === 0) {
-    throw new Error('At least one RPC_URLS must be provided')
-  }
-
-  // distribute positions to workers
-  const positionsPerWorker = Math.ceil(positions.length / WORKERS_AMOUNT)
-  let workerPromises: Promise<unknown>[] = []
-
-  for (let i = 0; i < WORKERS_AMOUNT; i++) {
-    const startPos = i * positionsPerWorker
-    const endPos = Math.min(startPos + positionsPerWorker, positions.length)
-    workerPromises.push(
-      createWorkerPromise(marketAddress, positions.slice(startPos, endPos), i, rpcUrls)
-    )
-  }
-
-  const results = await Promise.allSettled(workerPromises)
-
-  results.forEach((result, index) => {
-    if (result.status === 'rejected') {
-      log(chalk.red(`Worker ${index} failed with error:`, result.reason))
+        this.MULTICALL_BATCH_SIZE,
+        rpcUrl
+      )
+      log(chalk.bgBlue(`Found ${liquidatableCount} liquidatable positions.`))
+    } catch (error) {
+      log(chalk.red('Error in checkLiquidations:', error))
     }
-  })
-
-  return results
-}
-
-// fetch positions from redis
-async function fetchPositions(
-  marketAddress: string,
-  currentIndex: number,
-  endIndex: number
-): Promise<Position[]> {
-  const pipeline = redis.pipeline()
-
-  pipeline.zrange(`position_index:${marketAddress}`, currentIndex, endIndex)
-  const results = await pipeline.exec()
-  if (!results || results.length === 0 || results[0][1] === null) {
-    return []
-  }
-  const positionIds = results[0][1] as string[]
-  if (positionIds.length === 0) {
-    return []
   }
 
-  const ownerPipeline = redis.pipeline()
-  ownerPipeline.hmget(`positions:${marketAddress}`, ...positionIds)
-  const ownerResults = await ownerPipeline.exec()
-  if (!ownerResults || ownerResults.length === 0 || ownerResults[0][1] === null) {
-    return []
+  // fetch positions from redis
+  async fetchPositions(
+    marketAddress: string,
+    currentIndex: number,
+    endIndex: number
+  ): Promise<Position[]> {
+    const pipeline = redis.pipeline()
+
+    pipeline.zrange(`position_index:${marketAddress}`, currentIndex, endIndex)
+    const results = await pipeline.exec()
+    if (!results || results.length === 0 || results[0][1] === null) {
+      return []
+    }
+    const positionIds = results[0][1] as string[]
+    if (positionIds.length === 0) {
+      return []
+    }
+
+    const ownerPipeline = redis.pipeline()
+    ownerPipeline.hmget(`positions:${marketAddress}`, ...positionIds)
+    const ownerResults = await ownerPipeline.exec()
+    if (!ownerResults || ownerResults.length === 0 || ownerResults[0][1] === null) {
+      return []
+    }
+
+    const owners = ownerResults[0][1] as string[]
+    const positions: Position[] = positionIds.map((id, index) => ({
+      positionId: id,
+      owner: owners[index],
+    }))
+
+    positionIds.length = 0
+    owners.length = 0
+
+    return positions
   }
 
-  const owners = ownerResults[0][1] as string[]
-  const positions: Position[] = positionIds.map((id, index) => ({
-    positionId: id,
-    owner: owners[index],
-  }))
+  async run() {
+    const firstRun = !(await redis.get('FirstRun'))
+    if (firstRun) {
+      log(chalk.bold.red('Waiting for collector to finish first run'))
+      return
+    }
 
-  positionIds.length = 0;
-  owners.length = 0;
+    if (!process.env.MARKET || !markets[process.env.MARKET]) {
+      log(chalk.bold.red('MARKET must be provided'))
+      return
+    }
 
-  return positions
-}
+    if (!process.env.RPC_URLS) {
+      log(chalk.bold.red('At least one RPC_URLS must be provided'))
+      return
+    }
 
-export async function liquidationChecker() {
-  const firstRun = !(await redis.get('FirstRun'))
-  if (firstRun) {
-    log(chalk.bold.red('Waiting for collector to finish first run'))
-    return
-  }
+    log(chalk.bold.blue('Cron job started at:', new Date().toLocaleString()))
+    const startTime = Date.now()
 
-  if (!process.env.MARKET || !markets[process.env.MARKET]) {
-    log(chalk.bold.red('MARKET must be provided'))
-    return
-  }
+    const marketAddress = markets[process.env.MARKET]
+    log(
+      'Liquidation Checker module is running for market:',
+      process.env.MARKET,
+      'with address:',
+      marketAddress
+    )
 
-  if (!process.env.RPC_URLS) {
-    log(chalk.bold.red('At least one RPC_URLS must be provided'))
-    return
-  }
-
-  if (taskRunning) {
-    log(chalk.bold.red('Task is already running. Skipping this run...'))
-    return
-  }
-
-  taskRunning = true
-  log(chalk.bold.blue('Cron job started at:', new Date().toLocaleString()))
-  const startTime = Date.now()
-
-  const marketAddress = markets[process.env.MARKET]
-  log(
-    'Liquidation Checker module is running for market:',
-    process.env.MARKET,
-    'with address:',
-    marketAddress
-  )
-
-  try {
     const totalPositions = await redis.zcard(`position_index:${marketAddress}`)
 
     const currentIndexKey = `current-index:${marketAddress}`
     let currentIndexValue = await redis.get(currentIndexKey)
     let currentIndex = currentIndexValue ? parseInt(currentIndexValue) : 0
 
-    let endIndex = currentIndex + POSITIONS_PER_RUN
+    let endIndex = currentIndex + this.POSITIONS_PER_RUN
 
     let positions: Position[] = []
 
     if (endIndex >= totalPositions) {
       endIndex = totalPositions - 1
-      const positionsLeft = POSITIONS_PER_RUN - (endIndex - currentIndex)
+      const positionsLeft = this.POSITIONS_PER_RUN - (endIndex - currentIndex)
 
-      positions = await fetchPositions(marketAddress, currentIndex, endIndex)
+      positions = await this.fetchPositions(marketAddress, currentIndex, endIndex)
 
       log('Processing positions from', currentIndex, 'to', endIndex)
 
       currentIndex = 0
       endIndex = currentIndex + positionsLeft
 
-      positions = positions.concat(await fetchPositions(marketAddress, currentIndex, endIndex))
+      positions = positions.concat(await this.fetchPositions(marketAddress, currentIndex, endIndex))
 
       log('Processing remaining positions from', currentIndex, 'to', endIndex)
     } else {
-      positions = await fetchPositions(marketAddress, currentIndex, endIndex)
+      positions = await this.fetchPositions(marketAddress, currentIndex, endIndex)
       log('Processing positions from', currentIndex, 'to', endIndex)
     }
 
-    await distributeWorkToWorkers(marketAddress, positions)
+    await this.distributeWork(marketAddress, positions)
+    positions.length = 0
 
     // update the current index
     currentIndex = endIndex + 1
@@ -250,9 +276,5 @@ export async function liquidationChecker() {
         'ms'
       )
     )
-  } catch (error) {
-    console.error('Error during the cron job:', error)
-  } finally {
-    taskRunning = false
   }
 }
