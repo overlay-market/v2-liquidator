@@ -206,6 +206,12 @@ export class LiquidatorCheckerHandler {
   }
 
   async run() {
+    const firstRun = !(await redis.get('FirstRun'))
+    if (firstRun) {
+      log(chalk.bold.red('Waiting for collector to finish first run'))
+      return
+    }
+
     if (!process.env.MARKET || !markets[process.env.MARKET]) {
       log(chalk.bold.red('MARKET must be provided'))
       return

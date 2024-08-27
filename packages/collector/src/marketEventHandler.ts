@@ -147,7 +147,7 @@ async function fetchEvents(marketName: string) {
 
       if (promises.length === 50 || toBlock === latestBlock) {
         // execute 100 promises in parallel
-        log(`Fetching events for market: ${chalk.bold.blue(marketName)} from block: ${fromBlock} to block: ${toBlock}`)
+        log(`Fetching events for market: ${chalk.bold.blue(marketName)} from block: ${fromBlock} to block: ${toBlock} ${useFork ? 'using fork' : ''}`)
         const eventsArrays = await Promise.all(promises)
         events = events.concat(eventsArrays.flat()) // Flatten the array of arrays into a single array of events
 
