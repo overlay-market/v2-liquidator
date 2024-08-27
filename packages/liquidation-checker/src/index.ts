@@ -1,25 +1,30 @@
 import cron from 'node-cron'
-import { liquidationChecker } from './liquidatorCheckerHandler'
-import dotenv from 'dotenv';
-import { config } from './config';
+import { LiquidatorCheckerHandler } from './liquidatorCheckerHandler'
+import dotenv from 'dotenv'
+import { config } from './config'
+import chalk from 'chalk'
 
-dotenv.config();
+dotenv.config()
 
-const cronSchedule = config[process.env.MARKET || 'default'].cron_schedule;
+const cronSchedule = config[process.env.MARKET || 'default'].cron_schedule
+let taskRunning = false
 
 cron.schedule(cronSchedule, async () => {
-  try {
-    await liquidationChecker();
-    // free up memory with garbage collection
-    if (global.gc) {
-      global.gc();
-    } else {
-      console.warn('Garbage collection is not exposed');
-    }
-  } catch (error) {
-    console.error('Error in liquidationChecker:', error);
+  if (taskRunning) {
+    console.log(chalk.bold.red('Task is already running. Skipping this run...'))
+    return
   }
-});
+
+  taskRunning = true
+  try {
+    const checker = new LiquidatorCheckerHandler()
+    await checker.run()
+  } catch (error) {
+    console.error('Error in liquidationChecker:', error)
+  } finally {
+    taskRunning = false
+  }
+})
 
 // run liquidationChecker() once to fetch events for all markets
 // liquidationChecker()
