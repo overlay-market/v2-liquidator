@@ -78,7 +78,7 @@ export const config: Record<string, MarketConfig> = {
       //   positions_per_run: 500,
       // },
       [Networks.BERACHAIN]: {
-        address: '0xd9b217fa8a9e8ef1c8558128029564e9a50f284d',
+        address: '0xd9b217fa8A9E8Ef1c8558128029564e9A50F284D',
         positions_per_run: 50,
       },
     },
