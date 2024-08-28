@@ -130,6 +130,10 @@ export class LiquidatorCheckerHandler {
             network: result.network,
           })
         )
+
+        // add counter for liquidatable positions
+        await redis.incr(`liquidatable_positions_found`)
+        await redis.incr(`liquidatable_positions_found:${result.network}:${marketAddress.toLowerCase()}`)
       } else {
         console.log('Position already found in the liquidatable_positions list')
       }
@@ -244,7 +248,6 @@ export class LiquidatorCheckerHandler {
       allPositions[network] = positions
     }
 
-    console.log('All positions:', allPositions.movement?.length)
     return allPositions
   }
 

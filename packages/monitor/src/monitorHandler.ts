@@ -80,7 +80,7 @@ async function getLiquidatorStats(
   const liquidatablePositionsFound = (await redis.get('liquidatable_positions_found')) || '0'
 
   // get data by market
-  const dataByMarket: { [key: string]: MarketData } = {}
+  let dataByMarket: { [key: string]: MarketData } = {}
 
   for (const market of Object.keys(markets)) {
     const totalLiquidatedPositionsByMarket =
@@ -105,24 +105,24 @@ async function getLiquidatorStats(
     provider
   )
 
-  const dataByExecutor: { [key: string]: ExecutorData } = {}
+  let dataByExecutor: { [key: string]: ExecutorData } = {}
 
-  const keys = await redis.keys('total_liquidated_positions:*')
+  const keys = await redis.keys(`total_liquidated_positions_by_executor:${network}:*`)
   const executorAddresses = keys.map((key) => key.split(':')[1])
 
   for (const executor of executorAddresses) {
     const totalLiquidatedPositionsByExecutor =
-      (await redis.get(`total_liquidated_positions:${executor}`)) || '0'
+      (await redis.get(`total_liquidated_positions_by_executor:${network}:${executor}`)) || '0'
     const liquidatedPositionsByExecutor =
-      (await redis.get(`liquidated_positions:${executor}`)) || '0'
+      (await redis.get(`liquidated_positions_by_executor:${network}:${executor}`)) || '0'
     const ethBalance = await provider.getBalance(executor)
     const ovRewardsClaimed = await ovContract.balanceOf(executor)
 
-    const prevOvBalance = (await redis.get(`ov_balance:${executor}`)) || '0'
+    const prevOvBalance = (await redis.get(`ov_balance:${network}:${executor}`)) || '0'
     const ovRewardsClaimedDiff = ethers.BigNumber.from(ovRewardsClaimed).sub(
       ethers.BigNumber.from(prevOvBalance)
     )
-    await redis.set(`ov_balance:${executor}`, ovRewardsClaimed.toString())
+    await redis.set(`ov_balance:${network}:${executor}`, ovRewardsClaimed.toString())
 
     dataByExecutor[executor] = {
       totalLiquidatedPositions: parseInt(totalLiquidatedPositionsByExecutor),
@@ -202,7 +202,7 @@ async function resetAllData(
   }
 
   for (const executor of executorAddresses) {
-    await redis.set(`liquidated_positions:${executor}`, '0')
+    await redis.set(`liquidated_positions:${network}:${executor}`, '0')
   }
 }
 
