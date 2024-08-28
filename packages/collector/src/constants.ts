@@ -117,7 +117,7 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
     },
     enabled: true,
     blockStep: 5000,
-    useFork: true,
+    useFork: false,
   },
   [Networks.MOVEMENT]: {
     rpc_url: process.env.MOVEMENT_RPC_URLS?.split(',')[0] || 'https://mevm.devnet.imola.movementlabs.xyz',
