@@ -108,7 +108,7 @@ async function getLiquidatorStats(
   let dataByExecutor: { [key: string]: ExecutorData } = {}
 
   const keys = await redis.keys(`total_liquidated_positions_by_executor:${network}:*`)
-  const executorAddresses = keys.map((key) => key.split(':')[1])
+  const executorAddresses = keys.map((key) => key.split(':')[2])
 
   for (const executor of executorAddresses) {
     const totalLiquidatedPositionsByExecutor =
