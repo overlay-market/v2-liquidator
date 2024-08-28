@@ -1,5 +1,5 @@
 import cron from 'node-cron'
-import { liquidationChecker } from './liquidatorCheckerHandler'
+import { LiquidatorCheckerHandler } from './liquidatorCheckerHandler'
 import dotenv from 'dotenv'
 import { config } from './config'
 import chalk from 'chalk'
@@ -23,7 +23,8 @@ async function start() {
   taskRunning = true
 
   try {
-    await liquidationChecker()
+    const checker = new LiquidatorCheckerHandler()
+    await checker.run()
   } catch (error) {
     log(chalk.bold.red(`Error running liquidation checker for market: ${process.env.MARKET}`))
     console.error(error)

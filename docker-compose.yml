@@ -22,15 +22,15 @@ services:
     environment:
       <<: *common-environment
       FORK_RPC_URL: ${FORK_RPC_URL}
-      NODE_OPTIONS: --max_old_space_size=409
+      NODE_OPTIONS: --max_old_space_size=3072
     depends_on:
       - redis-server
     restart: unless-stopped
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: 512M
+          cpus: '0.9'
+          memory: 4096M
 
   liquidation-checker-eth-dominance:
     build:
@@ -252,14 +252,6 @@ services:
         limits:
           cpus: '0.5'
           memory: 256M
-
-  dozzle:
-    image: amir20/dozzle:latest
-    ports:
-      - "9999:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
     
   dozzle:
     image: amir20/dozzle:latest

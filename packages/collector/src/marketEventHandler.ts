@@ -129,13 +129,17 @@ async function processEvent(
 }
 
 // Fetch events for a given market
-async function fetchEvents(network: Networks, marketName: string, rpcUrl: string) {
+async function fetchEvents(network: Networks, marketName: string, rpcUrl: string, useFork = false) {
   const marketAddress = networksConfig[network].markets[marketName].address
   const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-  const ovlMarketContract = new ethers.Contract(marketAddress, networksConfig[network].useOldMarketAbi ? market_old_abi : market_abi, provider)
+  const ovlMarketContract = new ethers.Contract(
+    marketAddress,
+    networksConfig[network].useOldMarketAbi ? market_old_abi : market_abi,
+    provider
+  )
 
   // get the latest block processed for the market
-  let startBlock = await redis.get(`latest_block_processed:${network}:${marketAddress}`) 
+  let startBlock = await redis.get(`latest_block_processed:${network}:${marketAddress}`)
   // get the latest block from the RPC provider
   const latestBlock = await provider.getBlockNumber()
   // current block step to fetch events
@@ -157,7 +161,7 @@ async function fetchEvents(network: Networks, marketName: string, rpcUrl: string
     // create an array to hold promises for each block range
     let promises = []
     let batchInitBlock = parseInt(startBlock)
-    
+
     for (let block = parseInt(startBlock); block < latestBlock; block += blockStep + 1) {
       const fromBlock = block
       const toBlock = Math.min(block + blockStep, latestBlock)
@@ -167,8 +171,8 @@ async function fetchEvents(network: Networks, marketName: string, rpcUrl: string
         // execute 100 promises in parallel
         log(
           `Fetching events for market: ${chalk.bold.blue(
-            `${network} - ${marketName}`
-          )} from block: ${batchInitBlock} to block: ${toBlock}`
+            marketName
+          )} from block: ${fromBlock} to block: ${toBlock} ${useFork ? 'using fork' : ''}`
         )
         const eventsArrays = await Promise.all(promises)
         events = events.concat(eventsArrays.flat()) // Flatten the array of arrays into a single array of events
@@ -213,10 +217,8 @@ export async function fetchAndProcessEventsForAllMarkets(network: Networks) {
     startAnvil(networkConfig.fork_rpc_url)
 
     for (const [marketName] of Object.entries(networkConfig.markets)) {
-      await fetchEvents(network, marketName, 'http://localhost:8545')
+      await fetchEvents(network, marketName, 'http://localhost:8545', true)
     }
-
-    await redis.set(`${network}:first_collector_run`, 'true')
 
     stopAnvil()
   } else {
@@ -224,6 +226,8 @@ export async function fetchAndProcessEventsForAllMarkets(network: Networks) {
       await fetchEvents(network, marketName, networkConfig.rpc_url)
     }
   }
+
+  await redis.set(`${network}:first_collector_run`, 'true')
 
   log(chalk.bgGreen('All markets processed successfully for network:', network))
 }
