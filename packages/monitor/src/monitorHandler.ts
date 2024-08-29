@@ -52,6 +52,8 @@ async function fetchMarkets(network: Networks): Promise<{ [key: string]: string 
     for (const market of marketsArray) {
       if (market.address && market.name) {
         markets[market.address.toLowerCase()] = market.name.replace('-', '\\-')
+      } else if (market.address) {
+        markets[market.address.toLowerCase()] = market.address
       }
     }
 
@@ -75,9 +77,9 @@ async function getLiquidatorStats(
   markets: { [key: string]: string },
   network: Networks
 ): Promise<LiquidatorStats> {
-  const totalLiquidatedPositions = (await redis.get('total_liquidated_positions')) || '0'
-  const liquidatedPositions = (await redis.get('liquidated_positions')) || '0'
-  const liquidatablePositionsFound = (await redis.get('liquidatable_positions_found')) || '0'
+  const totalLiquidatedPositions = (await redis.get(`total_liquidated_positions:${network}`)) || '0'
+  const liquidatedPositions = (await redis.get(`liquidated_positions:${network}`)) || '0'
+  const liquidatablePositionsFound = (await redis.get(`liquidatable_positions_found:${network}`)) || '0'
 
   // get data by market
   let dataByMarket: { [key: string]: MarketData } = {}
@@ -191,10 +193,8 @@ async function resetAllData(
 ) {
   console.log(chalk.blue('Resetting data...'))
 
-  await redis.set('liquidated_positions', '0')
-  await redis.set('liquidatable_positions_found', '0')
-
-  await redis.set('liquidator_report_timestamp', Date.now().toString())
+  await redis.set(`liquidated_positions:${network}`, '0')
+  await redis.set(`liquidatable_positions_found:${network}`, '0')
 
   for (const market of Object.keys(markets)) {
     await redis.set(`liquidated_positions:${network}:${market}`, '0')
@@ -224,6 +224,8 @@ export async function sendLiquidatorReport() {
 
     await resetAllData(stats.executorAddresses, markets, network)
   }
+
+  await redis.set('liquidator_report_timestamp', Date.now().toString())
 
   log(chalk.green('Liquidator report sent successfully'))
 }
