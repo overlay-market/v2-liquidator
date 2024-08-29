@@ -155,11 +155,11 @@ export const config: Record<string, MarketConfig> = {
   },
   EvIndex: {
     workers: 1,
-    cron_schedule: '35 */2 * * * *',
+    cron_schedule: '*/30 * * * * *',
     networks: {
       [Networks.ARBITRUM]: {
         address: '0x770E3A8afC5c01855b5bD8EB5b96b23bd7Af1e43',
-        positions_per_run: 1000,
+        positions_per_run: 100,
       },
     },
   },
