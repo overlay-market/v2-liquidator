@@ -76,10 +76,14 @@ async function sendTelegramMessage(message: string) {
 async function getLiquidatorStats(
   markets: { [key: string]: string },
   network: Networks
-): Promise<LiquidatorStats> {
-  const totalLiquidatedPositions = (await redis.get(`total_liquidated_positions:${network}`)) || '0'
-  const liquidatedPositions = (await redis.get(`liquidated_positions:${network}`)) || '0'
-  const liquidatablePositionsFound = (await redis.get(`liquidatable_positions_found:${network}`)) || '0'
+): Promise<LiquidatorStats | undefined> {
+  const totalLiquidatedPositions = (await redis.get(`total_liquidated_positions:${network}:total`)) || '0'
+  const liquidatedPositions = (await redis.get(`liquidated_positions:${network}:total`)) || '0'
+  const liquidatablePositionsFound = (await redis.get(`liquidatable_positions_found:${network}:total`)) || '0'
+
+  if (liquidatedPositions === '0') {
+    return
+  }
 
   // get data by market
   let dataByMarket: { [key: string]: MarketData } = {}
@@ -91,6 +95,10 @@ async function getLiquidatorStats(
       (await redis.get(`liquidated_positions:${network}:${market.toLowerCase()}`)) || '0'
     const liquidatablePositionsFoundByMarket =
       (await redis.get(`liquidatable_positions_found:${network}:${market.toLowerCase()}`)) || '0'
+
+    if (liquidatedPositionsByMarket === '0') {
+      continue
+    }
 
     dataByMarket[market] = {
       totalLiquidatedPositions: parseInt(totalLiquidatedPositionsByMarket),
@@ -193,8 +201,8 @@ async function resetAllData(
 ) {
   console.log(chalk.blue('Resetting data...'))
 
-  await redis.set(`liquidated_positions:${network}`, '0')
-  await redis.set(`liquidatable_positions_found:${network}`, '0')
+  await redis.set(`liquidated_positions:${network}:total`, '0')
+  await redis.set(`liquidatable_positions_found:${network}:total`, '0')
 
   for (const market of Object.keys(markets)) {
     await redis.set(`liquidated_positions:${network}:${market}`, '0')
@@ -212,6 +220,12 @@ export async function sendLiquidatorReport() {
   for (const network of Object.keys(networkConfig) as Networks[]) {
     const markets = await fetchMarkets(network)
     const stats = await getLiquidatorStats(markets, network)
+
+    if (!stats) {
+      log(chalk.yellow('No liquidatable positions found for', network))
+      continue
+    }
+
     const message = createLiquidatorReportMessage(stats, markets, network)
 
     try {
