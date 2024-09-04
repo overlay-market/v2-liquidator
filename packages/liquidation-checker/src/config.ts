@@ -55,10 +55,10 @@ export const config: Record<string, MarketConfig> = {
         address: '0x3a204d03e9B1fEE01b8989333665b6c46Cc1f79E',
         positions_per_run: 5000,
       },
-      // [Networks.MOVEMENT]: {
-      //   address: '0xB021EB4489c230234567Ca6789e53403310Db090',
-      //   positions_per_run: 50,
-      // },
+      [Networks.MOVEMENT]: {
+        address: '0xB021EB4489c230234567Ca6789e53403310Db090',
+        positions_per_run: 300,
+      },
       [Networks.BERACHAIN]: {
         address: '0x09E8641df1E963d0bB1267e51579fC2B4E3E60cd',
         positions_per_run: 50,
@@ -73,10 +73,10 @@ export const config: Record<string, MarketConfig> = {
         address: '0x553de578e68a4faa55d4522665cb2d2d53390d22',
         positions_per_run: 4000,
       },
-      // [Networks.MOVEMENT]: {
-      //   address: '0xeab2fbdc9d43e785eb4065c8447d872735729aac',
-      //   positions_per_run: 500,
-      // },
+      [Networks.MOVEMENT]: {
+        address: '0xeab2fbdc9d43e785eb4065c8447d872735729aac',
+        positions_per_run: 300,
+      },
       [Networks.BERACHAIN]: {
         address: '0xd9b217fa8A9E8Ef1c8558128029564e9A50F284D',
         positions_per_run: 50,
