@@ -113,6 +113,18 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
       'EthSol': {
         address: '0x9d32d77C2213A5FF7b6E52669D32752CC092Ff40',
         init_block: '2980119',
+      },
+      'CS Rifles': {
+        address: '0x745D36559834f6b016fc43d2261F0709e62344e1',
+        init_block: '3518395',
+      },
+      'CS Knives': {
+        address: '0x789d85Fb4F104fEb1cd85C7475C02F3F8e2dFf5B',
+        init_block: '3824316',
+      },
+      'CS Knives Rifles': {
+        address: '0x9eb938C3739bBf2B54A80AdD213F66fe4Cd694DC',
+        init_block: '3824328',
       }
     },
     enabled: true,

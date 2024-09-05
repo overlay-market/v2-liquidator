@@ -191,4 +191,34 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'CS Rifles': {
+    workers: 1,
+    cron_schedule: '45 */2 * * * *',
+    networks: {
+      [Networks.BERACHAIN]: {
+        address: '0x745D36559834f6b016fc43d2261F0709e62344e1',
+        positions_per_run: 50,
+      },
+    },
+  },
+  'CS Knives': {
+    workers: 1,
+    cron_schedule: '45 */2 * * * *',
+    networks: {
+      [Networks.BERACHAIN]: {
+        address: '0x789d85Fb4F104fEb1cd85C7475C02F3F8e2dFf5B',
+        positions_per_run: 50,
+      },
+    },
+  },
+  'CS Knives Rifles': {
+    workers: 1,
+    cron_schedule: '45 */2 * * * *',
+    networks: {
+      [Networks.BERACHAIN]: {
+        address: '0x9eb938C3739bBf2B54A80AdD213F66fe4Cd694DC',
+        positions_per_run: 50,
+      },
+    },
+  },
 }

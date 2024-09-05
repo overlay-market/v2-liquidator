@@ -202,6 +202,57 @@ services:
           cpus: '0.5'
           memory: 512M
 
+  liquidation-checker-cs-rifles:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: CS Rifles
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  liquidation-checker-cs-knives:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: CS Knives
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  liquidation-checker-cs-knives-rifles:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: CS Knives Rifles
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
   executor-1:
     build:
       context: .
