@@ -29,7 +29,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '4'
+          cpus: '0.9'
           memory: 4096M
 
   liquidation-checker-eth-dominance:
