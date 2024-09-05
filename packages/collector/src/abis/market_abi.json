@@ -1,423 +1,539 @@
 [
-  { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
+  { "type": "constructor", "inputs": [], "stateMutability": "nonpayable" },
   {
-    "anonymous": false,
-    "inputs": [
-      { "indexed": true, "internalType": "address", "name": "sender", "type": "address" },
-      { "indexed": false, "internalType": "uint256", "name": "positionId", "type": "uint256" },
-      { "indexed": false, "internalType": "uint256", "name": "oi", "type": "uint256" },
-      { "indexed": false, "internalType": "uint256", "name": "debt", "type": "uint256" },
-      { "indexed": false, "internalType": "bool", "name": "isLong", "type": "bool" },
-      { "indexed": false, "internalType": "uint256", "name": "price", "type": "uint256" }
-    ],
-    "name": "Build",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      { "indexed": true, "internalType": "address", "name": "sender", "type": "address" },
-      { "indexed": true, "internalType": "address", "name": "owner", "type": "address" },
-      { "indexed": false, "internalType": "uint256", "name": "positionId", "type": "uint256" },
-      { "indexed": false, "internalType": "int256", "name": "mint", "type": "int256" },
-      { "indexed": false, "internalType": "uint256", "name": "price", "type": "uint256" }
-    ],
-    "name": "Liquidate",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      { "indexed": true, "internalType": "address", "name": "sender", "type": "address" },
-      { "indexed": false, "internalType": "uint256", "name": "positionId", "type": "uint256" },
-      { "indexed": false, "internalType": "uint256", "name": "fraction", "type": "uint256" },
-      { "indexed": false, "internalType": "int256", "name": "mint", "type": "int256" },
-      { "indexed": false, "internalType": "uint256", "name": "price", "type": "uint256" }
-    ],
-    "name": "Unwind",
-    "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "components": [
-          { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
-          { "internalType": "uint256", "name": "microWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "macroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOverMicroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOverMacroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOneMacroWindowAgo", "type": "uint256" },
-          { "internalType": "uint256", "name": "reserveOverMicroWindow", "type": "uint256" },
-          { "internalType": "bool", "name": "hasReserve", "type": "bool" }
-        ],
-        "internalType": "struct Oracle.Data",
-        "name": "data",
-        "type": "tuple"
-      },
-      { "internalType": "uint256", "name": "volume", "type": "uint256" }
-    ],
+    "type": "function",
     "name": "ask",
-    "outputs": [{ "internalType": "uint256", "name": "ask_", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "components": [
-          { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
-          { "internalType": "uint256", "name": "microWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "macroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOverMicroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOverMacroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOneMacroWindowAgo", "type": "uint256" },
-          { "internalType": "uint256", "name": "reserveOverMicroWindow", "type": "uint256" },
-          { "internalType": "bool", "name": "hasReserve", "type": "bool" }
-        ],
-        "internalType": "struct Oracle.Data",
         "name": "data",
-        "type": "tuple"
-      }
+        "type": "tuple",
+        "internalType": "struct Oracle.Data",
+        "components": [
+          { "name": "timestamp", "type": "uint256", "internalType": "uint256" },
+          { "name": "microWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "macroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOverMicroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOverMacroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOneMacroWindowAgo", "type": "uint256", "internalType": "uint256" },
+          { "name": "reserveOverMicroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "hasReserve", "type": "bool", "internalType": "bool" }
+        ]
+      },
+      { "name": "volume", "type": "uint256", "internalType": "uint256" }
     ],
+    "outputs": [{ "name": "ask_", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "backRunBound",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "components": [
-          { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
-          { "internalType": "uint256", "name": "microWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "macroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOverMicroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOverMacroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOneMacroWindowAgo", "type": "uint256" },
-          { "internalType": "uint256", "name": "reserveOverMicroWindow", "type": "uint256" },
-          { "internalType": "bool", "name": "hasReserve", "type": "bool" }
-        ],
-        "internalType": "struct Oracle.Data",
         "name": "data",
-        "type": "tuple"
-      },
-      { "internalType": "uint256", "name": "volume", "type": "uint256" }
+        "type": "tuple",
+        "internalType": "struct Oracle.Data",
+        "components": [
+          { "name": "timestamp", "type": "uint256", "internalType": "uint256" },
+          { "name": "microWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "macroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOverMicroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOverMacroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOneMacroWindowAgo", "type": "uint256", "internalType": "uint256" },
+          { "name": "reserveOverMicroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "hasReserve", "type": "bool", "internalType": "bool" }
+        ]
+      }
     ],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "bid",
-    "outputs": [{ "internalType": "uint256", "name": "bid_", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
+    "inputs": [
+      {
+        "name": "data",
+        "type": "tuple",
+        "internalType": "struct Oracle.Data",
+        "components": [
+          { "name": "timestamp", "type": "uint256", "internalType": "uint256" },
+          { "name": "microWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "macroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOverMicroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOverMacroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOneMacroWindowAgo", "type": "uint256", "internalType": "uint256" },
+          { "name": "reserveOverMicroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "hasReserve", "type": "bool", "internalType": "bool" }
+        ]
+      },
+      { "name": "volume", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [{ "name": "bid_", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
   },
   {
-    "inputs": [
-      { "internalType": "uint256", "name": "collateral", "type": "uint256" },
-      { "internalType": "uint256", "name": "leverage", "type": "uint256" },
-      { "internalType": "bool", "name": "isLong", "type": "bool" },
-      { "internalType": "uint256", "name": "priceLimit", "type": "uint256" }
-    ],
+    "type": "function",
     "name": "build",
-    "outputs": [{ "internalType": "uint256", "name": "positionId_", "type": "uint256" }],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "inputs": [
+      { "name": "collateral", "type": "uint256", "internalType": "uint256" },
+      { "name": "leverage", "type": "uint256", "internalType": "uint256" },
+      { "name": "isLong", "type": "bool", "internalType": "bool" },
+      { "name": "priceLimit", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [{ "name": "positionId_", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "nonpayable"
   },
   {
-    "inputs": [
-      {
-        "components": [
-          { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
-          { "internalType": "uint256", "name": "microWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "macroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOverMicroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOverMacroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOneMacroWindowAgo", "type": "uint256" },
-          { "internalType": "uint256", "name": "reserveOverMicroWindow", "type": "uint256" },
-          { "internalType": "bool", "name": "hasReserve", "type": "bool" }
-        ],
-        "internalType": "struct Oracle.Data",
-        "name": "data",
-        "type": "tuple"
-      },
-      { "internalType": "uint256", "name": "cap", "type": "uint256" }
-    ],
+    "type": "function",
     "name": "capNotionalAdjustedForBounds",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "cap", "type": "uint256" }],
-    "name": "capNotionalAdjustedForCircuitBreaker",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
+        "name": "data",
+        "type": "tuple",
+        "internalType": "struct Oracle.Data",
         "components": [
-          { "internalType": "uint32", "name": "timestamp", "type": "uint32" },
-          { "internalType": "uint32", "name": "window", "type": "uint32" },
-          { "internalType": "int192", "name": "accumulator", "type": "int192" }
-        ],
-        "internalType": "struct Roller.Snapshot",
-        "name": "snapshot",
-        "type": "tuple"
+          { "name": "timestamp", "type": "uint256", "internalType": "uint256" },
+          { "name": "microWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "macroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOverMicroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOverMacroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOneMacroWindowAgo", "type": "uint256", "internalType": "uint256" },
+          { "name": "reserveOverMicroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "hasReserve", "type": "bool", "internalType": "bool" }
+        ]
       },
-      { "internalType": "uint256", "name": "cap", "type": "uint256" }
+      { "name": "cap", "type": "uint256", "internalType": "uint256" }
     ],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "capOiAdjustedForCircuitBreaker",
+    "inputs": [{ "name": "cap", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "circuitBreaker",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
+        "name": "snapshot",
+        "type": "tuple",
+        "internalType": "struct Roller.Snapshot",
         "components": [
-          { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
-          { "internalType": "uint256", "name": "microWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "macroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOverMicroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOverMacroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOneMacroWindowAgo", "type": "uint256" },
-          { "internalType": "uint256", "name": "reserveOverMicroWindow", "type": "uint256" },
-          { "internalType": "bool", "name": "hasReserve", "type": "bool" }
-        ],
-        "internalType": "struct Oracle.Data",
-        "name": "data",
-        "type": "tuple"
-      }
+          { "name": "timestamp", "type": "uint32", "internalType": "uint32" },
+          { "name": "window", "type": "uint32", "internalType": "uint32" },
+          { "name": "accumulator", "type": "int192", "internalType": "int192" }
+        ]
+      },
+      { "name": "cap", "type": "uint256", "internalType": "uint256" }
     ],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "dataIsValid",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "dpUpperLimit",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "factory",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "feed",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "components": [
-          { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
-          { "internalType": "uint256", "name": "microWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "macroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOverMicroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOverMacroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOneMacroWindowAgo", "type": "uint256" },
-          { "internalType": "uint256", "name": "reserveOverMicroWindow", "type": "uint256" },
-          { "internalType": "bool", "name": "hasReserve", "type": "bool" }
-        ],
-        "internalType": "struct Oracle.Data",
         "name": "data",
-        "type": "tuple"
+        "type": "tuple",
+        "internalType": "struct Oracle.Data",
+        "components": [
+          { "name": "timestamp", "type": "uint256", "internalType": "uint256" },
+          { "name": "microWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "macroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOverMicroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOverMacroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOneMacroWindowAgo", "type": "uint256", "internalType": "uint256" },
+          { "name": "reserveOverMicroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "hasReserve", "type": "bool", "internalType": "bool" }
+        ]
       }
     ],
+    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "dpUpperLimit",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "emergencyWithdraw",
+    "inputs": [{ "name": "positionId", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "factory",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "feed",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "frontRunBound",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
+    "inputs": [
+      {
+        "name": "data",
+        "type": "tuple",
+        "internalType": "struct Oracle.Data",
+        "components": [
+          { "name": "timestamp", "type": "uint256", "internalType": "uint256" },
+          { "name": "microWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "macroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOverMicroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOverMacroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOneMacroWindowAgo", "type": "uint256", "internalType": "uint256" },
+          { "name": "reserveOverMicroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "hasReserve", "type": "bool", "internalType": "bool" }
+        ]
+      }
+    ],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
   },
   {
-    "inputs": [{ "internalType": "uint256[15]", "name": "_params", "type": "uint256[15]" }],
+    "type": "function",
     "name": "initialize",
+    "inputs": [{ "name": "_params", "type": "uint256[15]", "internalType": "uint256[15]" }],
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
-    "inputs": [
-      { "internalType": "address", "name": "owner", "type": "address" },
-      { "internalType": "uint256", "name": "positionId", "type": "uint256" }
-    ],
+    "type": "function",
+    "name": "isShutdown",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "liquidate",
+    "inputs": [
+      { "name": "owner", "type": "address", "internalType": "address" },
+      { "name": "positionId", "type": "uint256", "internalType": "uint256" }
+    ],
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
-    "inputs": [
-      { "internalType": "uint256", "name": "oiOverweight", "type": "uint256" },
-      { "internalType": "uint256", "name": "oiUnderweight", "type": "uint256" },
-      { "internalType": "uint256", "name": "timeElapsed", "type": "uint256" }
-    ],
+    "type": "function",
     "name": "oiAfterFunding",
-    "outputs": [
-      { "internalType": "uint256", "name": "", "type": "uint256" },
-      { "internalType": "uint256", "name": "", "type": "uint256" }
+    "inputs": [
+      { "name": "oiOverweight", "type": "uint256", "internalType": "uint256" },
+      { "name": "oiUnderweight", "type": "uint256", "internalType": "uint256" },
+      { "name": "timeElapsed", "type": "uint256", "internalType": "uint256" }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [
+      { "name": "", "type": "uint256", "internalType": "uint256" },
+      { "name": "", "type": "uint256", "internalType": "uint256" }
+    ],
+    "stateMutability": "view"
   },
   {
-    "inputs": [
-      { "internalType": "uint256", "name": "notional", "type": "uint256" },
-      { "internalType": "uint256", "name": "midPrice", "type": "uint256" }
-    ],
+    "type": "function",
     "name": "oiFromNotional",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
+    "inputs": [
+      { "name": "notional", "type": "uint256", "internalType": "uint256" },
+      { "name": "midPrice", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "pure"
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "oiLong",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "oiLongShares",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "oiShort",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "oiShortShares",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
-    "name": "ovl",
-    "outputs": [{ "internalType": "contract IOverlayV1Token", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "type": "function",
+    "name": "ov",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address", "internalType": "contract IOverlayV1Token" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "params",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
+    "inputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
   },
   {
-    "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "type": "function",
+    "name": "pause",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "paused",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "positions",
+    "inputs": [{ "name": "", "type": "bytes32", "internalType": "bytes32" }],
     "outputs": [
-      { "internalType": "uint96", "name": "notionalInitial", "type": "uint96" },
-      { "internalType": "uint96", "name": "debtInitial", "type": "uint96" },
-      { "internalType": "int24", "name": "midTick", "type": "int24" },
-      { "internalType": "int24", "name": "entryTick", "type": "int24" },
-      { "internalType": "bool", "name": "isLong", "type": "bool" },
-      { "internalType": "bool", "name": "liquidated", "type": "bool" },
-      { "internalType": "uint240", "name": "oiShares", "type": "uint240" },
-      { "internalType": "uint16", "name": "fractionRemaining", "type": "uint16" }
+      { "name": "notionalInitial", "type": "uint96", "internalType": "uint96" },
+      { "name": "debtInitial", "type": "uint96", "internalType": "uint96" },
+      { "name": "midTick", "type": "int24", "internalType": "int24" },
+      { "name": "entryTick", "type": "int24", "internalType": "int24" },
+      { "name": "isLong", "type": "bool", "internalType": "bool" },
+      { "name": "liquidated", "type": "bool", "internalType": "bool" },
+      { "name": "oiShares", "type": "uint240", "internalType": "uint240" },
+      { "name": "fractionRemaining", "type": "uint16", "internalType": "uint16" }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
-    "inputs": [
-      { "internalType": "enum Risk.Parameters", "name": "name", "type": "uint8" },
-      { "internalType": "uint256", "name": "value", "type": "uint256" }
-    ],
+    "type": "function",
     "name": "setRiskParam",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "snapshotMinted",
-    "outputs": [
-      { "internalType": "uint32", "name": "timestamp", "type": "uint32" },
-      { "internalType": "uint32", "name": "window", "type": "uint32" },
-      { "internalType": "int192", "name": "accumulator", "type": "int192" }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "snapshotVolumeAsk",
-    "outputs": [
-      { "internalType": "uint32", "name": "timestamp", "type": "uint32" },
-      { "internalType": "uint32", "name": "window", "type": "uint32" },
-      { "internalType": "int192", "name": "accumulator", "type": "int192" }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "snapshotVolumeBid",
-    "outputs": [
-      { "internalType": "uint32", "name": "timestamp", "type": "uint32" },
-      { "internalType": "uint32", "name": "window", "type": "uint32" },
-      { "internalType": "int192", "name": "accumulator", "type": "int192" }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "timestampUpdateLast",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
-      { "internalType": "uint256", "name": "positionId", "type": "uint256" },
-      { "internalType": "uint256", "name": "fraction", "type": "uint256" },
-      { "internalType": "uint256", "name": "priceLimit", "type": "uint256" }
+      { "name": "name", "type": "uint8", "internalType": "enum Risk.Parameters" },
+      { "name": "value", "type": "uint256", "internalType": "uint256" }
     ],
-    "name": "unwind",
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
+    "type": "function",
+    "name": "shutdown",
     "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "snapshotMinted",
+    "inputs": [],
+    "outputs": [
+      { "name": "timestamp", "type": "uint32", "internalType": "uint32" },
+      { "name": "window", "type": "uint32", "internalType": "uint32" },
+      { "name": "accumulator", "type": "int192", "internalType": "int192" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "snapshotVolumeAsk",
+    "inputs": [],
+    "outputs": [
+      { "name": "timestamp", "type": "uint32", "internalType": "uint32" },
+      { "name": "window", "type": "uint32", "internalType": "uint32" },
+      { "name": "accumulator", "type": "int192", "internalType": "int192" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "snapshotVolumeBid",
+    "inputs": [],
+    "outputs": [
+      { "name": "timestamp", "type": "uint32", "internalType": "uint32" },
+      { "name": "window", "type": "uint32", "internalType": "uint32" },
+      { "name": "accumulator", "type": "int192", "internalType": "int192" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "timestampUpdateLast",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "unpause",
+    "inputs": [],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "unwind",
+    "inputs": [
+      { "name": "positionId", "type": "uint256", "internalType": "uint256" },
+      { "name": "fraction", "type": "uint256", "internalType": "uint256" },
+      { "name": "priceLimit", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "update",
+    "inputs": [],
     "outputs": [
       {
-        "components": [
-          { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
-          { "internalType": "uint256", "name": "microWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "macroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOverMicroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOverMacroWindow", "type": "uint256" },
-          { "internalType": "uint256", "name": "priceOneMacroWindowAgo", "type": "uint256" },
-          { "internalType": "uint256", "name": "reserveOverMicroWindow", "type": "uint256" },
-          { "internalType": "bool", "name": "hasReserve", "type": "bool" }
-        ],
-        "internalType": "struct Oracle.Data",
         "name": "",
-        "type": "tuple"
+        "type": "tuple",
+        "internalType": "struct Oracle.Data",
+        "components": [
+          { "name": "timestamp", "type": "uint256", "internalType": "uint256" },
+          { "name": "microWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "macroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOverMicroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOverMacroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "priceOneMacroWindowAgo", "type": "uint256", "internalType": "uint256" },
+          { "name": "reserveOverMicroWindow", "type": "uint256", "internalType": "uint256" },
+          { "name": "hasReserve", "type": "bool", "internalType": "bool" }
+        ]
       }
     ],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "Build",
+    "inputs": [
+      { "name": "sender", "type": "address", "indexed": true, "internalType": "address" },
+      { "name": "positionId", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      { "name": "oi", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      { "name": "debt", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      { "name": "isLong", "type": "bool", "indexed": false, "internalType": "bool" },
+      { "name": "price", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      { "name": "oiAfterBuild", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      {
+        "name": "oiSharesAfterBuild",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "CacheRiskCalc",
+    "inputs": [
+      {
+        "name": "newDpUpperLimit",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "EmergencyWithdraw",
+    "inputs": [
+      { "name": "sender", "type": "address", "indexed": true, "internalType": "address" },
+      { "name": "positionId", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      { "name": "collateral", "type": "uint256", "indexed": false, "internalType": "uint256" }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Liquidate",
+    "inputs": [
+      { "name": "sender", "type": "address", "indexed": true, "internalType": "address" },
+      { "name": "owner", "type": "address", "indexed": true, "internalType": "address" },
+      { "name": "positionId", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      { "name": "mint", "type": "int256", "indexed": false, "internalType": "int256" },
+      { "name": "price", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      {
+        "name": "oiAfterLiquidate",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "oiSharesAfterLiquidate",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Paused",
+    "inputs": [
+      { "name": "account", "type": "address", "indexed": false, "internalType": "address" }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Unpaused",
+    "inputs": [
+      { "name": "account", "type": "address", "indexed": false, "internalType": "address" }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Unwind",
+    "inputs": [
+      { "name": "sender", "type": "address", "indexed": true, "internalType": "address" },
+      { "name": "positionId", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      { "name": "fraction", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      { "name": "mint", "type": "int256", "indexed": false, "internalType": "int256" },
+      { "name": "price", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      { "name": "oiAfterUnwind", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      {
+        "name": "oiSharesAfterUnwind",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Update",
+    "inputs": [
+      { "name": "oiLong", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      { "name": "oiShort", "type": "uint256", "indexed": false, "internalType": "uint256" }
+    ],
+    "anonymous": false
   }
 ]

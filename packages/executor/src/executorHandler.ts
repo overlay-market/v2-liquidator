@@ -1,40 +1,36 @@
 import market_abi from './abis/market_abi.json'
+import market_old_abi from './abis/market_old_abi.json'
 import dotenv from 'dotenv'
 import chalk from 'chalk'
 import { ethers } from 'ethers'
 import redis from './redisHandler'
+import { networksConfig, Position } from './constants'
 
 dotenv.config()
 
 const log = console.log
 
-interface Position {
-  positionId: string
-  owner: string
-  marketAddress: string
-}
-
 const MAX_RETRIES = 3
 
 async function incrementRetryCount(position: Position): Promise<number> {
-  const retryKey = `retry:${position.marketAddress}:${position.positionId}`
+  const retryKey = `retry:${position.network}:${position.marketAddress}:${position.positionId}`
   const retries = await redis.incr(retryKey)
   return retries
 }
 
 async function resetRetryCount(position: Position) {
-  const retryKey = `retry:${position.marketAddress}:${position.positionId}`
+  const retryKey = `retry:${position.network}:${position.marketAddress}:${position.positionId}`
   await redis.del(retryKey)
 }
 
 async function liquidatePosition(position: Position) {
-  const { positionId, owner, marketAddress } = position
+  const { positionId, owner, marketAddress, network } = position
 
   try {
     const privateKeys = process.env.PRIVATE_KEYS?.split(',') ?? []
 
-    const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URLS?.split(',')[0])
-    const marketContract = new ethers.Contract(marketAddress, market_abi, provider)
+    const provider = new ethers.providers.JsonRpcProvider(networksConfig[network].rpc_url)
+    const marketContract = new ethers.Contract(marketAddress, networksConfig[network].useOldMarketAbi ? market_old_abi : market_abi, provider)
 
     for (const privateKey of privateKeys) {
       const wallet = new ethers.Wallet(privateKey, provider)
@@ -54,7 +50,7 @@ async function liquidatePosition(position: Position) {
           'positionId:'
         )} ${positionId} ${chalk.yellow('owner:')} ${owner} ${chalk.yellow(
           'market:'
-        )} ${marketAddress}`
+        )} ${marketAddress} ${chalk.yellow('network:')} ${network}`
       )
 
       // attempt to liquidate
@@ -63,7 +59,7 @@ async function liquidatePosition(position: Position) {
 
       if (receipt.status === 1) {
         log(
-          `${chalk.bgGreen('Position liquidated successfully! =>')} ${chalk.yellow(
+          `${chalk.bgGreen('Position liquidated successfully! =>')} ${chalk.yellow('network:')} ${network} ${chalk.yellow(
             'positionId:'
           )} ${positionId} ${chalk.yellow('executed by:')} ${wallet.address} ${chalk.yellow(
             'txHash:'
@@ -71,28 +67,28 @@ async function liquidatePosition(position: Position) {
         )
 
         // remove position from Redis
-        await redis.hdel(`positions:${marketAddress}`, positionId)
-        await redis.zrem(`position_index:${marketAddress}`, positionId)
+        await redis.hdel(`positions:${network}:${marketAddress}`, positionId)
+        await redis.zrem(`position_index:${network}:${marketAddress}`, positionId)
         await resetRetryCount(position)
 
         // track on redis total liquidated positions by executor
-        await redis.incr(`total_liquidated_positions:${wallet.address}`)
+        await redis.incr(`total_liquidated_positions_by_executor:${network}:${wallet.address}`)
         // add counter to track total liquidated positions
-        await redis.incr(`total_liquidated_positions`)
+        await redis.incr(`total_liquidated_positions:${network}:total`)
         // add counter to track total liquidated positions
-        await redis.incr(`total_liquidated_positions:${marketAddress.toLowerCase()}`)
+        await redis.incr(`total_liquidated_positions:${network}:${marketAddress.toLowerCase()}`)
         // add total liquidated positions by executor by session
-        await redis.incr(`liquidated_positions:${wallet.address}`)
+        await redis.incr(`liquidated_positions_by_executor:${network}:${wallet.address}`)
         // add total liquidated positions by session
-        await redis.incr(`liquidated_positions`)
+        await redis.incr(`liquidated_positions:${network}:total`)
         // add total liquidated positions by session
-        await redis.incr(`liquidated_positions:${marketAddress.toLowerCase()}`)
+        await redis.incr(`liquidated_positions:${network}:${marketAddress.toLowerCase()}`)
 
 
         return
       } else {
         log(
-          `${chalk.bgRed('Transaction failed! =>')} ${chalk.yellow(
+          `${chalk.bgRed('Transaction failed! =>')} ${chalk.yellow('network:')} ${network} ${chalk.yellow(
             'positionId:'
           )} ${positionId} ${chalk.yellow('executed by:')} ${wallet.address}`
         )
@@ -104,7 +100,7 @@ async function liquidatePosition(position: Position) {
 
     log(chalk.bold.red('No private keys available to liquidate position'))
   } catch (error) {
-    log(`${chalk.bgRed('Transaction failed! =>')} ${chalk.yellow('positionId:')} ${positionId}`)
+    log(`${chalk.bgRed('Transaction failed! =>')} ${chalk.yellow('network:')} ${network} ${chalk.yellow('positionId:')} ${positionId}`)
     log(chalk.red(error))
   }
 
@@ -113,8 +109,9 @@ async function liquidatePosition(position: Position) {
 
   if (retries > MAX_RETRIES) {
     log(chalk.bold.red(`Position ${position.positionId} exceeded max retries, removing from queue`));
-    await redis.hdel(`positions:${marketAddress}`, position.positionId)
-    await redis.zrem(`position_index:${marketAddress}`, position.positionId)
+    await redis.hdel(`positions:${network}:${marketAddress}`, position.positionId)
+    await redis.zrem(`position_index:${network}:${marketAddress}`, position.positionId)
+    await resetRetryCount(position)
   } else {
     log(chalk.bgBlue(`Re-queuing position ${position.positionId} for retry ${retries} of ${MAX_RETRIES}`))
     await redis.lpush('liquidatable_positions', JSON.stringify(position))
@@ -122,11 +119,6 @@ async function liquidatePosition(position: Position) {
 }
 
 export async function liquidablePositionsListener() {
-  if (!process.env.RPC_URLS) {
-    log(chalk.bold.red('At least one RPC_URLS must be provided'))
-    return
-  }
-
   if (!process.env.PRIVATE_KEYS) {
     log(chalk.bold.red('At least one private key is required'))
     return
@@ -145,7 +137,7 @@ export async function liquidablePositionsListener() {
         log(chalk.bold.blue('New liquidatable position found!'))
         log(
           chalk.blue(
-            `Processing position: marketAddress: ${position.marketAddress}, positionId: ${position.positionId}`
+            `Processing position: marketAddress: ${position.marketAddress}, positionId: ${position.positionId}, network: ${position.network}`
           )
         )
 

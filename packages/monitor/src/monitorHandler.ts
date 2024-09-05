@@ -3,8 +3,8 @@ import chalk from 'chalk'
 import redis from './redisHandler'
 import { ethers } from 'ethers'
 import TelegramBot from 'node-telegram-bot-api'
-import { rpcURL, OVTokenAddress, erc20ABI} from './constants'
-import axios from 'axios';
+import { networkConfig, erc20ABI, Networks } from './constants'
+import axios from 'axios'
 
 dotenv.config()
 
@@ -43,22 +43,24 @@ interface LiquidatorStats {
   executorAddresses: string[]
 }
 
-async function fetchMarkets(): Promise<{ [key: string]: string }> {
+async function fetchMarkets(network: Networks): Promise<{ [key: string]: string }> {
   try {
-    const response = await axios.get('https://api.overlay.market/sepolia-charts/v1/charts/markets');
-    const marketsArray = response.data;
+    const response = await axios.get(networkConfig[network].apiUrl)
+    const marketsArray = response.data
 
-    const markets: { [key: string]: string } = {};
+    const markets: { [key: string]: string } = {}
     for (const market of marketsArray) {
       if (market.address && market.name) {
-        markets[market.address.toLowerCase()] = market.name.replace('-', '\\-');
+        markets[market.address.toLowerCase()] = market.name.replace('-', '\\-')
+      } else if (market.address) {
+        markets[market.address.toLowerCase()] = market.address
       }
     }
 
-    return markets;
+    return markets
   } catch (error) {
-    console.error('Error fetching markets:', error);
-    return {};
+    console.error('Error fetching markets:', error)
+    return {}
   }
 }
 
@@ -71,20 +73,32 @@ async function sendTelegramMessage(message: string) {
   await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, message, { parse_mode: 'MarkdownV2' })
 }
 
-async function getLiquidatorStats(markets: { [key: string]: string }): Promise<LiquidatorStats> {
-  const totalLiquidatedPositions = (await redis.get('total_liquidated_positions')) || '0'
-  const liquidatedPositions = (await redis.get('liquidated_positions')) || '0'
-  const liquidatablePositionsFound = (await redis.get('liquidatable_positions_found')) || '0'
-  
+async function getLiquidatorStats(
+  markets: { [key: string]: string },
+  network: Networks
+): Promise<LiquidatorStats | undefined> {
+  const totalLiquidatedPositions = (await redis.get(`total_liquidated_positions:${network}:total`)) || '0'
+  const liquidatedPositions = (await redis.get(`liquidated_positions:${network}:total`)) || '0'
+  const liquidatablePositionsFound = (await redis.get(`liquidatable_positions_found:${network}:total`)) || '0'
+
+  if (liquidatedPositions === '0') {
+    return
+  }
+
   // get data by market
-  const dataByMarket: { [key: string]: MarketData } = {}
+  let dataByMarket: { [key: string]: MarketData } = {}
 
   for (const market of Object.keys(markets)) {
     const totalLiquidatedPositionsByMarket =
-      (await redis.get(`total_liquidated_positions:${market.toLowerCase()}`)) || '0'
-    const liquidatedPositionsByMarket = (await redis.get(`liquidated_positions:${market.toLowerCase()}`)) || '0'
+      (await redis.get(`total_liquidated_positions:${network}:${market.toLowerCase()}`)) || '0'
+    const liquidatedPositionsByMarket =
+      (await redis.get(`liquidated_positions:${network}:${market.toLowerCase()}`)) || '0'
     const liquidatablePositionsFoundByMarket =
-      (await redis.get(`liquidatable_positions_found:${market.toLowerCase()}`)) || '0'
+      (await redis.get(`liquidatable_positions_found:${network}:${market.toLowerCase()}`)) || '0'
+
+    if (liquidatedPositionsByMarket === '0') {
+      continue
+    }
 
     dataByMarket[market] = {
       totalLiquidatedPositions: parseInt(totalLiquidatedPositionsByMarket),
@@ -94,24 +108,31 @@ async function getLiquidatorStats(markets: { [key: string]: string }): Promise<L
   }
 
   // get data by executor
-  const provider = new ethers.providers.JsonRpcProvider(rpcURL)
-  const ovContract = new ethers.Contract(OVTokenAddress, erc20ABI, provider)
+  const provider = new ethers.providers.JsonRpcProvider(networkConfig[network].rpcUrl)
+  const ovContract = new ethers.Contract(
+    networkConfig[network].ov_token_address,
+    erc20ABI,
+    provider
+  )
 
-  const dataByExecutor: { [key: string]: ExecutorData } = {}
+  let dataByExecutor: { [key: string]: ExecutorData } = {}
 
-  const keys = await redis.keys('ov_balance:*');
-  const executorAddresses = keys.map(key => key.split(':')[1]);
+  const keys = await redis.keys(`total_liquidated_positions_by_executor:${network}:*`)
+  const executorAddresses = keys.map((key) => key.split(':')[2])
 
   for (const executor of executorAddresses) {
     const totalLiquidatedPositionsByExecutor =
-      (await redis.get(`total_liquidated_positions:${executor}`)) || '0'
-    const liquidatedPositionsByExecutor = (await redis.get(`liquidated_positions:${executor}`)) || '0'
+      (await redis.get(`total_liquidated_positions_by_executor:${network}:${executor}`)) || '0'
+    const liquidatedPositionsByExecutor =
+      (await redis.get(`liquidated_positions_by_executor:${network}:${executor}`)) || '0'
     const ethBalance = await provider.getBalance(executor)
     const ovRewardsClaimed = await ovContract.balanceOf(executor)
 
-    const prevOvBalance = await redis.get(`ov_balance:${executor}`) || '0'
-    const ovRewardsClaimedDiff = ethers.BigNumber.from(ovRewardsClaimed).sub(ethers.BigNumber.from(prevOvBalance))
-    await redis.set(`ov_balance:${executor}`, ovRewardsClaimed.toString())
+    const prevOvBalance = (await redis.get(`ov_balance:${network}:${executor}`)) || '0'
+    const ovRewardsClaimedDiff = ethers.BigNumber.from(ovRewardsClaimed).sub(
+      ethers.BigNumber.from(prevOvBalance)
+    )
+    await redis.set(`ov_balance:${network}:${executor}`, ovRewardsClaimed.toString())
 
     dataByExecutor[executor] = {
       totalLiquidatedPositions: parseInt(totalLiquidatedPositionsByExecutor),
@@ -122,7 +143,7 @@ async function getLiquidatorStats(markets: { [key: string]: string }): Promise<L
     }
   }
 
-  const prevTimestamp = await redis.get('liquidator_report_timestamp') || ''
+  const prevTimestamp = (await redis.get('liquidator_report_timestamp')) || ''
 
   return {
     totalLiquidatedPositions: parseInt(totalLiquidatedPositions),
@@ -131,13 +152,19 @@ async function getLiquidatorStats(markets: { [key: string]: string }): Promise<L
     dataByMarket,
     dataByExecutor,
     prevTimestamp,
-    executorAddresses
+    executorAddresses,
   }
 }
 
-function createLiquidatorReportMessage(stats: LiquidatorStats, markets: { [key: string]: string }): string {
-  let message = `📋 *Liquidator Report* 📋\n`
-  message += `from: ${stats.prevTimestamp ? new Date(parseInt(stats.prevTimestamp)).toUTCString() : 'N/A'}\n`
+function createLiquidatorReportMessage(
+  stats: LiquidatorStats,
+  markets: { [key: string]: string },
+  network: Networks
+): string {
+  let message = `📋 *Liquidator Report for ${network}* 📋\n`
+  message += `from: ${
+    stats.prevTimestamp ? new Date(parseInt(stats.prevTimestamp)).toUTCString() : 'N/A'
+  }\n`
   message += `to: ${new Date().toUTCString()}\n\n`
   message += `*Total Liquidated Positions*: ${stats.totalLiquidatedPositions}\n`
   message += `*Liquidated Positions*: ${stats.liquidatedPositions}\n`
@@ -167,40 +194,52 @@ function createLiquidatorReportMessage(stats: LiquidatorStats, markets: { [key: 
   return message
 }
 
-async function resetAllData(executorAddresses: string[], markets: { [key: string]: string }) {
+async function resetAllData(
+  executorAddresses: string[],
+  markets: { [key: string]: string },
+  network: Networks
+) {
   console.log(chalk.blue('Resetting data...'))
 
-  await redis.set('liquidated_positions', '0')
-  await redis.set('liquidatable_positions_found', '0')
-
-  await redis.set('liquidator_report_timestamp', Date.now().toString())
+  await redis.set(`liquidated_positions:${network}:total`, '0')
+  await redis.set(`liquidatable_positions_found:${network}:total`, '0')
 
   for (const market of Object.keys(markets)) {
-    await redis.set(`liquidated_positions:${market}`, '0')
-    await redis.set(`liquidatable_positions_found:${market}`, '0')
+    await redis.set(`liquidated_positions:${network}:${market}`, '0')
+    await redis.set(`liquidatable_positions_found:${network}:${market}`, '0')
   }
 
   for (const executor of executorAddresses) {
-    await redis.set(`liquidated_positions:${executor}`, '0')
+    await redis.set(`liquidated_positions:${network}:${executor}`, '0')
   }
 }
 
 export async function sendLiquidatorReport() {
   log(chalk.blue('Creating liquidator report...'))
 
-  const markets = await fetchMarkets()
-  const stats = await getLiquidatorStats(markets)
-  const message = createLiquidatorReportMessage(stats, markets)
-  
-  try {
-    log(chalk.blue('Sending liquidator report...'))
-    await sendTelegramMessage(message)
-  } catch (error) {
-    log(chalk.bgRed('Error sending liquidator report:', error))
-    return
+  for (const network of Object.keys(networkConfig) as Networks[]) {
+    const markets = await fetchMarkets(network)
+    const stats = await getLiquidatorStats(markets, network)
+
+    if (!stats) {
+      log(chalk.yellow('No liquidatable positions found for', network))
+      continue
+    }
+
+    const message = createLiquidatorReportMessage(stats, markets, network)
+
+    try {
+      log(chalk.blue('Sending liquidator report...'))
+      await sendTelegramMessage(message)
+    } catch (error) {
+      log(chalk.bgRed('Error sending liquidator report:', error))
+      return
+    }
+
+    await resetAllData(stats.executorAddresses, markets, network)
   }
 
-  await resetAllData(stats.executorAddresses, markets)
+  await redis.set('liquidator_report_timestamp', Date.now().toString())
 
   log(chalk.green('Liquidator report sent successfully'))
 }
