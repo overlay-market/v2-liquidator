@@ -193,8 +193,12 @@ export const config: Record<string, MarketConfig> = {
   },
   'CS Rifles': {
     workers: 1,
-    cron_schedule: '45 */2 * * * *',
+    cron_schedule: '47 */2 * * * *',
     networks: {
+      [Networks.ARBITRUM]: {
+        address: '0xE35a856F1d98f101c5C60dB8d02BA4Dff87986B3',
+        positions_per_run: 1000,
+      },
       [Networks.BERACHAIN]: {
         address: '0x745D36559834f6b016fc43d2261F0709e62344e1',
         positions_per_run: 50,
@@ -203,8 +207,12 @@ export const config: Record<string, MarketConfig> = {
   },
   'CS Knives': {
     workers: 1,
-    cron_schedule: '45 */2 * * * *',
+    cron_schedule: '49 */2 * * * *',
     networks: {
+      [Networks.ARBITRUM]: {
+        address: '0x6Dfe4094599C74A920285A17608Ae023D707eEd9',
+        positions_per_run: 1000,
+      },
       [Networks.BERACHAIN]: {
         address: '0x789d85Fb4F104fEb1cd85C7475C02F3F8e2dFf5B',
         positions_per_run: 50,
@@ -213,10 +221,28 @@ export const config: Record<string, MarketConfig> = {
   },
   'CS Knives Rifles': {
     workers: 1,
-    cron_schedule: '45 */2 * * * *',
+    cron_schedule: '51 */2 * * * *',
     networks: {
+      [Networks.ARBITRUM]: {
+        address: '0x2011d14B00f49CC461958Be682bC1443C7Fd5d87',
+        positions_per_run: 1000,
+      },
       [Networks.BERACHAIN]: {
         address: '0x9eb938C3739bBf2B54A80AdD213F66fe4Cd694DC',
+        positions_per_run: 50,
+      },
+    },
+  },
+  'Cats Dogs': {
+    workers: 1,
+    cron_schedule: '53 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0x58CAc8F5C3b398650e30f724aDf57c4D21D1E900',
+        positions_per_run: 1000,
+      },
+      [Networks.BERACHAIN]: {
+        address: '0xa7becde03da95d1dd0657710e4725342218b2876',
         positions_per_run: 50,
       },
     },

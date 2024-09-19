@@ -67,6 +67,22 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
       'EthSol': {
         address: '0x3966f792517E2Df998C48301163c2A95BFd3efF8',
         init_block: '58877180',
+      },
+      'CS Rifles': {
+        address: '0xE35a856F1d98f101c5C60dB8d02BA4Dff87986B3',
+        init_block: '77553289',
+      },
+      'CS Knives': {
+        address: '0x6Dfe4094599C74A920285A17608Ae023D707eEd9',
+        init_block: '77553504',
+      },
+      'CS Knives Rifles': {
+        address: '0x2011d14B00f49CC461958Be682bC1443C7Fd5d87',
+        init_block: '77553837',
+      },
+      'Cats Dogs': {
+        address: '0x58CAc8F5C3b398650e30f724aDf57c4D21D1E900',
+        init_block: '81886410',
       }
     },
     enabled: true,
@@ -125,6 +141,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
       'CS Knives Rifles': {
         address: '0x9eb938C3739bBf2B54A80AdD213F66fe4Cd694DC',
         init_block: '3824328',
+      },
+      'Cats Dogs': {
+        address: '0xa7becde03da95d1dd0657710e4725342218b2876',
+        init_block: '4465357',
       }
     },
     enabled: true,
