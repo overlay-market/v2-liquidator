@@ -22,7 +22,7 @@ services:
     environment:
       <<: *common-environment
       FORK_RPC_URL: ${FORK_RPC_URL}
-      NODE_OPTIONS: --max_old_space_size=3072
+      NODE_OPTIONS: --max_old_space_size=6144
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -30,7 +30,7 @@ services:
       resources:
         limits:
           cpus: '2'
-          memory: 4096M
+          memory: 7168M
 
   liquidation-checker-eth-dominance:
     build:
