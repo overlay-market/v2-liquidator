@@ -253,13 +253,47 @@ services:
           cpus: '0.5'
           memory: 512M
 
-  liquidation-checker-cats-dogs:
+  liquidation-checker-cats-dogs-2:
     build:
       context: .
       dockerfile: packages/liquidation-checker/Dockerfile
     environment:
       <<: *common-environment
-      MARKET: Cats Dogs
+      MARKET: Cats Dogs 2
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  liquidation-checker-cats-frogs:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Cats Frogs
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  liquidation-checker-frogs-dogs:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Frogs Dogs
       NODE_OPTIONS: --max_old_space_size=409
     depends_on:
       - redis-server

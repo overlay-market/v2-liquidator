@@ -80,9 +80,17 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0x2011d14B00f49CC461958Be682bC1443C7Fd5d87',
         init_block: '77553837',
       },
-      'Cats Dogs': {
-        address: '0x58CAc8F5C3b398650e30f724aDf57c4D21D1E900',
-        init_block: '81886410',
+      'Cats Dogs 2': {
+        address: '0x73973d72eef84a8624e4ec381e8e73caff570092',
+        init_block: '83398517',
+      },
+      'Cats Frogs': {
+        address: '0x8bfb2494f3a9b1441185cf04bb10e92e6b4fd9b9',
+        init_block: '83398664',
+      },
+      'Frogs Dogs': {
+        address: '0xecd76abb33c36dd62a7d033d26f7146801e03d4f',
+        init_block: '83398824',
       }
     },
     enabled: true,
@@ -142,9 +150,17 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0x9eb938C3739bBf2B54A80AdD213F66fe4Cd694DC',
         init_block: '3824328',
       },
-      'Cats Dogs': {
-        address: '0xa7becde03da95d1dd0657710e4725342218b2876',
-        init_block: '4465357',
+      'Cats Dogs 2': {
+        address: '0xa85ad94c84f2bdc48127d93d087054a5f7e5726b',
+        init_block: '4678879',
+      },
+      'Cats Frogs': {
+        address: '0xf0d9f85295d7a41b51aa5bde08c199735fa15909',
+        init_block: '4678895',
+      },
+      'Frogs Dogs': {
+        address: '0x0befa5099b225ffdaadbba5911d464e12a75a773',
+        init_block: '4678914',
       }
     },
     enabled: true,

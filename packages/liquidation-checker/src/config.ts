@@ -233,16 +233,44 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
-  'Cats Dogs': {
+  'Cats Dogs 2': {
     workers: 1,
     cron_schedule: '53 */2 * * * *',
     networks: {
       [Networks.ARBITRUM]: {
-        address: '0x58CAc8F5C3b398650e30f724aDf57c4D21D1E900',
+        address: '0x73973d72eef84a8624e4ec381e8e73caff570092',
         positions_per_run: 1000,
       },
       [Networks.BERACHAIN]: {
-        address: '0xa7becde03da95d1dd0657710e4725342218b2876',
+        address: '0xa85ad94c84f2bdc48127d93d087054a5f7e5726b',
+        positions_per_run: 50,
+      },
+    },
+  },
+  'Cats Frogs': {
+    workers: 1,
+    cron_schedule: '53 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0x8bfb2494f3a9b1441185cf04bb10e92e6b4fd9b9',
+        positions_per_run: 1000,
+      },
+      [Networks.BERACHAIN]: {
+        address: '0xf0d9f85295d7a41b51aa5bde08c199735fa15909',
+        positions_per_run: 50,
+      },
+    },
+  },
+  'Frogs Dogs': {
+    workers: 1,
+    cron_schedule: '53 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0xecd76abb33c36dd62a7d033d26f7146801e03d4f',
+        positions_per_run: 1000,
+      },
+      [Networks.BERACHAIN]: {
+        address: '0x0befa5099b225ffdaadbba5911d464e12a75a773',
         positions_per_run: 50,
       },
     },
