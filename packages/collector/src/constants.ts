@@ -91,7 +91,11 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
       'Frogs Dogs': {
         address: '0xecd76abb33c36dd62a7d033d26f7146801e03d4f',
         init_block: '83398824',
-      }
+      },
+      'Real Estate': {
+        address: '0x31d1e411db1a11a5741ff55d5c01c0c4cf4ac891',
+        init_block: '86272345',
+      },
     },
     enabled: true,
     blockStep: 45000,
@@ -161,7 +165,11 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
       'Frogs Dogs': {
         address: '0x0befa5099b225ffdaadbba5911d464e12a75a773',
         init_block: '4678914',
-      }
+      },
+      'Real Estate': {
+        address: '0xd27803e696f818038c19f10ca8fc509ec07ba04c',
+        init_block: '5189892',
+      },
     },
     enabled: true,
     blockStep: 5000,
@@ -178,6 +186,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
       'ETH Dominance': {
         address: '0xeab2fbdc9d43e785eb4065c8447d872735729aac',
         init_block: '645447',
+      },
+      'Real Estate': {
+        address: '0x13b35923944df7e27082fcef640442386487bdda',
+        init_block: '15302992',
       },
     },
     enabled: true,

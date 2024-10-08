@@ -275,4 +275,22 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'Real Estate': {
+    workers: 1,
+    cron_schedule: '13 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0x31d1e411db1a11a5741ff55d5c01c0c4cf4ac891',
+        positions_per_run: 1000,
+      },
+      [Networks.BERACHAIN]: {
+        address: '0xd27803e696f818038c19f10ca8fc509ec07ba04c',
+        positions_per_run: 50,
+      },
+      [Networks.MOVEMENT]: {
+        address: '0x13b35923944df7e27082fcef640442386487bdda',
+        positions_per_run: 300,
+      },
+    },
+  },
 }
