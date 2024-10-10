@@ -96,6 +96,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0x31d1e411db1a11a5741ff55d5c01c0c4cf4ac891',
         init_block: '86272345',
       },
+      'Super Eth': {
+        address: '0xfD3362Feb6a1fd9C7fDD4e314ecdaAC1E54360C6',
+        init_block: '87446746',
+      },
     },
     enabled: true,
     blockStep: 45000,
@@ -170,6 +174,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0xd27803e696f818038c19f10ca8fc509ec07ba04c',
         init_block: '5189892',
       },
+      'Super Eth': {
+        address: '0x7883c07F0b6D8004e2c8348Ab5dF2113423A5629',
+        init_block: '5399003',
+      },
     },
     enabled: true,
     blockStep: 5000,
@@ -190,6 +198,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
       'Real Estate': {
         address: '0x13b35923944df7e27082fcef640442386487bdda',
         init_block: '15302992',
+      },
+      'Super Eth': {
+        address: '0x32aBE0b73564E1F0B8981474D65DCb72Ca1e4865',
+        init_block: '17459819',
       },
     },
     enabled: true,

@@ -293,4 +293,22 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'Super Eth': {
+    workers: 1,
+    cron_schedule: '15 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0xfD3362Feb6a1fd9C7fDD4e314ecdaAC1E54360C6',
+        positions_per_run: 1000,
+      },
+      [Networks.BERACHAIN]: {
+        address: '0x7883c07F0b6D8004e2c8348Ab5dF2113423A5629',
+        positions_per_run: 50,
+      },
+      [Networks.MOVEMENT]: {
+        address: '0x32aBE0b73564E1F0B8981474D65DCb72Ca1e4865',
+        positions_per_run: 300,
+      },
+    },
+  },
 }
