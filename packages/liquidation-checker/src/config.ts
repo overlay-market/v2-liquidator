@@ -311,4 +311,40 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'Carlsen': {
+    workers: 1,
+    cron_schedule: '17 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0xF3A513ADaDb8F1617c71B7B48Bc0Ef0CF9509E0F',
+        positions_per_run: 1000,
+      },
+      [Networks.BERACHAIN]: {
+        address: '0xFcf1CD40d20ae4955b35833c2329E923A5D8453d',
+        positions_per_run: 50,
+      },
+      [Networks.MOVEMENT]: {
+        address: '0x89b53FC8cBf3b646145FF510c44719d4961a9D33',
+        positions_per_run: 300,
+      },
+    },
+  },
+  'Hikaru': {
+    workers: 1,
+    cron_schedule: '19 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0x3BAD2B943f4921C90f8738791A842905376FFb1d',
+        positions_per_run: 1000,
+      },
+      [Networks.BERACHAIN]: {
+        address: '0xDD81f146822100a71D1485a087a0F5D571b66942',
+        positions_per_run: 50,
+      },
+      [Networks.MOVEMENT]: {
+        address: '0xfD73F1a5b9AE44780dD4e36bE443b9DFA444b376',
+        positions_per_run: 300,
+      },
+    },
+  },
 }

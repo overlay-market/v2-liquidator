@@ -100,6 +100,14 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0xfD3362Feb6a1fd9C7fDD4e314ecdaAC1E54360C6',
         init_block: '87446746',
       },
+      'Carlsen': {
+        address: '0xF3A513ADaDb8F1617c71B7B48Bc0Ef0CF9509E0F',
+        init_block: '89445675',
+      },
+      'Hikaru': {
+        address: '0x3BAD2B943f4921C90f8738791A842905376FFb1d',
+        init_block: '89640248',
+      },
     },
     enabled: true,
     blockStep: 45000,
@@ -178,6 +186,14 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0x7883c07F0b6D8004e2c8348Ab5dF2113423A5629',
         init_block: '5399003',
       },
+      'Carlsen': {
+        address: '0xFcf1CD40d20ae4955b35833c2329E923A5D8453d',
+        init_block: '5696408',
+      },
+      'Hikaru': {
+        address: '0xDD81f146822100a71D1485a087a0F5D571b66942',
+        init_block: '5733190',
+      },
     },
     enabled: true,
     blockStep: 5000,
@@ -202,6 +218,14 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
       'Super Eth': {
         address: '0x32aBE0b73564E1F0B8981474D65DCb72Ca1e4865',
         init_block: '17459819',
+      },
+      'Carlsen': {
+        address: '0x89b53FC8cBf3b646145FF510c44719d4961a9D33',
+        init_block: '20364376',
+      },
+      'Hikaru': {
+        address: '0xfD73F1a5b9AE44780dD4e36bE443b9DFA444b376',
+        init_block: '20689621',
       },
     },
     enabled: true,
