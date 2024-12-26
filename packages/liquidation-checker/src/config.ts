@@ -347,4 +347,18 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'Spotify Lana Del Rey': {
+    workers: 1,
+    cron_schedule: '21 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0x8dDcf6C9c8b076F79be582544877087c3caBb9Eb',
+        positions_per_run: 1000,
+      },
+      [Networks.BERACHAIN]: {
+        address: '0x3a7302C4844853F7A7C14f8E671F190244A69B4C',
+        positions_per_run: 50,
+      },
+    },
+  },
 }
