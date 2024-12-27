@@ -108,6 +108,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0x3BAD2B943f4921C90f8738791A842905376FFb1d',
         init_block: '89640248',
       },
+      'Spotify Lana Del Rey': {
+        address: '0x8dDcf6C9c8b076F79be582544877087c3caBb9Eb',
+        init_block: '110298214',
+      },
     },
     enabled: true,
     blockStep: 45000,
@@ -193,6 +197,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
       'Hikaru': {
         address: '0xDD81f146822100a71D1485a087a0F5D571b66942',
         init_block: '5733190',
+      },
+      'Spotify Lana Del Rey': {
+        address: '0x3a7302C4844853F7A7C14f8E671F190244A69B4C',
+        init_block: '8489075',
       },
     },
     enabled: true,
