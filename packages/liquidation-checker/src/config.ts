@@ -35,15 +35,6 @@ export const networkConfig: Record<Networks, NetworkConfig> = {
     multicall_batch_size: 300,
     rpc_first_probability: 1,
   },
-  [Networks.MOVEMENT]: {
-    rpcUrls: process.env.MOVEMENT_RPC_URLS?.split(',') || [
-      'https://mevm.devnet.imola.movementlabs.xyz',
-    ],
-    multicall2_address: '0xc5F85207a16FB6634eAd4f17Ad5222F122e8F0De',
-    ovl_state_address: '0x0CA6128B528f503C7c649ba9cc02560a8B9fD55e',
-    multicall_batch_size: 10,
-    rpc_first_probability: 1,
-  },
 }
 
 export const config: Record<string, MarketConfig> = {
@@ -54,10 +45,6 @@ export const config: Record<string, MarketConfig> = {
       [Networks.ARBITRUM]: {
         address: '0x3a204d03e9B1fEE01b8989333665b6c46Cc1f79E',
         positions_per_run: 5000,
-      },
-      [Networks.MOVEMENT]: {
-        address: '0xB021EB4489c230234567Ca6789e53403310Db090',
-        positions_per_run: 300,
       },
       [Networks.BERACHAIN]: {
         address: '0x09E8641df1E963d0bB1267e51579fC2B4E3E60cd',
@@ -72,10 +59,6 @@ export const config: Record<string, MarketConfig> = {
       [Networks.ARBITRUM]: {
         address: '0x553de578e68a4faa55d4522665cb2d2d53390d22',
         positions_per_run: 4000,
-      },
-      [Networks.MOVEMENT]: {
-        address: '0xeab2fbdc9d43e785eb4065c8447d872735729aac',
-        positions_per_run: 300,
       },
       [Networks.BERACHAIN]: {
         address: '0xd9b217fa8A9E8Ef1c8558128029564e9A50F284D',
@@ -287,10 +270,6 @@ export const config: Record<string, MarketConfig> = {
         address: '0xd27803e696f818038c19f10ca8fc509ec07ba04c',
         positions_per_run: 50,
       },
-      [Networks.MOVEMENT]: {
-        address: '0x13b35923944df7e27082fcef640442386487bdda',
-        positions_per_run: 300,
-      },
     },
   },
   'Super Eth': {
@@ -304,10 +283,6 @@ export const config: Record<string, MarketConfig> = {
       [Networks.BERACHAIN]: {
         address: '0x7883c07F0b6D8004e2c8348Ab5dF2113423A5629',
         positions_per_run: 50,
-      },
-      [Networks.MOVEMENT]: {
-        address: '0x32aBE0b73564E1F0B8981474D65DCb72Ca1e4865',
-        positions_per_run: 300,
       },
     },
   },
@@ -323,10 +298,6 @@ export const config: Record<string, MarketConfig> = {
         address: '0xFcf1CD40d20ae4955b35833c2329E923A5D8453d',
         positions_per_run: 50,
       },
-      [Networks.MOVEMENT]: {
-        address: '0x89b53FC8cBf3b646145FF510c44719d4961a9D33',
-        positions_per_run: 300,
-      },
     },
   },
   'Hikaru': {
@@ -340,10 +311,6 @@ export const config: Record<string, MarketConfig> = {
       [Networks.BERACHAIN]: {
         address: '0xDD81f146822100a71D1485a087a0F5D571b66942',
         positions_per_run: 50,
-      },
-      [Networks.MOVEMENT]: {
-        address: '0xfD73F1a5b9AE44780dD4e36bE443b9DFA444b376',
-        positions_per_run: 300,
       },
     },
   },

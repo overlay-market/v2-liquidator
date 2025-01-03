@@ -10,7 +10,6 @@ export interface Market {
 export enum Networks {
   ARBITRUM = "arbitrum",
   BERACHAIN = "berachain",
-  MOVEMENT = "movement",
 }
 
 export interface NetworksConfig {
@@ -205,39 +204,6 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
     },
     enabled: true,
     blockStep: 5000,
-    useFork: false,
-  },
-  [Networks.MOVEMENT]: {
-    rpc_url: process.env.MOVEMENT_RPC_URLS?.split(',')[0] || 'https://mevm.devnet.imola.movementlabs.xyz',
-    fork_rpc_url: process.env.MOVEMENT_FORK_RPC_URL?.split(',')[0] || 'https://mevm.devnet.imola.movementlabs.xyz',
-    markets: {
-      'BTC Dominance': {
-        address: '0xB021EB4489c230234567Ca6789e53403310Db090',
-        init_block: '308279',
-      },
-      'ETH Dominance': {
-        address: '0xeab2fbdc9d43e785eb4065c8447d872735729aac',
-        init_block: '645447',
-      },
-      'Real Estate': {
-        address: '0x13b35923944df7e27082fcef640442386487bdda',
-        init_block: '15302992',
-      },
-      'Super Eth': {
-        address: '0x32aBE0b73564E1F0B8981474D65DCb72Ca1e4865',
-        init_block: '17459819',
-      },
-      'Carlsen': {
-        address: '0x89b53FC8cBf3b646145FF510c44719d4961a9D33',
-        init_block: '20364376',
-      },
-      'Hikaru': {
-        address: '0xfD73F1a5b9AE44780dD4e36bE443b9DFA444b376',
-        init_block: '20689621',
-      },
-    },
-    enabled: true,
-    blockStep: 2000,
     useFork: false,
   },
 }
