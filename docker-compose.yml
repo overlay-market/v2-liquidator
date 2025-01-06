@@ -439,6 +439,19 @@ services:
         limits:
           cpus: '0.5'
           memory: 256M
+
+  health-checker:
+    build:
+      context: .
+      dockerfile: packages/health-checker/Dockerfile
+    restart: unless-stopped
+    ports:
+      - '2025:2025'
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
     
   dozzle:
     image: amir20/dozzle:latest
