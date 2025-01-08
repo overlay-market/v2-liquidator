@@ -445,6 +445,8 @@ services:
       context: .
       dockerfile: packages/health-checker/Dockerfile
     restart: unless-stopped
+    environment:
+      <<: *common-environment
     ports:
       - '2025:2025'
     deploy:
