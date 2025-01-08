@@ -69,9 +69,18 @@ importers:
 
   packages/health-checker:
     dependencies:
+      chalk:
+        specifier: '4'
+        version: 4.1.2
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.5
       express:
         specifier: ^4.21.2
         version: 4.21.2
+      ioredis:
+        specifier: ^5.4.1
+        version: 5.4.1
     devDependencies:
       '@types/express':
         specifier: ^5.0.0
