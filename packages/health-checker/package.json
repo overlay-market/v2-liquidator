@@ -1,0 +1,21 @@
+{
+  "name": "health-checker",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "ts-node src/server.ts"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "ioredis": "^5.4.1",
+    "dotenv": "^16.4.5",
+    "chalk": "4"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^20.12.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
