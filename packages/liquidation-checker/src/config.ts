@@ -328,4 +328,18 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'Bera NFTs Index': {
+    workers: 1,
+    cron_schedule: '23 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0x8dDcf6C9c8b076F79be582544877087c3caBb9Eb',
+        positions_per_run: 1000,
+      },
+      [Networks.BERACHAIN]: {
+        address: '0x4B41dB951F92aBc131BcB1c2E08172dECA3611aE',
+        positions_per_run: 50,
+      },
+    },
+  },
 }

@@ -111,6 +111,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0x8dDcf6C9c8b076F79be582544877087c3caBb9Eb',
         init_block: '110298214',
       },
+      'Bera NFTs Index': {
+        address: '0x32A7489c9FC9dbD554afA0498C979370C0200caC',
+        init_block: '114602081',
+      },
     },
     enabled: true,
     blockStep: 45000,
@@ -200,6 +204,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
       'Spotify Lana Del Rey': {
         address: '0x3a7302C4844853F7A7C14f8E671F190244A69B4C',
         init_block: '8489075',
+      },
+      'Bera NFTs Index': {
+        address: '0x4B41dB951F92aBc131BcB1c2E08172dECA3611aE',
+        init_block: '9278093',
       },
     },
     enabled: true,
