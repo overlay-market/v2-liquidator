@@ -389,6 +389,23 @@ services:
           cpus: '0.5'
           memory: 512M
 
+  liquidation-checker-bera-nfts:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Bera NFTs Index
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
   executor-1:
     build:
       context: .
