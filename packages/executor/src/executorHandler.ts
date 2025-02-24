@@ -1,5 +1,4 @@
 import market_abi from './abis/market_abi.json'
-import market_old_abi from './abis/market_old_abi.json'
 import dotenv from 'dotenv'
 import chalk from 'chalk'
 import { ethers } from 'ethers'
@@ -30,7 +29,7 @@ async function liquidatePosition(position: Position) {
     const privateKeys = process.env.PRIVATE_KEYS?.split(',') ?? []
 
     const provider = new ethers.providers.JsonRpcProvider(networksConfig[network].rpc_url)
-    const marketContract = new ethers.Contract(marketAddress, networksConfig[network].useOldMarketAbi ? market_old_abi : market_abi, provider)
+    const marketContract = new ethers.Contract(marketAddress, market_abi, provider)
 
     for (const privateKey of privateKeys) {
       const wallet = new ethers.Wallet(privateKey, provider)
