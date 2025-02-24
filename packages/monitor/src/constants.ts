@@ -1,5 +1,4 @@
 export enum Networks {
-  ARBITRUM = "arbitrum",
   BERACHAIN = "berachain",
 }
 
@@ -10,11 +9,6 @@ interface NetworkConfig {
 }
 
 export const networkConfig: Record<Networks, NetworkConfig> = {
-  [Networks.ARBITRUM]: {
-    rpcUrl: 'https://arbitrum-sepolia-rpc.publicnode.com',
-    apiUrl: 'https://api.overlay.market/sepolia-charts/v1/charts/markets',
-    ov_token_address: '0x3E27fAe625f25291bFda517f74bf41DC40721dA2',
-  },
   [Networks.BERACHAIN]: {
     rpcUrl: 'https://bartio.rpc.berachain.com/',
     apiUrl: 'https://api.overlay.market/bartio-charts/v1/charts/markets',

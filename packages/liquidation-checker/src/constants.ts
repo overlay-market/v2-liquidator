@@ -28,6 +28,5 @@ export enum PositionStatus {
 }
 
 export enum Networks {
-  ARBITRUM = "arbitrum",
   BERACHAIN = "berachain",
 }
