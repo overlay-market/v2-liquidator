@@ -1,6 +1,5 @@
 import { EventType, Networks, PositionStatus, networksConfig } from './constants'
 import market_abi from './abis/market_abi.json'
-import market_old_abi from './abis/market_old_abi.json'
 import { ethers } from 'ethers'
 import chalk from 'chalk'
 import { startAnvil, stopAnvil } from './anvilForkHandler'
@@ -134,7 +133,7 @@ async function fetchEvents(network: Networks, marketName: string, rpcUrl: string
   const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
   const ovlMarketContract = new ethers.Contract(
     marketAddress,
-    networksConfig[network].useOldMarketAbi ? market_old_abi : market_abi,
+    market_abi,
     provider
   )
 
