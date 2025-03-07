@@ -10,8 +10,8 @@ interface NetworkConfig {
 
 export const networkConfig: Record<Networks, NetworkConfig> = {
   [Networks.BERACHAIN]: {
-    rpcUrl: 'https://bartio.rpc.berachain.com/',
-    apiUrl: 'https://api.overlay.market/bartio-charts/v1/charts/markets',
+    rpcUrl: 'https://rpc.berachain.com/',
+    apiUrl: 'https://api.overlay.market/data/api/markets/chain/80094',
     ov_token_address: '0xaeD2f0c7AaCfE2B59Cc70964833EA4C28C2CdbDB',
   },
 }

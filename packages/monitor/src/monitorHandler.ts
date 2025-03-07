@@ -50,10 +50,14 @@ async function fetchMarkets(network: Networks): Promise<{ [key: string]: string 
 
     const markets: { [key: string]: string } = {}
     for (const market of marketsArray) {
-      if (market.address && market.name) {
-        markets[market.address.toLowerCase()] = market.name.replace('-', '\\-')
-      } else if (market.address) {
-        markets[market.address.toLowerCase()] = market.address
+      if (market.chains && market.chains.length > 0) {
+        const chain = market.chains[0]
+        
+        if (chain && chain.deploymentAddress && market.marketName) {
+          markets[chain.deploymentAddress.toLowerCase()] = market.marketName.replace('-', '\\-')
+        } else if (chain && chain.deploymentAddress) {
+          markets[chain.deploymentAddress.toLowerCase()] = chain.deploymentAddress
+        }
       }
     }
 
