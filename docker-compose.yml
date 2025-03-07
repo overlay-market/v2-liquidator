@@ -32,22 +32,22 @@ services:
           cpus: '2'
           memory: 7168M
 
-  liquidation-checker-eth-dominance:
+  liquidation-checker-cs2-skins:
     build:
       context: .
       dockerfile: packages/liquidation-checker/Dockerfile
     environment:
       <<: *common-environment
-      MARKET: Market Name
-      NODE_OPTIONS: --max_old_space_size=819
+      MARKET: CS2 Skins
+      NODE_OPTIONS: --max_old_space_size=409
     depends_on:
       - redis-server
     restart: unless-stopped
     deploy:
       resources:
         limits:
-          cpus: '0.8'
-          memory: 1024M
+          cpus: '0.5'
+          memory: 512M
 
   executor-1:
     build:

@@ -24,7 +24,12 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
   [Networks.BERACHAIN]: {
     rpc_url: process.env.BERACHAIN_RPC_URLS?.split(',')[0] || 'https://rpc.berachain.com/',
     fork_rpc_url: process.env.BERACHAIN_FORK_RPC_URL?.split(',')[0] || 'https://rpc.berachain.com/',
-    markets: {},
+    markets: {
+      'CS2 Skins': {
+        address: '0x670d05b714b783f35681cf834dcccd63a8c8df44',
+        init_block: '1904957',
+      },
+    },
     enabled: true,
     blockStep: 5000,
     useFork: false,
