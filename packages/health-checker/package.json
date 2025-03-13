@@ -7,10 +7,10 @@
     "dev": "ts-node src/server.ts"
   },
   "dependencies": {
-    "express": "^4.21.2",
-    "ioredis": "^5.4.1",
+    "chalk": "4",
     "dotenv": "^16.4.5",
-    "chalk": "4"
+    "ethers": "5.7.2",
+    "express": "^4.21.2"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",

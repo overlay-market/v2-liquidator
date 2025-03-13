@@ -75,12 +75,12 @@ importers:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
+      ethers:
+        specifier: 5.7.2
+        version: 5.7.2
       express:
         specifier: ^4.21.2
         version: 4.21.2
-      ioredis:
-        specifier: ^5.4.1
-        version: 5.4.1
     devDependencies:
       '@types/express':
         specifier: ^5.0.0
