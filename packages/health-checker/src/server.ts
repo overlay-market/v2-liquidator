@@ -1,13 +1,31 @@
 import express from 'express';
-import redis from './redisHandler';
+import { ethers } from 'ethers';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 2025;
 
 async function getExecutors() {
-  const keys = await redis.keys(`total_liquidated_positions_by_executor:${"berachain"}:*`)
-  const executorAddresses = keys.map((key) => key.split(':')[2])
-  return executorAddresses
+  const executors: string[] = [];
+  let index = 1;
+  
+  while (true) {
+    const privateKey = process.env[`PRIVATE_KEYS_${index}`];
+    if (!privateKey) break;
+    
+    try {
+      const wallet = new ethers.Wallet(privateKey);
+      executors.push(wallet.address);
+    } catch (error) {
+      console.error(`Error processing PRIVATE_KEY_${index}:`, error);
+    }
+    
+    index++;
+  }
+
+  return executors;
 }
 
 // Endpoint healthcheck also returns the executors addresses
