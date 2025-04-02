@@ -115,6 +115,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0x32A7489c9FC9dbD554afA0498C979370C0200caC',
         init_block: '114602081',
       },
+      'AI Agents Index': {
+        address: '0xa7323c2E3EF542760ec727F4069d76d1aA4Cb207',
+        init_block: '116321816',
+      },
     },
     enabled: true,
     blockStep: 45000,
@@ -208,6 +212,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
       'Bera NFTs Index': {
         address: '0x4B41dB951F92aBc131BcB1c2E08172dECA3611aE',
         init_block: '9278093',
+      },
+      'AI Agents Index': {
+        address: '0xd83Ab964B116Ab18BAB783B7E2cf27462Aa7D92D',
+        init_block: '9563106',
       },
     },
     enabled: true,

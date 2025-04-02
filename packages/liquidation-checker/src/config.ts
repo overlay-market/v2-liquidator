@@ -342,4 +342,18 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'AI Agents Index': {
+    workers: 1,
+    cron_schedule: '25 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0xa7323c2E3EF542760ec727F4069d76d1aA4Cb207',
+        positions_per_run: 1000,
+      },
+      [Networks.BERACHAIN]: {
+        address: '0xd83Ab964B116Ab18BAB783B7E2cf27462Aa7D92D',
+        positions_per_run: 50,
+      },
+    },
+  },
 }
