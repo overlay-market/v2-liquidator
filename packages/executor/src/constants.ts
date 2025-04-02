@@ -11,7 +11,6 @@ export interface Position {
 
 export enum Networks {
   ARBITRUM = "arbitrum",
-  BERACHAIN = "berachain",
 }
 
 export interface NetworksConfig {
@@ -23,8 +22,5 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
   [Networks.ARBITRUM]: {
     rpc_url: process.env.ARBITRUM_RPC_URLS?.split(',')[0] || 'https://arbitrum-sepolia-rpc.publicnode.com',
     useOldMarketAbi: true,
-  },
-  [Networks.BERACHAIN]: {
-    rpc_url: process.env.BERACHAIN_RPC_URLS?.split(',')[0] || 'https://bartio.rpc.berachain.com/',
   },
 }
