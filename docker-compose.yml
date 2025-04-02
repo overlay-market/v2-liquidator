@@ -464,8 +464,6 @@ services:
     restart: unless-stopped
     environment:
       <<: *common-environment
-      PRIVATE_KEYS_1: ${PRIVATE_KEYS_1}
-      PRIVATE_KEYS_2: ${PRIVATE_KEYS_2}
     ports:
       - '2025:2025'
     deploy:
