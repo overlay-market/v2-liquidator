@@ -25,6 +25,6 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
     useOldMarketAbi: true,
   },
   [Networks.BERACHAIN]: {
-    rpc_url: process.env.BERACHAIN_RPC_URLS?.split(',')[0] || 'https://bartio.rpc.berachain.com/',
+    rpc_url: process.env.BERACHAIN_RPC_URLS?.split(',')[0] || 'https://bepolia.rpc.berachain.com/',
   },
 }

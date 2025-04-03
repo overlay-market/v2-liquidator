@@ -29,9 +29,9 @@ export const networkConfig: Record<Networks, NetworkConfig> = {
     rpc_first_probability: 0.7,
   },
   [Networks.BERACHAIN]: {
-    rpcUrls: process.env.BERACHAIN_RPC_URLS?.split(',') || ['https://bartio.rpc.berachain.com/'],
-    multicall2_address: '0xDe9D8f9d9d2B276Dd5B921211AcB918d33Ed0B6C',
-    ovl_state_address: '0x4f69Dfb24958fCf69b70BcA73c3E74F2c82BB405',
+    rpcUrls: process.env.BERACHAIN_RPC_URLS?.split(',') || ['https://bepolia.rpc.berachain.com/'],
+    multicall2_address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    ovl_state_address: '0xC50C7a502e6aE874A6299f385F938aF5C30CB91d',
     multicall_batch_size: 300,
     rpc_first_probability: 1,
   },
