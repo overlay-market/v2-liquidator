@@ -72,7 +72,11 @@ async function liquidatePosition(position: Position) {
         await resetRetryCount(position)
 
         // track on redis total liquidated positions by executor
-        await redis.incr(`total_liquidated_positions_by_executor:${network}:${wallet.address}`)
+        const executorKey = `total_liquidated_positions_by_executor:${network}:${wallet.address}`
+        if (!(await redis.exists(executorKey))) {
+          await redis.set(executorKey, '0')
+        }
+        await redis.incr(executorKey)
         // add counter to track total liquidated positions
         await redis.incr(`total_liquidated_positions:${network}:total`)
         // add counter to track total liquidated positions
