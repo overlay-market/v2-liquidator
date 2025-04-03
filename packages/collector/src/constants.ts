@@ -119,6 +119,34 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0xa7323c2E3EF542760ec727F4069d76d1aA4Cb207',
         init_block: '116321816',
       },
+      'Defi Index': {
+        address: '0x4878328c8bc1a573f4ee6078a8f7f4cab9389e4b',
+        init_block: '123498197',
+      },
+      'Layer 1 Index': {
+        address: '0x5a38a6396b370b6d9eaa57a02c2ae8505f5b7565',
+        init_block: '123498477',
+      },
+      'Layer 2 Index': {
+        address: '0x1c4e3bdfc14b5a0e00a1b1b85649d15eee45c965',
+        init_block: '123498749',
+      },
+      'Layer1 Vs Layer2 Index': {
+        address: '0x0bbeddf276286d56a3bcef6758f88899186cebaf',
+        init_block: '123499419',
+      },
+      'HoneyComb and Jars NFT Index': {
+        address: '0xf1a44a7d3da0dbb9b01b46bd4d0e69b285ff86eb',
+        init_block: '123499784',
+      },
+      'iBGT BERA': {
+        address: '0x3df3d22b997b052fed9d5b7852a69857a18b2f35',
+        init_block: '135983325',
+      },
+      'Bullas': {
+        address: '0x035138efbce8bceea1d02a29ed34b66d48b28c2d',
+        init_block: '135983321',
+      },
     },
     enabled: true,
     blockStep: 45000,

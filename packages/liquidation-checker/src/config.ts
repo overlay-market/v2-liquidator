@@ -268,4 +268,74 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'Defi Index': {
+    workers: 1,
+    cron_schedule: '27 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0x4878328c8bc1a573f4ee6078a8f7f4cab9389e4b',
+        positions_per_run: 1000,
+      },
+    },
+  },
+  'Layer 1 Index': {
+    workers: 1,
+    cron_schedule: '29 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0x5a38a6396b370b6d9eaa57a02c2ae8505f5b7565',
+        positions_per_run: 1000,
+      },
+    },
+  },
+  'Layer 2 Index': {
+    workers: 1,
+    cron_schedule: '31 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0x1c4e3bdfc14b5a0e00a1b1b85649d15eee45c965',
+        positions_per_run: 1000,
+      },
+    },
+  },
+  'Layer1 Vs Layer2 Index': {
+    workers: 1,
+    cron_schedule: '33 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0x0bbeddf276286d56a3bcef6758f88899186cebaf',
+        positions_per_run: 1000,
+      },
+    },
+  },
+  'HoneyComb and Jars NFT Index': {
+    workers: 1,
+    cron_schedule: '35 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0xf1a44a7d3da0dbb9b01b46bd4d0e69b285ff86eb',
+        positions_per_run: 1000,
+      },
+    },
+  },
+  'iBGT BERA': {
+    workers: 1,
+    cron_schedule: '37 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0x3df3d22b997b052fed9d5b7852a69857a18b2f35',
+        positions_per_run: 1000,
+      },
+    },
+  },
+  'Bullas': {
+    workers: 1,
+    cron_schedule: '39 */2 * * * *',
+    networks: {
+      [Networks.ARBITRUM]: {
+        address: '0x035138efbce8bceea1d02a29ed34b66d48b28c2d',
+        positions_per_run: 1000,
+      },
+    },
+  },
 }
