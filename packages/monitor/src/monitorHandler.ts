@@ -3,7 +3,7 @@ import chalk from 'chalk'
 import redis from './redisHandler'
 import { ethers } from 'ethers'
 import TelegramBot from 'node-telegram-bot-api'
-import { networkConfig, erc20ABI, Networks } from './constants'
+import { networkConfig, erc20ABI, Networks, ChainId } from './constants'
 import axios from 'axios'
 
 dotenv.config()
@@ -46,14 +46,20 @@ interface LiquidatorStats {
 async function fetchMarkets(network: Networks): Promise<{ [key: string]: string }> {
   try {
     const response = await axios.get(networkConfig[network].apiUrl)
-    const marketsArray = response.data
+    const marketsData = response.data
+    const chainId = ChainId[network]
+    const marketsArray = marketsData[chainId] || []
 
     const markets: { [key: string]: string } = {}
     for (const market of marketsArray) {
-      if (market.address && market.name) {
-        markets[market.address.toLowerCase()] = market.name.replace('-', '\\-')
-      } else if (market.address) {
-        markets[market.address.toLowerCase()] = market.address
+      if (market.chains && market.chains.length > 0) {
+        const deploymentAddress = market.chains[0].deploymentAddress
+        const marketName = market.marketName
+        if (deploymentAddress && marketName) {
+          markets[deploymentAddress.toLowerCase()] = marketName.replace('-', '\\-')
+        } else if (deploymentAddress) {
+          markets[deploymentAddress.toLowerCase()] = deploymentAddress
+        }
       }
     }
 
