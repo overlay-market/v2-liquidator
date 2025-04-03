@@ -195,17 +195,24 @@ export class LiquidatorCheckerHandler {
       console.log('Total positions:', totalPositions)
       console.log('Network:', network)
 
+      // If there are no positions, skip processing
+      if (totalPositions === 0) {
+        allPositions[network] = []
+        continue
+      }
+
       const currentIndexKey = `current-index:${network}:${marketAddress}`
       let currentIndexValue = await redis.get(currentIndexKey)
       let currentIndex = currentIndexValue ? parseInt(currentIndexValue) : 0
 
       let endIndex = currentIndex + positionsPerRun
-
       let positions: Position[] = []
 
       if (endIndex >= totalPositions) {
+        // Process remaining positions until the end
         endIndex = totalPositions - 1
-        const positionsLeft = positionsPerRun - (endIndex - currentIndex)
+        const remainingPositions = endIndex - currentIndex + 1
+        const positionsNeededToComplete = positionsPerRun - remainingPositions
 
         positions = await this.fetchPositionsByNetwork(
           marketAddress,
@@ -216,21 +223,31 @@ export class LiquidatorCheckerHandler {
 
         log('Processing positions from', currentIndex, 'to', endIndex, 'for network', network)
 
-        currentIndex = 0
-        endIndex = currentIndex + positionsLeft
+        if (positionsNeededToComplete > 0) {
+          // Wrap around to the beginning to complete the batch
+          currentIndex = 0
+          endIndex = Math.min(positionsNeededToComplete - 1, totalPositions - 1)
 
-        positions = positions.concat(
-          await this.fetchPositionsByNetwork(marketAddress, network, currentIndex, endIndex)
-        )
+          const additionalPositions = await this.fetchPositionsByNetwork(
+            marketAddress,
+            network,
+            currentIndex,
+            endIndex
+          )
 
-        log(
-          'Processing remaining positions from',
-          currentIndex,
-          'to',
-          endIndex,
-          'for network',
-          network
-        )
+          log(
+            'Processing remaining positions from',
+            currentIndex,
+            'to',
+            endIndex,
+            'for network',
+            network
+          )
+
+          positions = positions.concat(additionalPositions)
+        } else {
+          currentIndex = 0
+        }
       } else {
         positions = await this.fetchPositionsByNetwork(
           marketAddress,
@@ -239,10 +256,10 @@ export class LiquidatorCheckerHandler {
           endIndex
         )
         log('Processing positions from', currentIndex, 'to', endIndex, 'for network', network)
+        currentIndex = endIndex + 1
       }
 
       // update the current index
-      currentIndex = endIndex + 1
       await redis.set(currentIndexKey, currentIndex)
 
       allPositions[network] = positions
