@@ -4,6 +4,11 @@ export enum Networks {
   BSC_TESTNET = "bsc_testnet",
 }
 
+export const ChainId = {
+  [Networks.ARBITRUM]: 421614,
+  [Networks.BERACHAIN]: 80069,
+}
+
 interface NetworkConfig {
   rpcUrl: string
   apiUrl: string
@@ -13,13 +18,13 @@ interface NetworkConfig {
 export const networkConfig: Record<Networks, NetworkConfig> = {
   [Networks.ARBITRUM]: {
     rpcUrl: 'https://arbitrum-sepolia-rpc.publicnode.com',
-    apiUrl: 'https://api.overlay.market/sepolia-charts/v1/charts/markets',
+    apiUrl: 'https://api.overlay.market/data/api/markets',
     ov_token_address: '0x3E27fAe625f25291bFda517f74bf41DC40721dA2',
   },
   [Networks.BERACHAIN]: {
-    rpcUrl: 'https://bartio.rpc.berachain.com/',
-    apiUrl: 'https://api.overlay.market/bartio-charts/v1/charts/markets',
-    ov_token_address: '0x97576e088f0d05EF68cac2EEc63d017FE90952a0',
+    rpcUrl: 'https://bepolia.rpc.berachain.com/',
+    apiUrl: 'https://api.overlay.market/data/api/markets',
+    ov_token_address: '0xd37f15e6f2E5F4A624bbb9864f56bbd2e9b201b5',
   },
   [Networks.BSC_TESTNET]: {
     rpcUrl: 'https://bsc-testnet-dataseed.bnbchain.org',

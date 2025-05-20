@@ -12,6 +12,27 @@ const log = console.log
 
 const MAX_RETRIES = 3
 
+async function initializeCounters() {
+  if (!process.env.PRIVATE_KEYS) {
+    log(chalk.bold.red('At least one private key is required'))
+    return
+  }
+
+  const privateKeys = process.env.PRIVATE_KEYS.split(',')
+  const networks = Object.keys(networksConfig)
+
+  for (const network of networks) {
+    // Initialize counters for each executor
+    for (const privateKey of privateKeys) {
+      const wallet = new ethers.Wallet(privateKey)
+      const executorKey = `total_liquidated_positions_by_executor:${network}:${wallet.address}`
+      if (!(await redis.exists(executorKey))) {
+        await redis.set(executorKey, '0')
+      }
+    }
+  }
+}
+
 async function incrementRetryCount(position: Position): Promise<number> {
   const retryKey = `retry:${position.network}:${position.marketAddress}:${position.positionId}`
   const retries = await redis.incr(retryKey)
@@ -72,7 +93,8 @@ async function liquidatePosition(position: Position) {
         await resetRetryCount(position)
 
         // track on redis total liquidated positions by executor
-        await redis.incr(`total_liquidated_positions_by_executor:${network}:${wallet.address}`)
+        const executorKey = `total_liquidated_positions_by_executor:${network}:${wallet.address}`
+        await redis.incr(executorKey)
         // add counter to track total liquidated positions
         await redis.incr(`total_liquidated_positions:${network}:total`)
         // add counter to track total liquidated positions
@@ -123,6 +145,9 @@ export async function liquidablePositionsListener() {
     log(chalk.bold.red('At least one private key is required'))
     return
   }
+
+  // Initialize all executor counters
+  await initializeCounters()
 
   log(chalk.bold.blue('Executor started at:', new Date().toLocaleString()))
   log(chalk.blue('Listening for liquidatable positions...'))
