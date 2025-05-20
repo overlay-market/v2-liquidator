@@ -12,6 +12,7 @@ export interface Position {
 export enum Networks {
   ARBITRUM = "arbitrum",
   BERACHAIN = "berachain",
+  BSC_TESTNET = "bsc_testnet",
 }
 
 export interface NetworksConfig {
@@ -26,5 +27,9 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
   },
   [Networks.BERACHAIN]: {
     rpc_url: process.env.BERACHAIN_RPC_URLS?.split(',')[0] || 'https://bepolia.rpc.berachain.com/',
+  },
+  [Networks.BSC_TESTNET]: {
+    rpc_url: process.env.BSC_TESTNET_RPC_URL?.split(',')[0] || 'https://bsc-testnet-dataseed.bnbchain.org',
+    useOldMarketAbi: true,
   },
 }

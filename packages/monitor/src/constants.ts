@@ -1,6 +1,7 @@
 export enum Networks {
   ARBITRUM = "arbitrum",
   BERACHAIN = "berachain",
+  BSC_TESTNET = "bsc_testnet",
 }
 
 export const ChainId = {
@@ -24,6 +25,11 @@ export const networkConfig: Record<Networks, NetworkConfig> = {
     rpcUrl: 'https://bepolia.rpc.berachain.com/',
     apiUrl: 'https://api.overlay.market/data/api/markets',
     ov_token_address: '0xd37f15e6f2E5F4A624bbb9864f56bbd2e9b201b5',
+  },
+  [Networks.BSC_TESTNET]: {
+    rpcUrl: 'https://bsc-testnet-dataseed.bnbchain.org',
+    apiUrl: 'https://api.overlay.market/bsc-testnet-charts/v1/charts/markets',
+    ov_token_address: '0xb880E767739A82Eb716780BDfdbC1eD7b23BDB38',
   },
 }
 
