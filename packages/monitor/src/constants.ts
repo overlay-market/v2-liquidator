@@ -7,6 +7,7 @@ export enum Networks {
 export const ChainId = {
   [Networks.ARBITRUM]: 421614,
   [Networks.BERACHAIN]: 80069,
+  [Networks.BSC_TESTNET]: 97,
 }
 
 interface NetworkConfig {
