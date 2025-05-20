@@ -1,6 +1,7 @@
 export enum Networks {
   ARBITRUM = "arbitrum",
   BERACHAIN = "berachain",
+  BSC_TESTNET = "bsc_testnet",
 }
 
 interface NetworkConfig {
@@ -19,6 +20,11 @@ export const networkConfig: Record<Networks, NetworkConfig> = {
     rpcUrl: 'https://bartio.rpc.berachain.com/',
     apiUrl: 'https://api.overlay.market/bartio-charts/v1/charts/markets',
     ov_token_address: '0x97576e088f0d05EF68cac2EEc63d017FE90952a0',
+  },
+  [Networks.BSC_TESTNET]: {
+    rpcUrl: 'https://bsc-testnet-dataseed.bnbchain.org',
+    apiUrl: 'https://api.overlay.market/bsc-testnet-charts/v1/charts/markets',
+    ov_token_address: '0xb880E767739A82Eb716780BDfdbC1eD7b23BDB38',
   },
 }
 

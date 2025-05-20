@@ -35,6 +35,13 @@ export const networkConfig: Record<Networks, NetworkConfig> = {
     multicall_batch_size: 300,
     rpc_first_probability: 1,
   },
+  [Networks.BSC_TESTNET]: {
+    rpcUrls: process.env.BSC_TESTNET_RPC_URL?.split(',') || ['https://bsc-testnet-dataseed.bnbchain.org'],
+    multicall2_address: '0xca11bde05977b3631167028862be2a173976ca11',
+    ovl_state_address: '0x81BdBf6C69882Fe7c958018D3fF7FcAcb59EF8b7',
+    multicall_batch_size: 300,
+    rpc_first_probability: 1,
+  },
 }
 
 export const config: Record<string, MarketConfig> = {
@@ -49,6 +56,10 @@ export const config: Record<string, MarketConfig> = {
       [Networks.BERACHAIN]: {
         address: '0x09E8641df1E963d0bB1267e51579fC2B4E3E60cd',
         positions_per_run: 50,
+      },
+      [Networks.BSC_TESTNET]: {
+        address: '0x39d6c6D1B3A3cafb2cFd6E753EcC54b316392aFa',
+        positions_per_run: 500,
       },
     },
   },
@@ -91,6 +102,10 @@ export const config: Record<string, MarketConfig> = {
       [Networks.BERACHAIN]: {
         address: '0x49c4ad8B75e118a9b7Bd1b89E7AF029f3cB1c237',
         positions_per_run: 50,
+      },
+      [Networks.BSC_TESTNET]: {
+        address: '0xE886b759c7811052EF54CCbC7359766A134211fb',
+        positions_per_run: 500,
       },
     },
   },
@@ -157,6 +172,10 @@ export const config: Record<string, MarketConfig> = {
       [Networks.BERACHAIN]: {
         address: '0x1C66ae94C7dD18935F1E723d6395dAC27905Ab0c',
         positions_per_run: 50,
+      },
+      [Networks.BSC_TESTNET]: {
+        address: '0xCeC1Bdb2d5e7e6B25DCd4415b01598Db522299d7',
+        positions_per_run: 500,
       },
     },
   },
@@ -298,6 +317,10 @@ export const config: Record<string, MarketConfig> = {
         address: '0xFcf1CD40d20ae4955b35833c2329E923A5D8453d',
         positions_per_run: 50,
       },
+      [Networks.BSC_TESTNET]: {
+        address: '0xCb351B69686573Ce6657c6711ef86585EAaf212a',
+        positions_per_run: 500,
+      },
     },
   },
   'Hikaru': {
@@ -312,6 +335,10 @@ export const config: Record<string, MarketConfig> = {
         address: '0xDD81f146822100a71D1485a087a0F5D571b66942',
         positions_per_run: 50,
       },
+      [Networks.BSC_TESTNET]: {
+        address: '0x461e07C991Aaef9007577cE280cd466a385b16b2',
+        positions_per_run: 500,
+      },
     },
   },
   'Spotify Lana Del Rey': {
@@ -325,6 +352,10 @@ export const config: Record<string, MarketConfig> = {
       [Networks.BERACHAIN]: {
         address: '0x3a7302C4844853F7A7C14f8E671F190244A69B4C',
         positions_per_run: 50,
+      },
+      [Networks.BSC_TESTNET]: {
+        address: '0x64e5b483c669E5eD772928B66DEd4b4a27c6e563',
+        positions_per_run: 500,
       },
     },
   },
@@ -353,6 +384,130 @@ export const config: Record<string, MarketConfig> = {
       [Networks.BERACHAIN]: {
         address: '0xd83Ab964B116Ab18BAB783B7E2cf27462Aa7D92D',
         positions_per_run: 50,
+      },
+      [Networks.BSC_TESTNET]: {
+        address: '0x757c732844ef5953b163fa2fd4f7dc0093ed3f44',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Defi Index': {
+    workers: 1,
+    cron_schedule: '27 */2 * * * *',
+    networks: {
+      [Networks.BSC_TESTNET]: {
+        address: '0x973dd431ef5e057Ef69cC23a7FBA9183c6a3BEc9',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Layer 1 Index': {
+    workers: 1,
+    cron_schedule: '29 */2 * * * *',
+    networks: {
+      [Networks.BSC_TESTNET]: {
+        address: '0x4D3AEB975d0178AcF62cBB0D11B8Ac30671ac003',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Layer 2 Index': {
+    workers: 1,
+    cron_schedule: '31 */2 * * * *',
+    networks: {
+      [Networks.BSC_TESTNET]: {
+        address: '0xB4f72FFD54b7090B6da8eAD9Dd689B5ba93cCdF5',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Layer 1 vs Layer 2': {
+    workers: 1,
+    cron_schedule: '33 */2 * * * *',
+    networks: {
+      [Networks.BSC_TESTNET]: {
+        address: '0x64E6416d5eF820f23E09C53ADF6aC4ab061a305D',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Amouranth vs peachJars': {
+    workers: 1,
+    cron_schedule: '35 */2 * * * *',
+    networks: {
+      [Networks.BSC_TESTNET]: {
+        address: '0x90463EEF2db8d2a5B4d42Bfa29266658bA146668',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Jessicanigri vs Monalita': {
+    workers: 1,
+    cron_schedule: '37 */2 * * * *',
+    networks: {
+      [Networks.BSC_TESTNET]: {
+        address: '0x009966e81Bc03D412052e75f3B281754e0f4C7B9',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Monalita vs Elvasnaps': {
+    workers: 1,
+    cron_schedule: '39 */2 * * * *',
+    networks: {
+      [Networks.BSC_TESTNET]: {
+        address: '0x679151e1c29D1A848F6Ddc2B64fC4B81724C196A',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Binance Alpha Index': {
+    workers: 1,
+    cron_schedule: '41 */2 * * * *',
+    networks: {
+      [Networks.BSC_TESTNET]: {
+        address: '0x7Ee577Fb630e9Edd2f5c62e857353545dF53A66B',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'BNB / USD': {
+    workers: 1,
+    cron_schedule: '43 */2 * * * *',
+    networks: {
+      [Networks.BSC_TESTNET]: {
+        address: '0xD9D2948f867Cf04e06Db278aAD2Dd0fE75fbE9f2',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Made In USA Index': {
+    workers: 1,
+    cron_schedule: '45 */2 * * * *',
+    networks: {
+      [Networks.BSC_TESTNET]: {
+        address: '0x3d084117FD13773dc4745D268717e4B4C51972D6',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'SOL Index': {
+    workers: 1,
+    cron_schedule: '47 */2 * * * *',
+    networks: {
+      [Networks.BSC_TESTNET]: {
+        address: '0x5A42905192d4a2d27f0664E912b7f3FfD8254591',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'SOL/USD': { 
+    workers: 1,
+    cron_schedule: '49 */2 * * * *',
+    networks: {
+      [Networks.BSC_TESTNET]: {
+        address: '0xe979178e6c15550D36215e273df3AAE010043714',
+        positions_per_run: 500,
       },
     },
   },

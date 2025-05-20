@@ -10,6 +10,7 @@ export interface Market {
 export enum Networks {
   ARBITRUM = "arbitrum",
   BERACHAIN = "berachain",
+  BSC_TESTNET = "bsc_testnet",
 }
 
 export interface NetworksConfig {
@@ -216,6 +217,87 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
       'AI Agents Index': {
         address: '0xd83Ab964B116Ab18BAB783B7E2cf27462Aa7D92D',
         init_block: '9563106',
+      },
+    },
+    enabled: true,
+    blockStep: 5000,
+    useFork: false,
+  },
+  [Networks.BSC_TESTNET]: {
+    rpc_url: process.env.BSC_TESTNET_RPC_URL?.split(',')[0] || 'https://bsc-testnet-dataseed.bnbchain.org',
+    fork_rpc_url: process.env.BSC_TESTNET_FORK_RPC_URL?.split(',')[0] || 'https://bsc-testnet-dataseed.bnbchain.org',
+    markets: {
+      'Counter-Strike 2 Skins': {
+        address: '0xE886b759c7811052EF54CCbC7359766A134211fb',
+        init_block: '51801645',
+      },
+      'ETH Dominance': {
+        address: '0x39d6c6D1B3A3cafb2cFd6E753EcC54b316392aFa',
+        init_block: '51853511',
+      },
+      'AI Index': {
+        address: '0xCeC1Bdb2d5e7e6B25DCd4415b01598Db522299d7',
+        init_block: '51853511',
+      },
+      'Hikaru Nakamura': {
+        address: '0x461e07C991Aaef9007577cE280cd466a385b16b2',
+        init_block: '51853511',
+      },
+      'Magnus Carlsen': {
+        address: '0xCb351B69686573Ce6657c6711ef86585EAaf212a',
+        init_block: '51853511',
+      },
+      'Defi Index': {
+        address: '0x973dd431ef5e057Ef69cC23a7FBA9183c6a3BEc9',
+        init_block: '51971579',
+      },
+      'Layer 1 Index': {
+        address: '0x4D3AEB975d0178AcF62cBB0D11B8Ac30671ac003',
+        init_block: '51971579',
+      },
+      'Layer 2 Index': {
+        address: '0xB4f72FFD54b7090B6da8eAD9Dd689B5ba93cCdF5',
+        init_block: '51971579',
+      },
+      'Layer1 Vs Layer2 Index': {
+        address: '0x64E6416d5eF820f23E09C53ADF6aC4ab061a305D',
+        init_block: '51971579',
+      },
+      'Lana Del Rey': {
+        address: '0x64e5b483c669E5eD772928B66DEd4b4a27c6e563',
+        init_block: '51853511',
+      },
+      'Amouranth vs peachJars': {
+        address: '0x90463EEF2db8d2a5B4d42Bfa29266658bA146668',
+        init_block: '51971579',
+      },
+      'Jessicanigri vs Monalita': {
+        address: '0x009966e81Bc03D412052e75f3B281754e0f4C7B9',
+        init_block: '51971579',
+      },
+      'Monalita vs Elvasnaps': {
+        address: '0x679151e1c29D1A848F6Ddc2B64fC4B81724C196A',
+        init_block: '51971580',
+      },
+      'Binance Alpha Index': {
+        address: '0x7Ee577Fb630e9Edd2f5c62e857353545dF53A66B',
+        init_block: '51720889',
+      },
+      'BNB / USD': {
+        address: '0xD9D2948f867Cf04e06Db278aAD2Dd0fE75fbE9f2',
+        init_block: '51720889',
+      },
+      'Made In USA Index': {
+        address: '0x3d084117FD13773dc4745D268717e4B4C51972D6',
+        init_block: '51720889',
+      },
+      'SOL Index': {
+        address: '0x5A42905192d4a2d27f0664E912b7f3FfD8254591',
+        init_block: '51801645',
+      },
+      'SOL/USD': {
+        address: '0xe979178e6c15550D36215e273df3AAE010043714',
+        init_block: '51801645',
       },
     },
     enabled: true,
