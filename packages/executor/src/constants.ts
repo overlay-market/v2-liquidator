@@ -29,7 +29,7 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
     rpc_url: process.env.BERACHAIN_RPC_URLS?.split(',')[0] || 'https://bepolia.rpc.berachain.com/',
   },
   [Networks.BSC_TESTNET]: {
-    rpc_url: process.env.BSC_TESTNET_RPC_URL?.split(',')[0] || 'https://bsc-testnet-dataseed.bnbchain.org',
+    rpc_url: process.env.BSC_TESTNET_RPC_URLS?.split(',')[0] || 'https://bsc-testnet-dataseed.bnbchain.org',
     useOldMarketAbi: true,
   },
 }

@@ -163,8 +163,8 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
     useFork: false,
   },
   [Networks.BSC_TESTNET]: {
-    rpc_url: process.env.BSC_TESTNET_RPC_URL?.split(',')[0] || 'https://bsc-testnet-dataseed.bnbchain.org',
-    fork_rpc_url: process.env.BSC_TESTNET_FORK_RPC_URL?.split(',')[0] || 'https://bsc-testnet-dataseed.bnbchain.org',
+    rpc_url: process.env.BSC_TESTNET_RPC_URLS?.split(',')[0] || 'https://bsc-testnet-dataseed.bnbchain.org',
+    fork_rpc_url: process.env.BSC_TESTNET_FORK_RPC_URLS?.split(',')[0] || 'https://bsc-testnet-dataseed.bnbchain.org',
     markets: {
       'Counter-Strike 2 Skins': {
         address: '0xE886b759c7811052EF54CCbC7359766A134211fb',
