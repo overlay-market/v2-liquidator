@@ -36,7 +36,7 @@ export const networkConfig: Record<Networks, NetworkConfig> = {
     rpc_first_probability: 1,
   },
   [Networks.BSC_TESTNET]: {
-    rpcUrls: process.env.BSC_TESTNET_RPC_URL?.split(',') || ['https://bsc-testnet-dataseed.bnbchain.org'],
+    rpcUrls: process.env.BSC_TESTNET_RPC_URLS?.split(',') || ['https://bsc-testnet-dataseed.bnbchain.org'],
     multicall2_address: '0xca11bde05977b3631167028862be2a173976ca11',
     ovl_state_address: '0x81BdBf6C69882Fe7c958018D3fF7FcAcb59EF8b7',
     multicall_batch_size: 300,
