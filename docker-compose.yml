@@ -544,6 +544,193 @@ services:
           cpus: '0.5'
           memory: 512M
 
+  liquidation-checker-amouranth-peachjars:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Amouranth vs peachJars
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  liquidation-checker-jessicanigri-monalita:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Jessicanigri vs Monalita
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  liquidation-checker-monalita-elvasnaps:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Monalita vs Elvasnaps
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  liquidation-checker-binance-alpha-index:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Binance Alpha Index
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  liquidation-checker-bnb-usd:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: BNB / USD
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  liquidation-checker-made-in-usa-index:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Made In USA Index
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  liquidation-checker-sol-index:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: SOL Index
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  liquidation-checker-sol-usd:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: SOL/USD
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  liquidation-checker-memes-index:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Memes Index
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  liquidation-checker-spotify-the-weeknd-index:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Spotify The Weeknd Index
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  liquidation-checker-spotify-billie-eilish-index:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Spotify Billie Eilish Index
+      NODE_OPTIONS: --max_old_space_size=409
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
   executor-1:
     build:
       context: .

@@ -166,7 +166,7 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
     rpc_url: process.env.BSC_TESTNET_RPC_URLS?.split(',')[0] || 'https://bsc-testnet-dataseed.bnbchain.org',
     fork_rpc_url: process.env.BSC_TESTNET_FORK_RPC_URLS?.split(',')[0] || 'https://bsc-testnet-dataseed.bnbchain.org',
     markets: {
-      'Counter-Strike 2 Skins': {
+      'CS2 Skins': {
         address: '0xE886b759c7811052EF54CCbC7359766A134211fb',
         init_block: '51801645',
       },
@@ -174,15 +174,15 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0x39d6c6D1B3A3cafb2cFd6E753EcC54b316392aFa',
         init_block: '51853511',
       },
-      'AI Index': {
+      'AiIndex': {
         address: '0xCeC1Bdb2d5e7e6B25DCd4415b01598Db522299d7',
         init_block: '51853511',
       },
-      'Hikaru Nakamura': {
+      'Hikaru': {
         address: '0x461e07C991Aaef9007577cE280cd466a385b16b2',
         init_block: '51853511',
       },
-      'Magnus Carlsen': {
+      'Carlsen': {
         address: '0xCb351B69686573Ce6657c6711ef86585EAaf212a',
         init_block: '51853511',
       },
@@ -202,7 +202,7 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0x64E6416d5eF820f23E09C53ADF6aC4ab061a305D',
         init_block: '51971579',
       },
-      'Lana Del Rey': {
+      'Spotify Lana Del Rey': {
         address: '0x64e5b483c669E5eD772928B66DEd4b4a27c6e563',
         init_block: '51853511',
       },
@@ -237,6 +237,62 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
       'SOL/USD': {
         address: '0xe979178e6c15550D36215e273df3AAE010043714',
         init_block: '51801645',
+      },
+      'CS Rifles': {
+        address: '0x9fdabaa4626a3e4290acbad0cef2786135c038c2',
+        init_block: '',
+      },
+      'CS Knives': {
+        address: '0x7420f40edae449304cb57f7a2e617dbc184edfac',
+        init_block: '',
+      },
+      'CS Knives Rifles': {
+        address: '0xd7d74a271e9ea8f9561b32ee997b47993c2de49b',
+        init_block: '',
+      },
+      'BTC Dominance': {
+        address: '0x17560a3032932ae7542bcc3e0f1d2b71b7a13727',
+        init_block: '',
+      },
+      'EthSol': {
+        address: '0x58cfe0e9e376981c1b7ba7cd2673a08f60690625',
+        init_block: '',
+      },
+      'Real Estate': {
+        address: '0x29f0852abbe23137e7d15dd64893c5ae4b05bce9',
+        init_block: '',
+      },
+      'Super Eth': {
+        address: '0x7b7dbada2560d2aa984d3ed9c692bbd23100e056',
+        init_block: '',
+      },
+      'Cats Dogs 2': {
+        address: '0x8fc864c4238c8642cd1d9bd5f8c27f18f2248521',
+        init_block: '',
+      },
+      'Cats Frogs': {
+        address: '0x5b16e45ab066bfc8882409b28fe768a2abde0d56',
+        init_block: '',
+      },
+      'Frogs Dogs': {
+        address: '0xe278196f5ba680ba4dc9f0c627cc3e589c6bd6c9',
+        init_block: '',
+      },
+      'AI Agents Index': {
+        address: '0x757c732844ef5953b163fa2fd4f7dc0093ed3f44',
+        init_block: '',
+      },
+      'Memes Index': {
+        address: '0xc89c7066b6f1ff3a261738b95b1e419fe04c10a9',
+        init_block: '',
+      },
+      'Spotify The Weeknd Index': {
+        address: '0x9cc4fde387c3b0318945e8338c74c8ef31ceed62',
+        init_block: '',
+      },
+      'Spotify Billie Eilish Index': {
+        address: '0xa1291de98afba51e7e957ffe5eeab071a8eac582',
+        init_block: '',
       },
     },
     enabled: true,
