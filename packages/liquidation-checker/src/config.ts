@@ -67,6 +67,10 @@ export const config: Record<string, MarketConfig> = {
         address: '0x553de578e68a4faa55d4522665cb2d2d53390d22',
         positions_per_run: 4000,
       },
+      [Networks.BSC_TESTNET]: {
+        address: '0x17560a3032932ae7542bcc3e0f1d2b71b7a13727',
+        positions_per_run: 500,
+      },
     },
   },
   'Quantum Cats': {
@@ -155,6 +159,10 @@ export const config: Record<string, MarketConfig> = {
         address: '0x3966f792517E2Df998C48301163c2A95BFd3efF8',
         positions_per_run: 1000,
       },
+      [Networks.BSC_TESTNET]: {
+        address: '0x58cfe0e9e376981c1b7ba7cd2673a08f60690625',
+        positions_per_run: 500,
+      },
     },
   },
   'CS Rifles': {
@@ -164,6 +172,10 @@ export const config: Record<string, MarketConfig> = {
       [Networks.ARBITRUM]: {
         address: '0xE35a856F1d98f101c5C60dB8d02BA4Dff87986B3',
         positions_per_run: 1000,
+      },
+      [Networks.BSC_TESTNET]: {
+        address: '0x9fdabaa4626a3e4290acbad0cef2786135c038c2',
+        positions_per_run: 500,
       },
     },
   },
@@ -175,6 +187,10 @@ export const config: Record<string, MarketConfig> = {
         address: '0x6Dfe4094599C74A920285A17608Ae023D707eEd9',
         positions_per_run: 1000,
       },
+      [Networks.BSC_TESTNET]: {
+        address: '0x7420f40edae449304cb57f7a2e617dbc184edfac',
+        positions_per_run: 500,
+      },
     },
   },
   'CS Knives Rifles': {
@@ -184,6 +200,10 @@ export const config: Record<string, MarketConfig> = {
       [Networks.ARBITRUM]: {
         address: '0x2011d14B00f49CC461958Be682bC1443C7Fd5d87',
         positions_per_run: 1000,
+      },
+      [Networks.BSC_TESTNET]: {
+        address: '0xd7d74a271e9ea8f9561b32ee997b47993c2de49b',
+        positions_per_run: 500,
       },
     },
   },
@@ -195,6 +215,10 @@ export const config: Record<string, MarketConfig> = {
         address: '0x73973d72eef84a8624e4ec381e8e73caff570092',
         positions_per_run: 1000,
       },
+      [Networks.BSC_TESTNET]: {
+        address: '0x8fc864c4238c8642cd1d9bd5f8c27f18f2248521',
+        positions_per_run: 500,
+      },
     },
   },
   'Cats Frogs': {
@@ -204,6 +228,10 @@ export const config: Record<string, MarketConfig> = {
       [Networks.ARBITRUM]: {
         address: '0x8bfb2494f3a9b1441185cf04bb10e92e6b4fd9b9',
         positions_per_run: 1000,
+      },
+      [Networks.BSC_TESTNET]: {
+        address: '0x5b16e45ab066bfc8882409b28fe768a2abde0d56',
+        positions_per_run: 500,
       },
     },
   },
@@ -215,6 +243,10 @@ export const config: Record<string, MarketConfig> = {
         address: '0xecd76abb33c36dd62a7d033d26f7146801e03d4f',
         positions_per_run: 1000,
       },
+      [Networks.BSC_TESTNET]: {
+        address: '0xe278196f5ba680ba4dc9f0c627cc3e589c6bd6c9',
+        positions_per_run: 500,
+      },
     },
   },
   'Real Estate': {
@@ -225,6 +257,10 @@ export const config: Record<string, MarketConfig> = {
         address: '0x31d1e411db1a11a5741ff55d5c01c0c4cf4ac891',
         positions_per_run: 1000,
       },
+      [Networks.BSC_TESTNET]: {
+        address: '0x29f0852abbe23137e7d15dd64893c5ae4b05bce9',
+        positions_per_run: 500,
+      },
     },
   },
   'Super Eth': {
@@ -234,6 +270,10 @@ export const config: Record<string, MarketConfig> = {
       [Networks.ARBITRUM]: {
         address: '0xfD3362Feb6a1fd9C7fDD4e314ecdaAC1E54360C6',
         positions_per_run: 1000,
+      },
+      [Networks.BSC_TESTNET]: {
+        address: '0x7b7dbada2560d2aa984d3ed9c692bbd23100e056',
+        positions_per_run: 500,
       },
     },
   },
@@ -465,6 +505,36 @@ export const config: Record<string, MarketConfig> = {
     networks: {
       [Networks.BSC_TESTNET]: {
         address: '0xe979178e6c15550D36215e273df3AAE010043714',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Memes Index': {
+    workers: 1,
+    cron_schedule: '51 */2 * * * *',
+    networks: {
+      [Networks.BSC_TESTNET]: {
+        address: '0xc89c7066b6f1ff3a261738b95b1e419fe04c10a9',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Spotify The Weeknd Index': {
+    workers: 1,
+    cron_schedule: '53 */2 * * * *',
+    networks: {
+      [Networks.BSC_TESTNET]: {
+        address: '0x9cc4fde387c3b0318945e8338c74c8ef31ceed62',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Spotify Billie Eilish Index': {
+    workers: 1,
+    cron_schedule: '55 */2 * * * *',
+    networks: {
+      [Networks.BSC_TESTNET]: {
+        address: '0xa1291de98afba51e7e957ffe5eeab071a8eac582',
         positions_per_run: 500,
       },
     },
