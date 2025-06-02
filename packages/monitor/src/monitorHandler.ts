@@ -167,7 +167,11 @@ function createLiquidatorReportMessage(
   markets: { [key: string]: string },
   network: Networks
 ): string {
-  let message = `📋 *Liquidator Report for ${network}* 📋\n`
+  let displayName = network as string;
+  if (network === Networks.BSC_TESTNET) {
+    displayName = 'bsc testnet';
+  }
+  let message = `📋 *Liquidator Report for ${displayName}* 📋\n`;
   message += `from: ${
     stats.prevTimestamp ? new Date(parseInt(stats.prevTimestamp)).toUTCString() : 'N/A'
   }\n`
