@@ -29,7 +29,7 @@ export const networkConfig: Record<Networks, NetworkConfig> = {
   },
   [Networks.BSC_TESTNET]: {
     rpcUrl: 'https://bsc-testnet-dataseed.bnbchain.org',
-    apiUrl: 'https://api.overlay.market/bsc-testnet-charts/v1/charts/markets',
+    apiUrl: 'https://api.overlay.market/data/api/markets',
     ov_token_address: '0xb880E767739A82Eb716780BDfdbC1eD7b23BDB38',
   },
 }
