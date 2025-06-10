@@ -142,6 +142,18 @@ async function fetchEvents(network: Networks, marketName: string, rpcUrl: string
   let startBlock = await redis.get(`latest_block_processed:${network}:${marketAddress}`)
   // get the latest block from the RPC provider
   const latestBlock = await provider.getBlockNumber()
+
+  // if the latest block from RPC is lower than our last processed block,
+  // it might be due to a reorg or RPC sync issue. Skip this run for this market.
+  if (startBlock && parseInt(startBlock) > latestBlock) {
+    log(
+      chalk.yellow(
+        `Last processed block ${startBlock} is greater than the current latest block ${latestBlock} for market ${marketName}. Skipping this run.`
+      )
+    )
+    return
+  }
+
   // current block step to fetch events
   const blockStep = networksConfig[network].blockStep
 
