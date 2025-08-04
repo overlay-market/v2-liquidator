@@ -42,6 +42,13 @@ export const networkConfig: Record<Networks, NetworkConfig> = {
     multicall_batch_size: 300,
     rpc_first_probability: 1,
   },
+  [Networks.BSC_MAINNET]: {
+    rpcUrls: process.env.BSC_MAINNET_RPC_URLS?.split(',') || ['https://bsc-dataseed.bnbchain.org'],
+    multicall2_address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+    ovl_state_address: '0x10575a9C8F36F9F42D7DB71Ef179eD9BEf8Df238',
+    multicall_batch_size: 300,
+    rpc_first_probability: 1,
+  },
 }
 
 export const config: Record<string, MarketConfig> = {
@@ -93,6 +100,10 @@ export const config: Record<string, MarketConfig> = {
       },
       [Networks.BSC_TESTNET]: {
         address: '0xE886b759c7811052EF54CCbC7359766A134211fb',
+        positions_per_run: 500,
+      },
+      [Networks.BSC_MAINNET]: {
+        address: '0x5Ec437121a47B86B40FdF1aB4eF95806e60a9247',
         positions_per_run: 500,
       },
     },

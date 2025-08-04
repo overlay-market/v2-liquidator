@@ -13,6 +13,7 @@ export enum Networks {
   ARBITRUM = "arbitrum",
   BERACHAIN = "berachain",
   BSC_TESTNET = "bsc_testnet",
+  BSC_MAINNET = "bsc_mainnet",
 }
 
 export interface NetworksConfig {
@@ -31,5 +32,8 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
   [Networks.BSC_TESTNET]: {
     rpc_url: process.env.BSC_TESTNET_RPC_URLS?.split(',')[0] || 'https://bsc-testnet-dataseed.bnbchain.org',
     useOldMarketAbi: true,
+  },
+  [Networks.BSC_MAINNET]: {
+    rpc_url: process.env.BSC_MAINNET_RPC_URLS?.split(',')[0] || 'https://bsc-dataseed.bnbchain.org',
   },
 }

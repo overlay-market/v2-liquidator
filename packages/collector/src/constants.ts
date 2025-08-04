@@ -11,6 +11,7 @@ export enum Networks {
   ARBITRUM = "arbitrum",
   BERACHAIN = "berachain",
   BSC_TESTNET = "bsc_testnet",
+  BSC_MAINNET = "bsc_mainnet",
 }
 
 export interface NetworksConfig {
@@ -293,6 +294,19 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
       'Spotify Billie Eilish Index': {
         address: '0xa1291de98afba51e7e957ffe5eeab071a8eac582',
         init_block: '',
+      },
+    },
+    enabled: true,
+    blockStep: 5000,
+    useFork: false,
+  },
+  [Networks.BSC_MAINNET]: {
+    rpc_url: process.env.BSC_MAINNET_RPC_URLS?.split(',')[0] || 'https://bsc-dataseed.bnbchain.org',
+    fork_rpc_url: process.env.BSC_MAINNET_FORK_RPC_URLS?.split(',')[0] || 'https://bsc-dataseed.bnbchain.org',
+    markets: {
+      'CS2 Skins': {
+        address: '0x5Ec437121a47B86B40FdF1aB4eF95806e60a9247',
+        init_block: '56097602',
       },
     },
     enabled: true,
