@@ -168,9 +168,6 @@ function createLiquidatorReportMessage(
   network: Networks
 ): string {
   let displayName = network as string;
-  if (network === Networks.BSC_TESTNET) {
-    displayName = 'bsc testnet';
-  }
   let message = `📋 *Liquidator Report for ${displayName}* 📋\n`;
   message += `from: ${
     stats.prevTimestamp ? new Date(parseInt(stats.prevTimestamp)).toUTCString() : 'N/A'
