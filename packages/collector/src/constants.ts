@@ -42,6 +42,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0x6bfde86c4C5AABb614addB51bDAd1C4450bD2901',
         init_block: '57245536',
       },
+      'Binance Alpha Index': {
+        address: '0x799B52DF5394b143C7786b1E6E4533CE1De5D817',
+        init_block: '57372370',
+      },
     },
     enabled: true,
     blockStep: 5000,

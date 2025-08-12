@@ -69,4 +69,14 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'Binance Alpha Index': {
+    workers: 1,
+    cron_schedule: '23 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x799B52DF5394b143C7786b1E6E4533CE1De5D817',
+        positions_per_run: 500,
+      },
+    },
+  },
 }

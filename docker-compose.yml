@@ -102,6 +102,23 @@ services:
           cpus: '0.65'
           memory: 768M
 
+  liquidation-binance-alpha-index:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Binance Alpha Index
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
   executor-1:
     build:
       context: .
