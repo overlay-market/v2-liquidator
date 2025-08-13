@@ -39,4 +39,44 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'Spotify The Weeknd': {
+    workers: 1,
+    cron_schedule: '17 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x809E3b60cFb68d617e75ccCc8B15336dB7bAEB06',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Strategic Reserve Index': {
+    workers: 1,
+    cron_schedule: '19 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x3fd2f14ae16919FDC7B1c3beF0cDbaA6A6B427Dc',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'BNB/USD': {
+    workers: 1,
+    cron_schedule: '21 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x6bfde86c4C5AABb614addB51bDAd1C4450bD2901',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Binance Alpha Index': {
+    workers: 1,
+    cron_schedule: '23 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x799B52DF5394b143C7786b1E6E4533CE1De5D817',
+        positions_per_run: 500,
+      },
+    },
+  },
 }
