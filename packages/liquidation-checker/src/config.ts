@@ -79,4 +79,14 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'AI Index': {
+    workers: 1,
+    cron_schedule: '25 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xb9FB39bD8C24bd4E8eDF339a33fb5cD2eD2dd9C8',
+        positions_per_run: 500,
+      },
+    },
+  },
 }

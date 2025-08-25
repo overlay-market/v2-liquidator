@@ -46,6 +46,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0x799B52DF5394b143C7786b1E6E4533CE1De5D817',
         init_block: '57372370',
       },
+      'AI Index': {
+        address: '0xb9FB39bD8C24bd4E8eDF339a33fb5cD2eD2dd9C8',
+        init_block: '58502607',
+      },
     },
     enabled: true,
     blockStep: 5000,
