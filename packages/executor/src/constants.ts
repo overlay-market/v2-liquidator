@@ -7,6 +7,7 @@ export interface Position {
   owner: string
   marketAddress: string
   network: Networks
+  lastErrorType?: string
 }
 
 export enum Networks {

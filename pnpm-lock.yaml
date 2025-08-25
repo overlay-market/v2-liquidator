@@ -56,10 +56,16 @@ importers:
       ioredis:
         specifier: ^5.4.1
         version: 5.4.1
+      node-telegram-bot-api:
+        specifier: ^0.66.0
+        version: 0.66.0(request@2.88.2)
     devDependencies:
       '@types/node':
         specifier: ^20.12.11
         version: 20.12.11
+      '@types/node-telegram-bot-api':
+        specifier: ^0.64.7
+        version: 0.64.7
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@20.12.11)(typescript@5.4.5)
