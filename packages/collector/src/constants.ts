@@ -50,6 +50,14 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0xb9FB39bD8C24bd4E8eDF339a33fb5cD2eD2dd9C8',
         init_block: '58502607',
       },
+      'USA Index': {
+        address: '0x5B6a02E0Bd8Ed1D6d58368D60275F60D26e0FB55',
+        init_block: '58942999',
+      },
+      'BTC Dominance': {
+        address: '0x204b281d5f5a504043Ae2D91f3CF79bbBC1F6E09',
+        init_block: '58942999',
+      },
     },
     enabled: true,
     blockStep: 5000,
