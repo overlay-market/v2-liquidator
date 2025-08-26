@@ -5,10 +5,20 @@ import chalk from 'chalk'
 import { ethers } from 'ethers'
 import redis from './redisHandler'
 import { networksConfig, Position } from './constants'
+import TelegramBot from 'node-telegram-bot-api'
 
 dotenv.config()
 
 const log = console.log
+
+let bot: TelegramBot
+
+if (process.env.TELEGRAM_BOT_TOKEN) {
+  bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN)
+  log(chalk.green('Telegram bot initialized'))
+} else {
+  log(chalk.bold.red('TELEGRAM_BOT_TOKEN must be provided'))
+}
 
 const MAX_RETRIES = 3
 
@@ -42,6 +52,33 @@ async function incrementRetryCount(position: Position): Promise<number> {
 async function resetRetryCount(position: Position) {
   const retryKey = `retry:${position.network}:${position.marketAddress}:${position.positionId}`
   await redis.del(retryKey)
+}
+
+async function sendTelegramMessage(message: string) {
+  if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_CHAT_ID) {
+    log(chalk.bold.red('TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID must be provided'))
+    return
+  }
+
+  try {
+    await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, message, { parse_mode: 'MarkdownV2' })
+    log(chalk.green('Error report sent to Telegram'))
+  } catch (error) {
+    log(chalk.red('Failed to send Telegram message:', error))
+  }
+}
+
+async function reportLiquidationError(position: Position, retries: number, errorType: string) {
+  const message = `❌ *Liquidation Failed* ❌\n\n` +
+    `*Position ID:* \`${position.positionId}\`\n` +
+    `*Owner:* \`${position.owner}\`\n` +
+    `*Market:* \`${position.marketAddress}\`\n` +
+    `*Network:* ${position.network}\n` +
+    `*Retries:* ${retries}/${MAX_RETRIES}\n` +
+    `*Error Type:* ${errorType}\n\n` +
+    `Check logs for detailed error information\\.`
+
+  await sendTelegramMessage(message)
 }
 
 async function liquidatePosition(position: Position) {
@@ -124,6 +161,23 @@ async function liquidatePosition(position: Position) {
   } catch (error) {
     log(`${chalk.bgRed('Transaction failed! =>')} ${chalk.yellow('network:')} ${network} ${chalk.yellow('positionId:')} ${positionId}`)
     log(chalk.red(error))
+    
+    // Store error type in local variable for final reporting
+    let errorType = 'Transaction Failed'
+    if (error instanceof Error) {
+      if (error.message.includes('insufficient funds')) {
+        errorType = 'Insufficient Funds'
+      } else if (error.message.includes('nonce')) {
+        errorType = 'Nonce Error'
+      } else if (error.message.includes('revert')) {
+        errorType = 'Transaction Reverted'
+      } else if (error.message.includes('gas')) {
+        errorType = 'Gas Error'
+      }
+    }
+    
+    // Store in a simple variable for the final report
+    position.lastErrorType = errorType
   }
 
   // increment retry count and check if it exceeds the max retries
@@ -131,6 +185,11 @@ async function liquidatePosition(position: Position) {
 
   if (retries > MAX_RETRIES) {
     log(chalk.bold.red(`Position ${position.positionId} exceeded max retries, removing from queue`));
+    
+    // Report error to Telegram when max retries exceeded
+    const errorType = position.lastErrorType || 'Max Retries Exceeded'
+    await reportLiquidationError(position, retries, errorType)
+    
     await redis.hdel(`positions:${network}:${marketAddress}`, position.positionId)
     await redis.zrem(`position_index:${network}:${marketAddress}`, position.positionId)
     await resetRetryCount(position)

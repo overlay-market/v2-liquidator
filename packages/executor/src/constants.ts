@@ -7,6 +7,7 @@ export interface Position {
   owner: string
   marketAddress: string
   network: Networks
+  lastErrorType?: string
 }
 
 export enum Networks {
@@ -20,6 +21,6 @@ export interface NetworksConfig {
 
 export const networksConfig: Record<Networks, NetworksConfig> = {
   [Networks.BSC_MAINNET]: {
-    rpc_url: process.env.BSC_MAINNET_RPC_URLS?.split(',')[0] || 'https://bsc-rpc.publicnode.com',
+    rpc_url: process.env.BSC_MAINNET_EXECUTOR_RPC_URL || 'https://bsc-rpc.publicnode.com',
   },
 }
