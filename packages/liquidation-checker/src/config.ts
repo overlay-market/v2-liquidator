@@ -89,4 +89,24 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'USA Index': {
+    workers: 1,
+    cron_schedule: '27 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x5B6a02E0Bd8Ed1D6d58368D60275F60D26e0FB55',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'BTC Dominance': {
+    workers: 1,
+    cron_schedule: '29 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x204b281d5f5a504043Ae2D91f3CF79bbBC1F6E09',
+        positions_per_run: 500,
+      },
+    },
+  },
 }
