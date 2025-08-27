@@ -61,7 +61,7 @@ async function sendTelegramMessage(message: string) {
   }
 
   try {
-    await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, message, { parse_mode: 'MarkdownV2' })
+    await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, message, { parse_mode: 'Markdown' })
     log(chalk.green('Error report sent to Telegram'))
   } catch (error) {
     log(chalk.red('Failed to send Telegram message:', error))
