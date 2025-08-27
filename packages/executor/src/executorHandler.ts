@@ -49,8 +49,13 @@ async function initializeCounters() {
  * but may become available later
  */
 export async function isMarketError(error: any): Promise<boolean> {
-  return error?.message?.includes('OVLV1:!data') || 
-         error?.error?.message?.includes('OVLV1:!data')
+  if (error?.message?.includes('OVLV1:!data')) {
+    return true
+  }
+  if (error?.error?.message?.includes('OVLV1:!data')) {
+    return true
+  }
+  return false
 }
 
 /**
@@ -241,21 +246,26 @@ export async function liquidablePositionsListener() {
 
   while (true) {
     try {
-      const result = await redis.brpop('liquidatable_positions', 0)
+      // 1. Process delayed positions that are ready to retry (immediate, non-blocking)
+      const now = Date.now()
+      const readyDelayed = await redis.zrangebyscore('delayed_positions', 0, now, 'LIMIT', 0, 1)
+      
+      if (readyDelayed.length > 0) {
+        const positionData = readyDelayed[0]
+        const delayedPosition: Position = JSON.parse(positionData)
+        
+        // Remove first, then process (atomic operation)
+        await redis.zrem('delayed_positions', positionData)
+        
+        log(chalk.blue(`Retrying delayed position ${delayedPosition.positionId} after backoff period`))
+        await liquidatePosition(delayedPosition)
+      }
+      
+      // 2. Check for new liquidatable positions (with 1 second timeout to avoid blocking)
+      const result = await redis.brpop('liquidatable_positions', 1)
       if (result) {
         const [key, positionData] = result
         const position: Position = JSON.parse(positionData)
-
-        // Process delayed positions that are ready to retry
-        const now = Date.now()
-        const readyDelayed = await redis.zrangebyscore('delayed_positions', 0, now, 'LIMIT', 0, 5)
-        for (const positionData of readyDelayed) {
-          const delayedPosition: Position = JSON.parse(positionData)
-          await redis.zrem('delayed_positions', positionData)
-          
-          log(chalk.blue(`Retrying delayed position ${delayedPosition.positionId} after backoff period`))
-          await liquidatePosition(delayedPosition)
-        }
 
         log(chalk.bold.blue('New liquidatable position found!'))
         log(
@@ -266,6 +276,10 @@ export async function liquidablePositionsListener() {
 
         await liquidatePosition(position)
       }
+      
+      // 3. Wait 1 second before next iteration to process both queues independently
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      
     } catch (error) {
       console.error('Error processing position:', error)
       await new Promise((resolve) => setTimeout(resolve, 10000)) // wait 10 seconds before retrying
