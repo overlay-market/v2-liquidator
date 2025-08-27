@@ -211,14 +211,8 @@ export async function liquidatePosition(position: Position) {
       
       log(chalk.yellow(`Position ${positionId} failed but still liquidatable, retrying in ${waitMinutes} minutes`))
       
-      const updatedPosition = {
-        ...position,
-        executeAfter: waitTime,
-        failButLiquidable: true
-      }
-      
       // Use separate delayed queue to avoid infinite loop
-      await redis.zadd('delayed_positions', waitTime, JSON.stringify(updatedPosition))
+      await redis.zadd('delayed_positions', waitTime, JSON.stringify(position))
       return // Exit without incrementing retry count
     } else {
       // Position is no longer liquidatable - notify and remove immediately
@@ -252,18 +246,11 @@ export async function liquidablePositionsListener() {
         const [key, positionData] = result
         const position: Position = JSON.parse(positionData)
 
-        // Check if position should be executed now or delayed
-        if (position.failButLiquidable && position.executeAfter && Date.now() < position.executeAfter) {
-          log(chalk.yellow(`Position ${position.positionId} is delayed but still liquidatable, re-queuing`))
-          await redis.lpush('liquidatable_positions', JSON.stringify(position))
-          continue // Skip to next iteration
-        }
-        
         // Process delayed positions that are ready to retry
         const now = Date.now()
         const readyDelayed = await redis.zrangebyscore('delayed_positions', 0, now, 'LIMIT', 0, 5)
         for (const positionData of readyDelayed) {
-          const delayedPosition = JSON.parse(positionData)
+          const delayedPosition: Position = JSON.parse(positionData)
           await redis.zrem('delayed_positions', positionData)
           
           log(chalk.blue(`Retrying delayed position ${delayedPosition.positionId} after backoff period`))

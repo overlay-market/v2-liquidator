@@ -8,8 +8,6 @@ export interface Position {
   marketAddress: string
   network: Networks
   lastErrorType?: string
-  executeAfter?: number    // Timestamp when position should be executed after market error
-  failButLiquidable?: boolean // Flag indicating if position failed but is still liquidatable
 }
 
 export enum Networks {

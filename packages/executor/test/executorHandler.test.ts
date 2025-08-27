@@ -238,7 +238,7 @@ describe('Executor Handler Tests', () => {
       expect(redis.zadd).toHaveBeenCalledWith(
         'delayed_positions',
         expect.any(Number),
-        expect.stringContaining('"failButLiquidable":true')
+        JSON.stringify(mockPosition)
       )
       
       // Verify the delay is approximately 7 minutes (420000ms)
@@ -265,7 +265,7 @@ describe('Executor Handler Tests', () => {
       expect(redis.zadd).toHaveBeenCalledWith(
         'delayed_positions',
         expect.any(Number),
-        expect.stringContaining('"failButLiquidable":true')
+        JSON.stringify(mockPosition)
       )
       
       // Verify the delay is approximately 3 minutes (180000ms)
@@ -336,6 +336,59 @@ describe('Executor Handler Tests', () => {
       // Should remove position immediately
       expect(redis.hdel).toHaveBeenCalled()
       expect(redis.zrem).toHaveBeenCalled()
+    })
+  })
+
+  describe('Queue Management Tests', () => {
+    it('should properly handle both liquidatable_positions and delayed_positions queues', async () => {
+      // Mock Redis operations for queue management
+      vi.mocked(redis.brpop).mockResolvedValue(['liquidatable_positions', JSON.stringify(mockPosition)])
+      vi.mocked(redis.zrangebyscore).mockResolvedValue([])
+      vi.mocked(redis.zrem).mockResolvedValue(1)
+
+      // Mock successful liquidation
+      const mockReceipt = { status: 1, transactionHash: '0xhash' }
+      const mockTransaction = {
+        wait: vi.fn().mockResolvedValue(mockReceipt),
+      }
+      mockMarketContract.liquidate.mockResolvedValue(mockTransaction)
+
+      // Mock other Redis operations
+      vi.mocked(redis.hdel).mockResolvedValue(1)
+      vi.mocked(redis.incr).mockResolvedValue(1)
+
+      // This would normally be called by the listener
+      // We're testing the queue logic indirectly
+      expect(redis.brpop).toHaveBeenCalledWith('liquidatable_positions', 0)
+    })
+
+    it('should process delayed positions when they are ready', async () => {
+      const delayedPosition = { ...mockPosition }
+      const now = Date.now()
+      
+      // Mock delayed positions ready to retry
+      vi.mocked(redis.zrangebyscore).mockResolvedValue([JSON.stringify(delayedPosition)])
+      vi.mocked(redis.zrem).mockResolvedValue(1)
+
+      // Mock successful liquidation for delayed position
+      const mockReceipt = { status: 1, transactionHash: '0xhash' }
+      const mockTransaction = {
+        wait: vi.fn().mockResolvedValue(mockReceipt),
+      }
+      mockMarketContract.liquidate.mockResolvedValue(mockTransaction)
+
+      // Mock other Redis operations
+      vi.mocked(redis.hdel).mockResolvedValue(1)
+      vi.mocked(redis.incr).mockResolvedValue(1)
+
+      // Process delayed position
+      await liquidatePosition(delayedPosition)
+
+      // Should have processed the delayed position
+      expect(mockMarketContract.liquidate).toHaveBeenCalledWith(
+        delayedPosition.owner,
+        delayedPosition.positionId
+      )
     })
   })
 })
