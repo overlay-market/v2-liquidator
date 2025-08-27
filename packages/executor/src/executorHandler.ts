@@ -48,7 +48,7 @@ async function initializeCounters() {
  * These errors indicate the market is not in a state to process liquidations
  * but may become available later
  */
-async function isMarketError(error: any): Promise<boolean> {
+export async function isMarketError(error: any): Promise<boolean> {
   return error?.message?.includes('OVLV1:!data') || 
          error?.error?.message?.includes('OVLV1:!data')
 }
@@ -57,7 +57,7 @@ async function isMarketError(error: any): Promise<boolean> {
  * Remove position from all Redis data structures
  * Used when position is no longer liquidatable or successfully liquidated
  */
-async function removePositionFromRedis(position: Position) {
+export async function removePositionFromRedis(position: Position) {
   const { positionId, marketAddress, network } = position
   await redis.hdel(`positions:${network}:${marketAddress}`, positionId)
   await redis.zrem(`position_index:${network}:${marketAddress}`, positionId)
@@ -67,7 +67,7 @@ async function removePositionFromRedis(position: Position) {
  * Check if a position is still liquidatable by querying the market state contract
  * This prevents us from retrying positions that are no longer valid
  */
-async function checkIfPositionStillLiquidatable(position: Position): Promise<boolean> {
+export async function checkIfPositionStillLiquidatable(position: Position): Promise<boolean> {
   try {
     const { marketAddress, network, positionId, owner } = position
     
@@ -122,7 +122,7 @@ async function reportLiquidationError(position: Position, retries: number, error
   await sendTelegramMessage(message)
 }
 
-async function liquidatePosition(position: Position) {
+export async function liquidatePosition(position: Position) {
   const { positionId, owner, marketAddress, network } = position
 
   try {
