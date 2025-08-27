@@ -76,7 +76,7 @@ async function sendTelegramMessage(message: string) {
     return
   }
 
-  await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, message, { parse_mode: 'MarkdownV2' })
+  await bot.sendMessage(process.env.TELEGRAM_CHAT_ID, message, { parse_mode: 'Markdown' })
 }
 
 async function getLiquidatorStats(
