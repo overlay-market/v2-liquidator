@@ -192,9 +192,9 @@ function createLiquidatorReportMessage(
     message += `🖋️ *Executor*: \`${executor}\`\n`
     message += `Total Liquidated Positions: ${data.totalLiquidatedPositions}\n`
     message += `Liquidated Positions: ${data.liquidatedPositions}\n`
-    message += `ETH Balance: ${data.ethBalance.replace('.', '\\.')}\n`
-    message += `OV Balance: ${data.ovBalance.replace('.', '\\.')}\n`
-    message += `OV Rewards Claimed: ${data.ovRewardsClaimed.replace('.', '\\.')}\n\n`
+    message += `ETH Balance: ${data.ethBalance}\n`
+    message += `OV Balance: ${data.ovBalance}\n`
+    message += `OV Rewards Claimed: ${data.ovRewardsClaimed}\n\n`
   }
 
   console.log(message)
