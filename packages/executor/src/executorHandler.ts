@@ -76,7 +76,7 @@ async function reportLiquidationError(position: Position, retries: number, error
     `*Network:* ${position.network}\n` +
     `*Retries:* ${retries}/${MAX_RETRIES}\n` +
     `*Error Type:* ${errorType}\n\n` +
-    `Check logs for detailed error information\\.`
+    `Check logs for detailed error information.`
 
   await sendTelegramMessage(message)
 }
