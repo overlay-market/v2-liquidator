@@ -109,4 +109,34 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'BTC/USD': {
+    workers: 1,
+    cron_schedule: '31 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x3d9701e8fE563D82c3787b3a783d8a218591E4A3',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'ETH/USD': {
+    workers: 1,
+    cron_schedule: '33 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x6aB3469c76ADf1eEF65EE105dac1093c130468BA',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'SOL/USD': {
+    workers: 1,
+    cron_schedule: '35 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x23cEfE1C6ea3c067F9500c8D9961baf01C39Ce3E',
+        positions_per_run: 500,
+      },
+    },
+  },
 }

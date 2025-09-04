@@ -58,6 +58,18 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0x204b281d5f5a504043Ae2D91f3CF79bbBC1F6E09',
         init_block: '58942999',
       },
+      'BTC/USD': {
+        address: '0x3d9701e8fE563D82c3787b3a783d8a218591E4A3',
+        init_block: '59986521',
+      },
+      'ETH/USD': {
+        address: '0x6aB3469c76ADf1eEF65EE105dac1093c130468BA',
+        init_block: '59986521',
+      },
+      'SOL/USD': {
+        address: '0x23cEfE1C6ea3c067F9500c8D9961baf01C39Ce3E',
+        init_block: '59986521',
+      },
     },
     enabled: true,
     blockStep: 5000,
