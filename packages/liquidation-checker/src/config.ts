@@ -139,4 +139,14 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'Aster/MYX': {
+    workers: 1,
+    cron_schedule: '37 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x377d6e6647189aa7ea9a5e12f4bdc7ecaebb7d45',
+        positions_per_run: 500,
+      },
+    },
+  },
 }

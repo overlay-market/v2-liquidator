@@ -70,6 +70,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0x23cEfE1C6ea3c067F9500c8D9961baf01C39Ce3E',
         init_block: '59986521',
       },
+      'Aster/MYX': {
+        address: '0x377d6e6647189aa7ea9a5e12f4bdc7ecaebb7d45',
+        init_block: '62329518',
+      },
     },
     enabled: true,
     blockStep: 5000,
