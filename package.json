@@ -6,7 +6,8 @@
   "scripts": {
     "collector:dev": "NODE_ENV=dev pnpm --filter collector run dev",
     "liquidation-checker:dev": "NODE_ENV=dev pnpm --filter liquidation-checker run dev",
-    "executor:dev": "NODE_ENV=dev pnpm --filter executor run dev"
+    "executor:dev": "NODE_ENV=dev pnpm --filter executor run dev",
+    "add-market": "node scripts/add-market.js"
   },
   "keywords": [],
   "author": "",

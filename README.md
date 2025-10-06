@@ -57,7 +57,10 @@ We will use docker compose to run all the modules and Redis.
 - `CRON_SCHEDULE_*`: Cron schedule for each cron job
 
 ## How to add a new market
+Run `pnpm run add-market` and follow the prompts; the helper updates all required files automatically.
+
+If you prefer to do it manually:
 - add the address and deploy block of the market smart contract in the `constants.ts` file in the `collector` module
 - add the address of the market smart contract in the `constants.ts` file in the `liquidationChecker` module
 - add the configuration for the market in the `config.ts` file in the `liquidationChecker` module
-- create a new `liquidationChecker` intance in the docker-compose file
+- create a new `liquidationChecker` instance in the docker-compose file
