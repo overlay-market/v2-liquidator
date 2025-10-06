@@ -149,4 +149,14 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'MrBeast': {
+    workers: 1,
+    cron_schedule: '39 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x02e9bbcf589ffcbdcc7f26064bf718611523a2bf',
+        positions_per_run: 500,
+      },
+    },
+  },
 }

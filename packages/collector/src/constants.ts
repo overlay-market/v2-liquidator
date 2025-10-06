@@ -74,6 +74,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0x377d6e6647189aa7ea9a5e12f4bdc7ecaebb7d45',
         init_block: '62329518',
       },
+      'MrBeast': {
+        address: '0x02e9bbcf589ffcbdcc7f26064bf718611523a2bf',
+        init_block: '63690500',
+      },
     },
     enabled: true,
     blockStep: 5000,
