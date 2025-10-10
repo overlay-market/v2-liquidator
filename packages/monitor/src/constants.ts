@@ -16,7 +16,7 @@ export const networkConfig: Record<Networks, NetworkConfig> = {
   [Networks.BSC_TESTNET]: {
     rpcUrl: 'https://bsc-testnet-rpc.publicnode.com',
     apiUrl: 'https://api.overlay.market/data/api/markets',
-    ov_token_address: '0x1F34c87ded863Fe3A3Cd76FAc8adA9608137C8c3',
+    ov_token_address: '0x1A0eF183D548405705bb9B00E8b4ef3524AE090E',
   },
 }
 
