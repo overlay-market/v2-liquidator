@@ -159,4 +159,14 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'gold-usd': {
+    workers: 1,
+    cron_schedule: '41 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x6c110d58dee4f0229c305c4858ab50fd203b8da5',
+        positions_per_run: 500,
+      },
+    },
+  },
 }

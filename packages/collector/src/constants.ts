@@ -78,6 +78,10 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         address: '0x02e9bbcf589ffcbdcc7f26064bf718611523a2bf',
         init_block: '63690500',
       },
+      'gold-usd': {
+        address: '0x6c110d58dee4f0229c305c4858ab50fd203b8da5',
+        init_block: '64052213',
+      },
     },
     enabled: true,
     blockStep: 5000,
