@@ -1,9 +1,9 @@
 export enum Networks {
-  BSC_MAINNET = "bsc_mainnet",
+  BSC_TESTNET = "bsc_testnet",
 }
 
 export const ChainId = {
-  [Networks.BSC_MAINNET]: 56,
+  [Networks.BSC_TESTNET]: 97,
 }
 
 interface NetworkConfig {
@@ -13,8 +13,8 @@ interface NetworkConfig {
 }
 
 export const networkConfig: Record<Networks, NetworkConfig> = {
-  [Networks.BSC_MAINNET]: {
-    rpcUrl: 'https://bsc-rpc.publicnode.com',
+  [Networks.BSC_TESTNET]: {
+    rpcUrl: 'https://bsc-testnet-rpc.publicnode.com',
     apiUrl: 'https://api.overlay.market/data/api/markets',
     ov_token_address: '0x1F34c87ded863Fe3A3Cd76FAc8adA9608137C8c3',
   },

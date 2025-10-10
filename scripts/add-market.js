@@ -114,7 +114,7 @@ function updateLiquidationConfig({
     `    workers: ${workers},\n` +
     `    cron_schedule: '${cronSchedule}',\n` +
     `    networks: {\n` +
-    `      [Networks.BSC_MAINNET]: {\n` +
+    `      [Networks.BSC_TESTNET]: {\n` +
     `        address: '${address}',\n` +
     `        positions_per_run: ${positionsPerRun},\n` +
     `      },\n` +

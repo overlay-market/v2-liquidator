@@ -28,5 +28,5 @@ export enum PositionStatus {
 }
 
 export enum Networks {
-  BSC_MAINNET = "bsc_mainnet",
+  BSC_TESTNET = "bsc_testnet",
 }

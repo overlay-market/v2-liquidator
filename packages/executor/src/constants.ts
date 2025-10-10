@@ -11,7 +11,7 @@ export interface Position {
 }
 
 export enum Networks {
-  BSC_MAINNET = "bsc_mainnet",
+  BSC_TESTNET = "bsc_testnet",
 }
 
 export interface NetworksConfig {
@@ -20,7 +20,7 @@ export interface NetworksConfig {
 }
 
 export const networksConfig: Record<Networks, NetworksConfig> = {
-  [Networks.BSC_MAINNET]: {
-    rpc_url: process.env.BSC_MAINNET_EXECUTOR_RPC_URL || 'https://bsc-rpc.publicnode.com',
+  [Networks.BSC_TESTNET]: {
+    rpc_url: process.env.BSC_TESTNET_EXECUTOR_RPC_URL || 'https://bsc-testnet-rpc.publicnode.com',
   },
 }
