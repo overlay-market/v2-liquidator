@@ -270,6 +270,193 @@ services:
         limits:
           cpus: '0.65'
           memory: 768M
+  liquidation-gold-usd-v2:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: GOLD/USD v2
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-btc-usd-v2:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: BTC/USD v2
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-eth-usd-v2:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: ETH/USD v2
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-sol-usd-v2:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: SOL/USD v2
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-bnb-usd-v2:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: BNB/USD v2
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-btc-dominance-v2:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: BTC Dominance v2
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-the-weeknd-v2:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: The Weeknd v2
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-usa-index-v2:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: USA Index v2
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-binance-alpha-index-v2:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Binance Alpha Index v2
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-strategic-reserve-index-v2:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Strategic Reserve Index v2
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-ai-index-v2:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: AI Index v2
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
 
   executor-1:
     build:
