@@ -169,4 +169,115 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'GOLD/USD v2': {
+    workers: 1,
+    cron_schedule: '45 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x2be9Fcd44635ae5d2c0BD39ae1FB5615D9e5299d',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'BTC/USD v2': {
+    workers: 1,
+    cron_schedule: '47 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xf70770051f8C02F8a96D2D01F1C521555bb15203',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'ETH/USD v2': {
+    workers: 1,
+    cron_schedule: '49 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xD214F7D05406Fc28557625AA0C0da71458E0CC6C',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'SOL/USD v2': {
+    workers: 1,
+    cron_schedule: '53 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xFf0bEFd39b7EA4B4B069658f6585F8eF0287fAD8',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'BNB/USD v2': {
+    workers: 1,
+    cron_schedule: '59 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xe2cd4672D085D2Ab163E248ac9293a16acCb7B67',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'BTC Dominance v2': {
+    workers: 1,
+    cron_schedule: '7 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xb574757A7865249E04872ad6A081ddDDEA79b9b2',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'The Weeknd v2': {
+    workers: 1,
+    cron_schedule: '9 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xaf489d2d691475e54AB2945eBC3243a8E9C82Ce3',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'USA Index v2': {
+    workers: 1,
+    cron_schedule: '11 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x446D0dCf7Aa2e05b7e955237beB03c19Cfce48e3',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Binance Alpha Index v2': {
+    workers: 1,
+    cron_schedule: '13 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x90C00f8E627644B6b4ccaE4019eFcdC9D531E2AA',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'Strategic Reserve Index v2': {
+    workers: 1,
+    cron_schedule: '15 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x83FaE17E4d6199838791B3707ab3c080aF83FF99',
+        positions_per_run: 500,
+      },
+    },
+  },
+  'AI Index v2': {
+    workers: 1,
+    cron_schedule: '17 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xe2584D1a23cb44fc7929e1723A8079dcd86B6971',
+        positions_per_run: 500,
+      },
+    },
+  },
+
 }
