@@ -33,10 +33,18 @@ export class LiquidatorCheckerHandler {
       const {
         rpcUrls,
         multicall2_address,
-        ovl_state_address,
+        factories,
         multicall_batch_size,
         rpc_first_probability,
       } = networkConfig[network]
+
+      // Get the factory-specific state contract address
+      const factoryAddress = marketNetwork.factory_address
+      if (!factories[factoryAddress]) {
+        console.error(`Factory ${factoryAddress} not found in network config for ${network}`)
+        continue
+      }
+      const ovl_state_address = factories[factoryAddress].ovl_state_address
 
       const rpcUrl = await selectRpc(rpcUrls, rpc_first_probability)
       const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
