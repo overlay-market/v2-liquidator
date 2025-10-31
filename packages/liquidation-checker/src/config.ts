@@ -308,17 +308,6 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
-  'Double or Nothing': {
-    workers: 1,
-    cron_schedule: '2 */15 * * * *', // on the 2 second every 15 minutes
-    networks: {
-      [Networks.BSC_MAINNET]: {
-        address: '0x0000000000000000000000000000000000000001',
-        positions_per_run: 500,
-        factory_address: '0x17D4F2ea0c3227FB6b31ADA99265E41f3369150A',
-      },
-    },
-  },
   'AI Index v2': {
     workers: 1,
     cron_schedule: '17 */2 * * * *',
@@ -327,6 +316,17 @@ export const config: Record<string, MarketConfig> = {
         address: '0xe2584D1a23cb44fc7929e1723A8079dcd86B6971',
         positions_per_run: 500,
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'Double or Nothing': {
+    workers: 1,
+    cron_schedule: '19 */15 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xfFaDA7c70c2868FD0Fe9BE85D326317923BaA0a8',
+        positions_per_run: 500,
+        factory_address: '0x17D4F2ea0c3227FB6b31ADA99265E41f3369150A',
       },
     },
   },

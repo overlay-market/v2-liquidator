@@ -153,8 +153,8 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
       'Double or Nothing': {
-        address: '0x0000000000000000000000000000000000000001',
-        init_block: '65628846',
+        address: '0xfFaDA7c70c2868FD0Fe9BE85D326317923BaA0a8',
+        init_block: '66549902',
         factory_address: '0x17D4F2ea0c3227FB6b31ADA99265E41f3369150A',
       },
 
