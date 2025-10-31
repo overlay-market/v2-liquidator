@@ -321,7 +321,7 @@ export const config: Record<string, MarketConfig> = {
   },
   'Double or Nothing': {
     workers: 1,
-    cron_schedule: '19 */15 * * * *',
+    cron_schedule: '19 * * * * *',
     networks: {
       [Networks.BSC_MAINNET]: {
         address: '0xfFaDA7c70c2868FD0Fe9BE85D326317923BaA0a8',
