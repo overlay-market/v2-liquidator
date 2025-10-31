@@ -69,7 +69,7 @@ function computeDefaultCronSchedule(configContent) {
   return `${maxSecond + 2} */2 * * * *`;
 }
 
-function updateCollectorConstants({ marketName, address, initBlock }) {
+function updateCollectorConstants({ marketName, address, initBlock, factoryAddress }) {
   const content = loadFile(COLLECTOR_CONSTANTS_PATH);
   if (content.includes(`'${marketName}'`)) {
     throw new Error(`Market '${marketName}' already exists in collector constants.`);
@@ -85,6 +85,7 @@ function updateCollectorConstants({ marketName, address, initBlock }) {
     `      '${marketName}': {\n` +
     `        address: '${address}',\n` +
     `        init_block: '${initBlock}',\n` +
+    `        factory_address: '${factoryAddress}',\n` +
     `      },\n`;
 
   const updated = content.slice(0, anchorIndex) + entry + content.slice(anchorIndex);
@@ -97,6 +98,7 @@ function updateLiquidationConfig({
   cronSchedule,
   workers,
   positionsPerRun,
+  factoryAddress,
 }) {
   const content = loadFile(LIQUIDATION_CONFIG_PATH);
   if (content.includes(`'${marketName}'`)) {
@@ -117,6 +119,7 @@ function updateLiquidationConfig({
     `      [Networks.BSC_MAINNET]: {\n` +
     `        address: '${address}',\n` +
     `        positions_per_run: ${positionsPerRun},\n` +
+    `        factory_address: '${factoryAddress}',\n` +
     `      },\n` +
     `    },\n` +
     `  },\n`;
@@ -178,6 +181,20 @@ function updateDockerCompose({ marketName, serviceName }) {
       throw new Error('Init block is required.');
     }
 
+    console.log('\nAvailable factories:');
+    console.log('  1. Original Factory (0xC35093f76fF3D31Af27A893CDcec585F1899eE54)');
+    console.log('  2. Gambling Factory (0x17D4F2ea0c3227FB6b31ADA99265E41f3369150A)');
+    const factoryChoice = await ask('Which factory? (1 or 2)', '1');
+
+    let factoryAddress;
+    if (factoryChoice === '1') {
+      factoryAddress = '0xC35093f76fF3D31Af27A893CDcec585F1899eE54';
+    } else if (factoryChoice === '2') {
+      factoryAddress = '0x17D4F2ea0c3227FB6b31ADA99265E41f3369150A';
+    } else {
+      throw new Error('Invalid factory choice. Must be 1 or 2.');
+    }
+
     const configContent = loadFile(LIQUIDATION_CONFIG_PATH);
     const defaultCronSchedule = computeDefaultCronSchedule(configContent);
     const cronSchedule = await ask('Cron schedule', defaultCronSchedule);
@@ -204,6 +221,7 @@ function updateDockerCompose({ marketName, serviceName }) {
       marketName,
       address: contractAddress,
       initBlock,
+      factoryAddress,
     });
 
     updateLiquidationConfig({
@@ -212,6 +230,7 @@ function updateDockerCompose({ marketName, serviceName }) {
       cronSchedule,
       workers,
       positionsPerRun,
+      factoryAddress,
     });
 
     updateDockerCompose({
@@ -220,6 +239,7 @@ function updateDockerCompose({ marketName, serviceName }) {
     });
 
     console.log(`\nSuccessfully added market '${marketName}'.`);
+    console.log(`Factory: ${factoryAddress === '0xC35093f76fF3D31Af27A893CDcec585F1899eE54' ? 'Original' : 'Gambling'}`);
     console.log('Remember to review the changes and commit them.');
   } catch (error) {
     console.error(`Error: ${error.message}`);

@@ -56,11 +56,26 @@ We will use docker compose to run all the modules and Redis.
 - `WORKERS_AMOUNT_*`: Number of workers to run in parallel for each cron job
 - `CRON_SCHEDULE_*`: Cron schedule for each cron job
 
+## Factory Support
+
+The liquidator supports multiple factory and state contract configurations:
+
+### Configured Factories
+
+1. **Original Factory**: `0xC35093f76fF3D31Af27A893CDcec585F1899eE54`
+   - State Contract: `0x10575a9C8F36F9F42D7DB71Ef179eD9BEf8Df238`
+   - Markets: All existing markets including v2 variants (BTC/USD, ETH/USD, SOL/USD, etc.)
+
+2. **Gambling Factory**: `0x17D4F2ea0c3227FB6b31ADA99265E41f3369150A`
+   - State Contract: `0x9C52f7107efBe6e0010E924a0B53265ba4e8959d`
+   - Markets: "Double or Nothing"
+
+Each market is associated with a specific factory, and the liquidation checker automatically uses the correct state contract based on the market's factory address.
+
 ## How to add a new market
-Run `pnpm run add-market` and follow the prompts; the helper updates all required files automatically.
+Run `pnpm run add-market` and follow the prompts; the helper updates all required files automatically and will ask you to select which factory the market belongs to.
 
 If you prefer to do it manually:
-- add the address and deploy block of the market smart contract in the `constants.ts` file in the `collector` module
-- add the address of the market smart contract in the `constants.ts` file in the `liquidationChecker` module
-- add the configuration for the market in the `config.ts` file in the `liquidationChecker` module
+- add the address, deploy block, and factory address of the market smart contract in the `constants.ts` file in the `collector` module
+- add the configuration for the market in the `config.ts` file in the `liquidationChecker` module, including the factory address
 - create a new `liquidationChecker` instance in the docker-compose file
