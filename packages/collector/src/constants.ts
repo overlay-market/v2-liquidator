@@ -157,6 +157,16 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         init_block: '66549902',
         factory_address: '0x17D4F2ea0c3227FB6b31ADA99265E41f3369150A',
       },
+      'Hikaru Nakamura': {
+        address: '0xfc1d83139aa4737a76e017596afa7c51f80470d0',
+        init_block: '67122704',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+      'Jissican vs Monalita': {
+        address: '0x84051e966ac782e794786333f0cd5d4584cf0ee2',
+        init_block: '67122704',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
 
     },
     enabled: true,
