@@ -330,4 +330,27 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'Hikaru Nakamura': {
+    workers: 1,
+    cron_schedule: '21 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xfc1d83139aa4737a76e017596afa7c51f80470d0',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'Jissican vs Monalita': {
+    workers: 1,
+    cron_schedule: '23 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x84051e966ac782e794786333f0cd5d4584cf0ee2',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+
 }
