@@ -352,5 +352,27 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'SOL Index': {
+    workers: 1,
+    cron_schedule: '25 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x6832fc384c891f0c18d770aa20cb4140e836be2a',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'AI Agents Index': {
+    workers: 1,
+    cron_schedule: '27 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xfbefe7796b8fea946197e7ca5bffdd45270446f2',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }
