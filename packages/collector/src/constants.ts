@@ -167,6 +167,16 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         init_block: '67122704',
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
+      'SOL Index': {
+        address: '0x6832fc384c891f0c18d770aa20cb4140e836be2a',
+        init_block: '67841194',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+      'AI Agents Index': {
+        address: '0xfbefe7796b8fea946197e7ca5bffdd45270446f2',
+        init_block: '67841259',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
 
     },
     enabled: true,
