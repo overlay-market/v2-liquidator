@@ -177,6 +177,26 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         init_block: '67841259',
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
+      'Defi Index': {
+        address: '0xc9f27accc1971c9583dd7d3e9c240555095f98e3',
+        init_block: '68172540',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+      'Memes Index': {
+        address: '0xe2c1220cac67dd50ccf917edbdfea34ad23a0371',
+        init_block: '68172540',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+      'Layer 1 Index': {
+        address: '0x21406642d69ee3bf6ffc6795a0fa3c70c28132c7',
+        init_block: '68172540',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+      'Layer 2 Index': {
+        address: '0xe906e2047d7fb07a9828b2342d64957407ac55e2',
+        init_block: '68172540',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
 
     },
     enabled: true,

@@ -374,5 +374,49 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'Defi Index': {
+    workers: 1,
+    cron_schedule: '29 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xc9f27accc1971c9583dd7d3e9c240555095f98e3',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'Memes Index': {
+    workers: 1,
+    cron_schedule: '31 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xe2c1220cac67dd50ccf917edbdfea34ad23a0371',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'Layer 1 Index': {
+    workers: 1,
+    cron_schedule: '33 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x21406642d69ee3bf6ffc6795a0fa3c70c28132c7',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'Layer 2 Index': {
+    workers: 1,
+    cron_schedule: '35 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xe906e2047d7fb07a9828b2342d64957407ac55e2',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }
