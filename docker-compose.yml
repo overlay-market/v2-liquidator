@@ -540,6 +540,74 @@ services:
           cpus: '0.65'
           memory: 768M
 
+  liquidation-defi-index:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Defi Index
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-memes-index:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Memes Index
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-layer-1-index:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Layer 1 Index
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-layer-2-index:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: Layer 2 Index
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
 
   executor-1:
     build:
