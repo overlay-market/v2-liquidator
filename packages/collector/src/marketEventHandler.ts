@@ -142,6 +142,7 @@ async function fetchEvents(network: Networks, marketName: string, rpcUrl: string
   let startBlock = await redis.get(`latest_block_processed:${network}:${marketAddress}`)
   // get the latest block from the RPC provider
   const latestBlock = await provider.getBlockNumber()
+  console.log('Latest block from RPC for network', network, 'is', latestBlock);
 
   // if the latest block from RPC is lower than our last processed block,
   // it might be due to a reorg or RPC sync issue. Skip this run for this market.
@@ -222,11 +223,8 @@ export async function fetchAndProcessEventsForAllMarkets(network: Networks) {
   log(chalk.bold.blue('Collector module is running for network:', network))
   log(chalk.bold.blue('Cron job started at:', new Date().toLocaleString()))
 
-  // due to the rate limits of the RPC provider, at the first run, we will fetch events for all markets running market by market
-  // after the first run, we will fetch events for all markets in parallel
-  const firstRun = await redis.get(`${network}:first_collector_run`)
-
-  if (!firstRun && networkConfig.useFork) {
+  if (true && networkConfig.useFork) {
+    console.log('Starting Anvil fork for network', network, 'using RPC URL', networkConfig.fork_rpc_url);
     startAnvil(networkConfig.fork_rpc_url)
 
     for (const [marketName] of Object.entries(networkConfig.markets)) {
@@ -240,7 +238,7 @@ export async function fetchAndProcessEventsForAllMarkets(network: Networks) {
       )
       // wrap in try catch to continue processing other markets in case of an error
       try {
-      await fetchEvents(network, marketName, 'http://localhost:8545', true)
+        await fetchEvents(network, marketName, 'http://localhost:8545', true)
       } catch (error) {
         log(
           chalk.bold.red(
@@ -263,7 +261,7 @@ export async function fetchAndProcessEventsForAllMarkets(network: Networks) {
       )
       // wrap in try catch to continue processing other markets in case of an error
       try {
-      await fetchEvents(network, marketName, networkConfig.rpc_url)
+        await fetchEvents(network, marketName, networkConfig.rpc_url)
       } catch (error) {
         log(
           chalk.bold.red(
