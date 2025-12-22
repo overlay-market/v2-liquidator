@@ -8,6 +8,9 @@ jest.mock('./redisHandler', () => {
       lpush: resolved('ok'),
       del: resolved(),
     },
+    redisBlocking: {
+      brpop: resolved(['liquidatable_positions', '']),
+    },
   }
 })
 

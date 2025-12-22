@@ -3,7 +3,7 @@ import market_old_abi from './abis/market_old_abi.json'
 import dotenv from 'dotenv'
 import chalk from 'chalk'
 import { ethers } from 'ethers'
-import redis from './redisHandler'
+import redis, { redisBlocking } from './redisHandler'
 import { networksConfig, Position } from './constants'
 import TelegramBot from 'node-telegram-bot-api'
 
@@ -281,7 +281,7 @@ export async function liquidablePositionsListener() {
 
   while (true) {
     try {
-      const result = await redis.brpop('liquidatable_positions', 0)
+      const result = await redisBlocking.brpop('liquidatable_positions', 0)
       if (result) {
         const [key, positionData] = result
         const position: Position = JSON.parse(positionData)
