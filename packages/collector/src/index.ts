@@ -76,13 +76,13 @@ async function start() {
 async function init() {
   const shouldRunImmediately = await firstRunForSomeNetwork()
 
-  if (shouldRunImmediately) {
+  if (true) {
     log(chalk.bold.blue('First run required for some networks, running start immediately...'))
     await start()
   }
 
-  log(chalk.bold.green('Scheduling cron job to run every 10 minutes...'))
-  cron.schedule('*/10 * * * *', start)
+  log(chalk.bold.green('Scheduling cron job to run every 1 minutes...'))
+  cron.schedule('*/1 * * * *', start)
 }
 
 if (process.env.NODE_ENV === 'dev') {

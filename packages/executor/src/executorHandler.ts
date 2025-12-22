@@ -21,6 +21,8 @@ if (process.env.TELEGRAM_BOT_TOKEN) {
 }
 
 const MAX_RETRIES = 3
+const BASE_RETRY_BACKOFF_MS = 5000
+const MAX_RETRY_BACKOFF_MS = 60000
 
 async function initializeCounters() {
   if (!process.env.PRIVATE_KEYS) {
@@ -54,6 +56,58 @@ async function resetRetryCount(position: Position) {
   await redis.del(retryKey)
 }
 
+function getRetryBackoffMs(retries: number) {
+  return Math.min(MAX_RETRY_BACKOFF_MS, BASE_RETRY_BACKOFF_MS * retries)
+}
+
+function scheduleRetry(position: Position, retries: number) {
+  const backoffMs = getRetryBackoffMs(retries)
+  log(chalk.bgBlue(`Re-queuing position ${position.positionId} for retry ${retries} in ${backoffMs / 1000}s`))
+
+  return setTimeout(() => {
+    redis
+      .lpush('liquidatable_positions', JSON.stringify(position))
+      .catch((error) => log(chalk.red(`Failed to re-queue position ${position.positionId}:`, error)))
+  }, backoffMs)
+}
+
+async function isPositionStillLiquidatable(position: Position): Promise<boolean> {
+  try {
+    const provider = new ethers.providers.JsonRpcProvider(networksConfig[position.network].rpc_url)
+    const marketContract = new ethers.Contract(
+      position.marketAddress,
+      networksConfig[position.network].useOldMarketAbi ? market_old_abi : market_abi,
+      provider
+    )
+
+    const [firstKey] = process.env.PRIVATE_KEYS?.split(',') ?? []
+    const signerOrProvider = firstKey ? new ethers.Wallet(firstKey, provider) : provider
+
+    await marketContract.connect(signerOrProvider).callStatic.liquidate(position.owner, position.positionId)
+    return true
+  } catch (error) {
+    const code = (error as any)?.code
+    // treat call reverts as no longer liquidatable; keep retrying if verification failed for other reasons
+    if (code === 'CALL_EXCEPTION' || (error as any)?.reason || (error as any)?.error?.reason) {
+      log(chalk.blue(`Position ${position.positionId} not liquidatable anymore (callStatic reverted)`))
+      return false
+    }
+
+    log(
+      chalk.yellow(
+        `Could not verify liquidation status for position ${position.positionId}, will keep retrying. Error: ${error}`
+      )
+    )
+    return true
+  }
+}
+
+let liquidatableCheck = isPositionStillLiquidatable
+
+function setLiquidatableCheck(fn: (position: Position) => Promise<boolean>) {
+  liquidatableCheck = fn
+}
+
 async function sendTelegramMessage(message: string) {
   if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_CHAT_ID) {
     log(chalk.bold.red('TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID must be provided'))
@@ -74,11 +128,17 @@ async function reportLiquidationError(position: Position, retries: number, error
     `*Owner:* \`${position.owner}\`\n` +
     `*Market:* \`${position.marketAddress}\`\n` +
     `*Network:* ${position.network}\n` +
-    `*Retries:* ${retries}/${MAX_RETRIES}\n` +
+    `*Retries:* ${retries} (window size ${MAX_RETRIES})\n` +
     `*Error Type:* ${errorType}\n\n` +
     `Check logs for detailed error information.`
 
   await sendTelegramMessage(message)
+}
+
+let reportErrorFn = reportLiquidationError
+
+function setReportLiquidationError(fn: typeof reportLiquidationError) {
+  reportErrorFn = fn
 }
 
 async function liquidatePosition(position: Position) {
@@ -180,23 +240,31 @@ async function liquidatePosition(position: Position) {
     position.lastErrorType = errorType
   }
 
-  // increment retry count and check if it exceeds the max retries
-  const retries = await incrementRetryCount(position);
+  await handleFailedAttempt(position)
+}
 
-  if (retries > MAX_RETRIES) {
-    log(chalk.bold.red(`Position ${position.positionId} exceeded max retries, removing from queue`));
-    
-    // Report error to Telegram when max retries exceeded
-    const errorType = position.lastErrorType || 'Max Retries Exceeded'
-    await reportLiquidationError(position, retries, errorType)
-    
-    await redis.hdel(`positions:${network}:${marketAddress}`, position.positionId)
-    await redis.zrem(`position_index:${network}:${marketAddress}`, position.positionId)
-    await resetRetryCount(position)
-  } else {
-    log(chalk.bgBlue(`Re-queuing position ${position.positionId} for retry ${retries} of ${MAX_RETRIES}`))
-    await redis.lpush('liquidatable_positions', JSON.stringify(position))
+async function handleFailedAttempt(position: Position) {
+  const { network, marketAddress } = position
+
+  const retries = await incrementRetryCount(position)
+  const completedRetryWindow = retries % MAX_RETRIES === 0
+  const uniquePositionKey = `${network}:${marketAddress}:${position.positionId}`
+
+  if (completedRetryWindow) {
+    const stillLiquidatable = await liquidatableCheck(position)
+
+    if (!stillLiquidatable) {
+      log(chalk.green(`Position ${position.positionId} is no longer liquidatable, returning to open positions`))
+      await resetRetryCount(position)
+      await redis.srem('unique_positions', uniquePositionKey)
+      return
+    }
+
+    const errorType = position.lastErrorType || 'Still liquidatable after failed attempts'
+    await reportErrorFn(position, retries, errorType)
   }
+
+  scheduleRetry(position, retries)
 }
 
 export async function liquidablePositionsListener() {
@@ -232,4 +300,17 @@ export async function liquidablePositionsListener() {
       await new Promise((resolve) => setTimeout(resolve, 10000)) // wait 10 seconds before retrying
     }
   }
+}
+
+// Exports for tests
+export const __test = {
+  MAX_RETRIES,
+  getRetryBackoffMs,
+  scheduleRetry,
+  isPositionStillLiquidatable,
+  handleFailedAttempt,
+  resetRetryCount,
+  reportLiquidationError,
+  setLiquidatableCheck,
+  setReportLiquidationError,
 }

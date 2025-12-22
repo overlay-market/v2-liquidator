@@ -617,6 +617,8 @@ services:
       <<: *common-environment
       PRIVATE_KEYS: ${PRIVATE_KEYS_1}
       NODE_OPTIONS: --max_old_space_size=204
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
     depends_on:
       - redis-server
     restart: unless-stopped
@@ -634,6 +636,8 @@ services:
       <<: *common-environment
       PRIVATE_KEYS: ${PRIVATE_KEYS_2}
       NODE_OPTIONS: --max_old_space_size=204
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
     depends_on:
       - redis-server
     restart: unless-stopped
