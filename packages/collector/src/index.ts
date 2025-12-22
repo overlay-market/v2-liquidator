@@ -81,8 +81,8 @@ async function init() {
     await start()
   }
 
-  log(chalk.bold.green('Scheduling cron job to run every 1 minutes...'))
-  cron.schedule('*/1 * * * *', start)
+  log(chalk.bold.green('Scheduling cron job to run every 5 minutes...'))
+  cron.schedule('*/5 * * * *', start)
 }
 
 if (process.env.NODE_ENV === 'dev') {
