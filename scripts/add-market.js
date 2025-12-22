@@ -183,14 +183,14 @@ function updateDockerCompose({ marketName, serviceName }) {
 
     console.log('\nAvailable factories:');
     console.log('  1. Original Factory (0xC35093f76fF3D31Af27A893CDcec585F1899eE54)');
-    console.log('  2. Gambling Factory (0x17D4F2ea0c3227FB6b31ADA99265E41f3369150A)');
+    console.log('  2. Gambling Factory (0x5e6613da86099c264ef9cd56c142506bbf642825)');
     const factoryChoice = await ask('Which factory? (1 or 2)', '1');
 
     let factoryAddress;
     if (factoryChoice === '1') {
       factoryAddress = '0xC35093f76fF3D31Af27A893CDcec585F1899eE54';
     } else if (factoryChoice === '2') {
-      factoryAddress = '0x17D4F2ea0c3227FB6b31ADA99265E41f3369150A';
+      factoryAddress = '0x5e6613da86099c264ef9cd56c142506bbf642825';
     } else {
       throw new Error('Invalid factory choice. Must be 1 or 2.');
     }
