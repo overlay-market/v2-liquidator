@@ -422,5 +422,16 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'don-v2': {
+    workers: 1,
+    cron_schedule: '19 * * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x026A7f4bEe2F79C8B605a141CE15d61a6F0a078E',
+        positions_per_run: 500,
+        factory_address: '0x5e6613da86099c264ef9cd56c142506bbf642825',
+      },
+    },
+  },
 
 }

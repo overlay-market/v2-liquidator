@@ -197,6 +197,11 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         init_block: '68172540',
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
+      'don-v2': {
+        address: '0x026A7f4bEe2F79C8B605a141CE15d61a6F0a078E',
+        init_block: '72568010',
+        factory_address: '0x5e6613da86099c264ef9cd56c142506bbf642825',
+      },
 
     },
     enabled: true,
