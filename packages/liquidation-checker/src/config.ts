@@ -433,5 +433,38 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'Elon Musk Mood Index': {
+    workers: 1,
+    cron_schedule: '01 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xb95668b06f7d6777ce1b9eb43c78ab6524f56b89',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'James Wynn Mind Stability Index': {
+    workers: 1,
+    cron_schedule: '03 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x68943f4562f34a0f24dfb103a1f31f829866bc11',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'Founders Operations Index': {
+    workers: 1,
+    cron_schedule: '05 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x6122e6318e85737e401060297c80b443af621717',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }

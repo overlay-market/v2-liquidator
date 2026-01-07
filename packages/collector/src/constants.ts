@@ -202,6 +202,21 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         init_block: '72568010',
         factory_address: '0x5e6613da86099c264ef9cd56c142506bbf642825',
       },
+      'Elon Musk Mood Index': {
+        address: '0xb95668b06f7d6777ce1b9eb43c78ab6524f56b89',
+        init_block: '74390451',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+      'James Wynn Mind Stability Index': {
+        address: '0x68943f4562f34a0f24dfb103a1f31f829866bc11',
+        init_block: '74390451',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+      'Founders Operations Index': {
+        address: '0x6122e6318e85737e401060297c80b443af621717',
+        init_block: '74390451',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
 
     },
     enabled: true,
