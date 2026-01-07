@@ -142,6 +142,7 @@ async function fetchEvents(network: Networks, marketName: string, rpcUrl: string
   let startBlock = await redis.get(`latest_block_processed:${network}:${marketAddress}`)
   // get the latest block from the RPC provider
   const latestBlock = await provider.getBlockNumber()
+  console.log('Latest block from RPC for network', network, 'is', latestBlock);
 
   // if the latest block from RPC is lower than our last processed block,
   // it might be due to a reorg or RPC sync issue. Skip this run for this market.
@@ -155,7 +156,8 @@ async function fetchEvents(network: Networks, marketName: string, rpcUrl: string
   }
 
   // current block step to fetch events
-  const blockStep = networksConfig[network].blockStep
+  const blockStepMultiplier = useFork ? 20 : 1
+  const blockStep = networksConfig[network].blockStep * blockStepMultiplier - 1
 
   let events: ethers.Event[] = []
 
@@ -180,11 +182,11 @@ async function fetchEvents(network: Networks, marketName: string, rpcUrl: string
       promises.push(ovlMarketContract.queryFilter('*', fromBlock, toBlock))
 
       if (promises.length === 50 || toBlock === latestBlock) {
-        // execute 100 promises in parallel
+        // execute promises in parallel
         log(
           `Fetching events for market: ${chalk.bold.blue(
             marketName
-          )} from block: ${fromBlock} to block: ${toBlock} ${useFork ? 'using fork' : ''}`
+          )} from block: ${batchInitBlock} to block: ${toBlock} ${useFork ? 'using fork' : ''}`
         )
         const eventsArrays = await Promise.all(promises)
         events = events.concat(eventsArrays.flat()) // Flatten the array of arrays into a single array of events
@@ -198,7 +200,7 @@ async function fetchEvents(network: Networks, marketName: string, rpcUrl: string
   } else {
     // if the start block is found in Redis, get events from the last processed block to the latest block
     log(
-      `Getting events from block: ${chalk.green(startBlock)} to block: ${chalk.green(
+      `Getting events from block 2nd: ${chalk.green(startBlock)} to block: ${chalk.green(
         latestBlock
       )} for market: ${chalk.bold.blue(`${network} - ${marketName}`)}`
     )
@@ -221,21 +223,52 @@ export async function fetchAndProcessEventsForAllMarkets(network: Networks) {
   log(chalk.bold.blue('Collector module is running for network:', network))
   log(chalk.bold.blue('Cron job started at:', new Date().toLocaleString()))
 
-  // due to the rate limits of the RPC provider, at the first run, we will fetch events for all markets running market by market
-  // after the first run, we will fetch events for all markets in parallel
-  const firstRun = await redis.get(`${network}:first_collector_run`)
-
-  if (!firstRun && networkConfig.useFork) {
+  if (true && networkConfig.useFork) {
+    console.log('Starting Anvil fork for network', network, 'using RPC URL', networkConfig.fork_rpc_url);
     startAnvil(networkConfig.fork_rpc_url)
 
     for (const [marketName] of Object.entries(networkConfig.markets)) {
-      await fetchEvents(network, marketName, 'http://localhost:8545', true)
+      // log the progress of networkConfig.markets using entrie index vs length
+      const marketIndex = Object.keys(networkConfig.markets).indexOf(marketName) + 1
+      const totalMarkets = Object.keys(networkConfig.markets).length
+      log(
+        chalk.bold.blue(
+          `Processing market ${marketIndex} of ${totalMarkets}: ${marketName} on network: ${network}`
+        )
+      )
+      // wrap in try catch to continue processing other markets in case of an error
+      try {
+        await fetchEvents(network, marketName, 'http://localhost:8545', true)
+      } catch (error) {
+        log(
+          chalk.bold.red(
+            `Error processing market ${marketName} on network ${network}: ${error}`
+          )
+        )
+      }
     }
 
     stopAnvil()
   } else {
     for (const [marketName] of Object.entries(networkConfig.markets)) {
-      await fetchEvents(network, marketName, networkConfig.rpc_url)
+      // log the progress of networkConfig.markets using entrie index vs length
+      const marketIndex = Object.keys(networkConfig.markets).indexOf(marketName) + 1
+      const totalMarkets = Object.keys(networkConfig.markets).length
+      log(
+        chalk.bold.blue(
+          `Processing market ${marketIndex} of ${totalMarkets}: ${marketName} on network: ${network}`
+        )
+      )
+      // wrap in try catch to continue processing other markets in case of an error
+      try {
+        await fetchEvents(network, marketName, networkConfig.rpc_url)
+      } catch (error) {
+        log(
+          chalk.bold.red(
+            `Error processing market ${marketName} on network ${network}: ${error}`
+          )
+        )
+      }
     }
   }
 
