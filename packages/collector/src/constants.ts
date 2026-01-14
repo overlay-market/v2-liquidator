@@ -217,6 +217,11 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         init_block: '74390451',
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
+      'CZ Signals Clarity Index': {
+        address: '0x46B1BA8E2B321600038D2A632b7b5C269DED5a47',
+        init_block: '75193201',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
 
     },
     enabled: true,

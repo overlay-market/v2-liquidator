@@ -466,5 +466,16 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'CZ Signals Clarity Index': {
+    workers: 1,
+    cron_schedule: '07 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x46B1BA8E2B321600038D2A632b7b5C269DED5a47',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }
