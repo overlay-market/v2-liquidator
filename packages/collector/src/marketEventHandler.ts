@@ -156,7 +156,7 @@ async function fetchEvents(network: Networks, marketName: string, rpcUrl: string
   }
 
   // current block step to fetch events
-  const blockStepMultiplier = useFork ? 20 : 1
+  const blockStepMultiplier = useFork ? 1 : 1
   const blockStep = networksConfig[network].blockStep * blockStepMultiplier - 1
 
   let events: ethers.Event[] = []
