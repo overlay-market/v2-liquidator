@@ -1,4 +1,4 @@
-import { EventType, Networks, PositionStatus, networksConfig } from './constants'
+import { ChainId, EventType, Networks, PositionStatus, networksConfig } from './constants'
 import market_abi from './abis/market_abi.json'
 import market_old_abi from './abis/market_old_abi.json'
 import { ethers } from 'ethers'
@@ -131,7 +131,8 @@ async function processEvent(
 // Fetch events for all enabled markets in a network
 async function fetchEvents(network: Networks, rpcUrl: string, useFork = false) {
   const networkConfig = networksConfig[network]
-  const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+  const chainId = ChainId[network]
+  const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl, chainId)
   const latestBlock = await provider.getBlockNumber()
 
   log(chalk.blue(`Latest block from RPC for network ${network} is ${latestBlock}`))

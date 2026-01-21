@@ -14,6 +14,11 @@ export enum Networks {
   BSC_MAINNET = "bsc_mainnet",
 }
 
+export const ChainId: Record<Networks, number> = {
+  [Networks.BSC_MAINNET]: 56,
+}
+
+
 export interface NetworksConfig {
   rpc_url: string;
   useOldMarketAbi?: boolean;

@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import chalk from 'chalk'
 import { ethers } from 'ethers'
 import redis, { redisBlocking } from './redisHandler'
-import { networksConfig, Position } from './constants'
+import { ChainId, networksConfig, Position } from './constants'
 import TelegramBot from 'node-telegram-bot-api'
 
 dotenv.config()
@@ -73,7 +73,8 @@ function scheduleRetry(position: Position, retries: number) {
 
 async function isPositionStillLiquidatable(position: Position): Promise<boolean> {
   try {
-    const provider = new ethers.providers.JsonRpcProvider(networksConfig[position.network].rpc_url)
+    const chainId = ChainId[position.network]
+    const provider = new ethers.providers.StaticJsonRpcProvider(networksConfig[position.network].rpc_url, chainId)
     const marketContract = new ethers.Contract(
       position.marketAddress,
       networksConfig[position.network].useOldMarketAbi ? market_old_abi : market_abi,
@@ -147,7 +148,8 @@ async function liquidatePosition(position: Position) {
   try {
     const privateKeys = process.env.PRIVATE_KEYS?.split(',') ?? []
 
-    const provider = new ethers.providers.JsonRpcProvider(networksConfig[network].rpc_url)
+    const chainId = ChainId[network]
+    const provider = new ethers.providers.StaticJsonRpcProvider(networksConfig[network].rpc_url, chainId)
     const marketContract = new ethers.Contract(marketAddress, networksConfig[network].useOldMarketAbi ? market_old_abi : market_abi, provider)
 
     for (const privateKey of privateKeys) {

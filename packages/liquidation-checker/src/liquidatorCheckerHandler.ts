@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 import chalk from 'chalk'
 import redis from './redisHandler'
 import { config, MarketConfig, networkConfig } from './config'
-import { LiquidatableResult, MulticallResult, Networks, Position } from './constants'
+import { ChainId, LiquidatableResult, MulticallResult, Networks, Position } from './constants'
 import { selectRpc } from './rpcHandler'
 import { ethers } from 'ethers'
 import market_state_abi from './abis/market_state_abi.json'
@@ -47,7 +47,8 @@ export class LiquidatorCheckerHandler {
       const ovl_state_address = factories[factoryAddress].ovl_state_address
 
       const rpcUrl = await selectRpc(rpcUrls, rpc_first_probability)
-      const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+      const chainId = ChainId[network]
+      const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl, chainId)
       const ovlMarketStateContract = new ethers.Contract(
         ovl_state_address,
         market_state_abi,

@@ -30,3 +30,7 @@ export enum PositionStatus {
 export enum Networks {
   BSC_MAINNET = "bsc_mainnet",
 }
+
+export const ChainId: Record<Networks, number> = {
+  [Networks.BSC_MAINNET]: 56,
+}

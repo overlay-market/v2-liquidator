@@ -12,6 +12,10 @@ export enum Networks {
   BSC_MAINNET = "bsc_mainnet",
 }
 
+export const ChainId = {
+  [Networks.BSC_MAINNET]: 56,
+}
+
 export interface NetworksConfig {
   rpc_url: string;
   fork_rpc_url: string;

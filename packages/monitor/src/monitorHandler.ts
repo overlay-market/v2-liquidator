@@ -114,7 +114,8 @@ async function getLiquidatorStats(
   }
 
   // get data by executor
-  const provider = new ethers.providers.JsonRpcProvider(networkConfig[network].rpcUrl)
+  const chainId = ChainId[network]
+  const provider = new ethers.providers.StaticJsonRpcProvider(networkConfig[network].rpcUrl, chainId)
   const ovContract = new ethers.Contract(
     networkConfig[network].ov_token_address,
     erc20ABI,
