@@ -16,6 +16,8 @@ services:
       - '6379:6379'
     command: redis-server --requirepass ${REDIS_PASSWORD}
     restart: unless-stopped
+    volumes:
+      - redis-data:/data
 
   collector:
     build:
@@ -771,3 +773,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+
+volumes:
+  redis-data:
