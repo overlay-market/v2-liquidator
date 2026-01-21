@@ -7,6 +7,19 @@ import { startAnvil, stopAnvil } from './anvilForkHandler'
 import redis from './redisHandler'
 import { ChainableCommander } from 'ioredis'
 
+// Static version of JsonRpcBatchProvider to reduce redundant eth_chainId calls.
+// This matches the behavior of StaticJsonRpcProvider but for batched requests.
+class StaticJsonRpcBatchProvider extends ethers.providers.JsonRpcBatchProvider {
+  async detectNetwork() {
+    let network = (this as any).network
+    if (network == null) {
+      network = await super.detectNetwork()
+        ; (this as any).network = network
+    }
+    return network
+  }
+}
+
 const log = console.log
 
 // Process events for a given market. Count new, updated, and removed positions
@@ -132,7 +145,7 @@ async function processEvent(
 async function fetchEvents(network: Networks, rpcUrl: string, useFork = false) {
   const networkConfig = networksConfig[network]
   const chainId = ChainId[network]
-  const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl, chainId)
+  const provider = new StaticJsonRpcBatchProvider(rpcUrl, chainId)
   const latestBlock = await provider.getBlockNumber()
 
   log(chalk.blue(`Latest block from RPC for network ${network} is ${latestBlock}`))
@@ -182,48 +195,63 @@ async function fetchEvents(network: Networks, rpcUrl: string, useFork = false) {
 
     log(`Processing interval: ${chalk.green(intervalFrom)} to ${chalk.green(intervalTo)} for ${chalk.bold.blue(currentAddresses.length)} markets`)
 
-    for (let block = intervalFrom; block <= intervalTo; block += blockStep + 1) {
-      const fromBlock = block
-      const toBlock = Math.min(block + blockStep, intervalTo)
+    const rpcBatchSize = networkConfig.rpcBatchSize
+    for (let block = intervalFrom; block <= intervalTo; block += (blockStep + 1) * rpcBatchSize) {
+      const batchPromises = []
+      const ranges = []
+
+      for (let j = 0; j < rpcBatchSize; j++) {
+        const fromBlock = block + j * (blockStep + 1)
+        if (fromBlock > intervalTo) break
+        const toBlock = Math.min(fromBlock + blockStep, intervalTo)
+        ranges.push({ fromBlock, toBlock })
+
+        batchPromises.push(
+          provider.send('eth_getLogs', [{
+            address: currentAddresses,
+            fromBlock: ethers.utils.hexStripZeros(ethers.utils.hexlify(fromBlock)),
+            toBlock: ethers.utils.hexStripZeros(ethers.utils.hexlify(toBlock)),
+          }])
+        )
+      }
 
       try {
-        log(chalk.gray(`  Fetching range: ${fromBlock} to ${toBlock}`))
-        // Ethers v5 getLogs doesn't support array for 'address' field in its Filter type/validation.
-        // We use provider.send to bypass this and call eth_getLogs directly.
-        const rawLogs = await provider.send('eth_getLogs', [{
-          address: currentAddresses,
-          fromBlock: ethers.utils.hexStripZeros(ethers.utils.hexlify(fromBlock)),
-          toBlock: ethers.utils.hexStripZeros(ethers.utils.hexlify(toBlock)),
-        }])
+        log(chalk.gray(`  Fetching ranges: ${ranges[0].fromBlock}-${ranges[ranges.length - 1].toBlock} (${ranges.length} batches)`))
+        const batchResults = await Promise.all(batchPromises)
 
-        const logs: ethers.providers.Log[] = rawLogs.map((l: any) => (provider.formatter as any).filterLog(l))
+        for (let j = 0; j < batchResults.length; j++) {
+          const rawLogs = batchResults[j]
+          const { fromBlock, toBlock } = ranges[j]
 
-        const events: ethers.Event[] = logs.map((log: ethers.providers.Log) => {
-          try {
-            const parsed = marketInterface.parseLog(log)
-            return {
-              ...log,
-              event: parsed.name,
-              args: parsed.args,
-            } as unknown as ethers.Event
-          } catch (e) {
-            return null as unknown as ethers.Event
+          const logs: ethers.providers.Log[] = rawLogs.map((l: any) => (provider.formatter as any).filterLog(l))
+
+          const events: ethers.Event[] = logs.map((log: ethers.providers.Log) => {
+            try {
+              const parsed = marketInterface.parseLog(log)
+              return {
+                ...log,
+                event: parsed.name,
+                args: parsed.args,
+              } as unknown as ethers.Event
+            } catch (e) {
+              return null as unknown as ethers.Event
+            }
+          }).filter((e: ethers.Event | null) => e !== null)
+
+          if (events.length > 0) {
+            await processEvents(network, events)
           }
-        }).filter((e: ethers.Event | null) => e !== null)
 
-        if (events.length > 0) {
-          await processEvents(network, events)
+          const pipeline = redis.pipeline()
+          for (const addr of currentAddresses) {
+            const key = `latest_block_processed:${network}:${addr.toLowerCase()}`
+            pipeline.set(key, toBlock.toString())
+          }
+          await pipeline.exec()
         }
-
-        const pipeline = redis.pipeline()
-        for (const addr of currentAddresses) {
-          const key = `latest_block_processed:${network}:${addr.toLowerCase()}`
-          pipeline.set(key, toBlock.toString())
-        }
-        await pipeline.exec()
 
       } catch (error) {
-        log(chalk.bold.red(`Error processing range ${fromBlock}-${toBlock} on network ${network}: ${error}`))
+        log(chalk.bold.red(`Error processing ranges starting at ${block} on network ${network}: ${error}`))
         // Abort the entire network processing to avoid skipping events or advancing block height incorrectly
         return
       }

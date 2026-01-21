@@ -35,6 +35,16 @@ jest.mock('ethers', () => {
                     send: mockSend,
                     formatter: mockFormatter,
                 })),
+                JsonRpcBatchProvider: jest.fn().mockImplementation(() => ({
+                    getBlockNumber: mockGetBlockNumber,
+                    send: mockSend,
+                    formatter: mockFormatter,
+                })),
+                StaticJsonRpcProvider: jest.fn().mockImplementation(() => ({
+                    getBlockNumber: mockGetBlockNumber,
+                    send: mockSend,
+                    formatter: mockFormatter,
+                })),
             },
             utils: {
                 ...original.ethers.utils,

@@ -22,6 +22,7 @@ export interface NetworksConfig {
   markets: Record<string, Market>;
   enabled: boolean;
   blockStep: number; // for big networks 45000 is a good value; for small networks 10000
+  rpcBatchSize: number; // number of eth_getLogs calls to batch in one request
   useFork: boolean;
   useOldMarketAbi?: boolean;
 }
@@ -230,6 +231,7 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
     },
     enabled: true,
     blockStep: 1000,
+    rpcBatchSize: 100,
     useFork: false,
   },
 }
