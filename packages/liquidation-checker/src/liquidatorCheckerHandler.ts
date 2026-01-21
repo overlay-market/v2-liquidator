@@ -93,8 +93,7 @@ export class LiquidatorCheckerHandler {
             .catch((error: Error) => {
               console.error(
                 chalk.bold.red(
-                  `Error processing batch from ${i} to ${
-                    i + batchSize
+                  `Error processing batch from ${i} to ${i + batchSize
                   } for ${network} network. RpcUrl: ${rpcUrl}`
                 )
               )
@@ -119,7 +118,7 @@ export class LiquidatorCheckerHandler {
 
       const isNew = await redis.sadd(
         'unique_positions',
-        `${result.network}:${marketAddress}:${positionId}`
+        `${result.network}:${marketAddress.toLowerCase()}:${positionId}`
       )
       if (isNew) {
         console.log(
@@ -160,7 +159,7 @@ export class LiquidatorCheckerHandler {
   ): Promise<Position[]> {
     const pipeline = redis.pipeline()
 
-    pipeline.zrange(`position_index:${network}:${marketAddress}`, currentIndex, endIndex)
+    pipeline.zrange(`position_index:${network}:${marketAddress.toLowerCase()}`, currentIndex, endIndex)
     const results = await pipeline.exec()
     if (!results || results.length === 0 || results[0][1] === null) {
       return []
@@ -171,7 +170,7 @@ export class LiquidatorCheckerHandler {
     }
 
     const ownerPipeline = redis.pipeline()
-    ownerPipeline.hmget(`positions:${network}:${marketAddress}`, ...positionIds)
+    ownerPipeline.hmget(`positions:${network}:${marketAddress.toLowerCase()}`, ...positionIds)
     const ownerResults = await ownerPipeline.exec()
     if (!ownerResults || ownerResults.length === 0 || ownerResults[0][1] === null) {
       return []
@@ -199,7 +198,7 @@ export class LiquidatorCheckerHandler {
 
       const marketAddress = marketNetwork.address
       const positionsPerRun = marketNetwork.positions_per_run
-      const totalPositions = await redis.zcard(`position_index:${network}:${marketAddress}`)
+      const totalPositions = await redis.zcard(`position_index:${network}:${marketAddress.toLowerCase()}`)
       console.log('Total positions:', totalPositions)
       console.log('Network:', network)
 
@@ -209,7 +208,7 @@ export class LiquidatorCheckerHandler {
         continue
       }
 
-      const currentIndexKey = `current-index:${network}:${marketAddress}`
+      const currentIndexKey = `current-index:${network}:${marketAddress.toLowerCase()}`
       let currentIndexValue = await redis.get(currentIndexKey)
       let currentIndex = currentIndexValue ? parseInt(currentIndexValue) : 0
 

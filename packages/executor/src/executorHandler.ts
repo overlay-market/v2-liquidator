@@ -37,7 +37,7 @@ async function initializeCounters() {
     // Initialize counters for each executor
     for (const privateKey of privateKeys) {
       const wallet = new ethers.Wallet(privateKey)
-      const executorKey = `total_liquidated_positions_by_executor:${network}:${wallet.address}`
+      const executorKey = `total_liquidated_positions_by_executor:${network}:${wallet.address.toLowerCase()}`
       if (!(await redis.exists(executorKey))) {
         await redis.set(executorKey, '0')
       }
@@ -46,13 +46,13 @@ async function initializeCounters() {
 }
 
 async function incrementRetryCount(position: Position): Promise<number> {
-  const retryKey = `retry:${position.network}:${position.marketAddress}:${position.positionId}`
+  const retryKey = `retry:${position.network}:${position.marketAddress.toLowerCase()}:${position.positionId}`
   const retries = await redis.incr(retryKey)
   return retries
 }
 
 async function resetRetryCount(position: Position) {
-  const retryKey = `retry:${position.network}:${position.marketAddress}:${position.positionId}`
+  const retryKey = `retry:${position.network}:${position.marketAddress.toLowerCase()}:${position.positionId}`
   await redis.del(retryKey)
 }
 
@@ -185,19 +185,19 @@ async function liquidatePosition(position: Position) {
         )
 
         // remove position from Redis
-        await redis.hdel(`positions:${network}:${marketAddress}`, positionId)
-        await redis.zrem(`position_index:${network}:${marketAddress}`, positionId)
+        await redis.hdel(`positions:${network}:${marketAddress.toLowerCase()}`, positionId)
+        await redis.zrem(`position_index:${network}:${marketAddress.toLowerCase()}`, positionId)
         await resetRetryCount(position)
 
         // track on redis total liquidated positions by executor
-        const executorKey = `total_liquidated_positions_by_executor:${network}:${wallet.address}`
+        const executorKey = `total_liquidated_positions_by_executor:${network}:${wallet.address.toLowerCase()}`
         await redis.incr(executorKey)
         // add counter to track total liquidated positions
         await redis.incr(`total_liquidated_positions:${network}:total`)
         // add counter to track total liquidated positions
         await redis.incr(`total_liquidated_positions:${network}:${marketAddress.toLowerCase()}`)
         // add total liquidated positions by executor by session
-        await redis.incr(`liquidated_positions_by_executor:${network}:${wallet.address}`)
+        await redis.incr(`liquidated_positions_by_executor:${network}:${wallet.address.toLowerCase()}`)
         // add total liquidated positions by session
         await redis.incr(`liquidated_positions:${network}:total`)
         // add total liquidated positions by session
@@ -221,7 +221,7 @@ async function liquidatePosition(position: Position) {
   } catch (error) {
     log(`${chalk.bgRed('Transaction failed! =>')} ${chalk.yellow('network:')} ${network} ${chalk.yellow('positionId:')} ${positionId}`)
     log(chalk.red(error))
-    
+
     // Store error type in local variable for final reporting
     let errorType = 'Transaction Failed'
     if (error instanceof Error) {
@@ -235,7 +235,7 @@ async function liquidatePosition(position: Position) {
         errorType = 'Gas Error'
       }
     }
-    
+
     // Store in a simple variable for the final report
     position.lastErrorType = errorType
   }
@@ -248,7 +248,7 @@ async function handleFailedAttempt(position: Position) {
 
   const retries = await incrementRetryCount(position)
   const completedRetryWindow = retries % MAX_RETRIES === 0
-  const uniquePositionKey = `${network}:${marketAddress}:${position.positionId}`
+  const uniquePositionKey = `${network}:${marketAddress.toLowerCase()}:${position.positionId}`
 
   if (completedRetryWindow) {
     const stillLiquidatable = await liquidatableCheck(position)

@@ -128,17 +128,17 @@ async function getLiquidatorStats(
 
   for (const executor of executorAddresses) {
     const totalLiquidatedPositionsByExecutor =
-      (await redis.get(`total_liquidated_positions_by_executor:${network}:${executor}`)) || '0'
+      (await redis.get(`total_liquidated_positions_by_executor:${network}:${executor.toLowerCase()}`)) || '0'
     const liquidatedPositionsByExecutor =
-      (await redis.get(`liquidated_positions_by_executor:${network}:${executor}`)) || '0'
+      (await redis.get(`liquidated_positions_by_executor:${network}:${executor.toLowerCase()}`)) || '0'
     const ethBalance = await provider.getBalance(executor)
     const ovRewardsClaimed = await ovContract.balanceOf(executor)
 
-    const prevOvBalance = (await redis.get(`ov_balance:${network}:${executor}`)) || '0'
+    const prevOvBalance = (await redis.get(`ov_balance:${network}:${executor.toLowerCase()}`)) || '0'
     const ovRewardsClaimedDiff = ethers.BigNumber.from(ovRewardsClaimed).sub(
       ethers.BigNumber.from(prevOvBalance)
     )
-    await redis.set(`ov_balance:${network}:${executor}`, ovRewardsClaimed.toString())
+    await redis.set(`ov_balance:${network}:${executor.toLowerCase()}`, ovRewardsClaimed.toString())
 
     dataByExecutor[executor] = {
       totalLiquidatedPositions: parseInt(totalLiquidatedPositionsByExecutor),
@@ -169,9 +169,8 @@ function createLiquidatorReportMessage(
 ): string {
   let displayName = network as string;
   let message = `📋 *Liquidator Report for ${displayName}* 📋\n`;
-  message += `from: ${
-    stats.prevTimestamp ? new Date(parseInt(stats.prevTimestamp)).toUTCString() : 'N/A'
-  }\n`
+  message += `from: ${stats.prevTimestamp ? new Date(parseInt(stats.prevTimestamp)).toUTCString() : 'N/A'
+    }\n`
   message += `to: ${new Date().toUTCString()}\n\n`
   message += `*Total Liquidated Positions*: ${stats.totalLiquidatedPositions}\n`
   message += `*Liquidated Positions*: ${stats.liquidatedPositions}\n`
@@ -212,12 +211,12 @@ async function resetAllData(
   await redis.set(`liquidatable_positions_found:${network}:total`, '0')
 
   for (const market of Object.keys(markets)) {
-    await redis.set(`liquidated_positions:${network}:${market}`, '0')
-    await redis.set(`liquidatable_positions_found:${network}:${market}`, '0')
+    await redis.set(`liquidated_positions:${network}:${market.toLowerCase()}`, '0')
+    await redis.set(`liquidatable_positions_found:${network}:${market.toLowerCase()}`, '0')
   }
 
   for (const executor of executorAddresses) {
-    await redis.set(`liquidated_positions:${network}:${executor}`, '0')
+    await redis.set(`liquidated_positions_by_executor:${network}:${executor.toLowerCase()}`, '0')
   }
 }
 

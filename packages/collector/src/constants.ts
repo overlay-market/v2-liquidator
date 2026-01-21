@@ -226,7 +226,7 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
     },
     enabled: true,
     blockStep: 1000,
-    useFork: true,
+    useFork: false,
   },
 }
 
