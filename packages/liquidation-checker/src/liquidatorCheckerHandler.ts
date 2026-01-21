@@ -298,7 +298,14 @@ export class LiquidatorCheckerHandler {
     log('Liquidation Checker module is running for market:', process.env.MARKET)
 
     let positions = await this.fetchAllPositions(market)
-    await this.checkLiquidations(market, positions)
+    const hasPositions = Object.values(positions).some((p) => p && p.length > 0)
+
+    if (hasPositions) {
+      await this.checkLiquidations(market, positions)
+    } else {
+      log(chalk.yellow('No positions to check. Skipping checkLiquidations.'))
+    }
+
     positions = {}
 
     log(
