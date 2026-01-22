@@ -477,5 +477,16 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'silver': {
+    workers: 1,
+    cron_schedule: '09 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xabc48a8945146ead99da41a45d824736c20ada9e',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }
