@@ -488,5 +488,38 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'super-eth': {
+    workers: 1,
+    cron_schedule: '11 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x0C92b62A9eC0f9f00dfcEFdF8ACC9A52A52Cc30a',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'magnus-carlsen': {
+    workers: 1,
+    cron_schedule: '13 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x267A9ed5B43Fdde6B4Cf0f18802B436eaF19f164',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'lana-del-rey': {
+    workers: 1,
+    cron_schedule: '15 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xC1890C46342AA706929Bdc32691eb60342135689',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }

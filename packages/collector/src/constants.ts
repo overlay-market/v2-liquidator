@@ -232,6 +232,21 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         init_block: '76738386',
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
+      'super-eth': {
+        address: '0x0C92b62A9eC0f9f00dfcEFdF8ACC9A52A52Cc30a',
+        init_block: '78107427',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+      'magnus-carlsen': {
+        address: '0x267A9ed5B43Fdde6B4Cf0f18802B436eaF19f164',
+        init_block: '78107427',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+      'lana-del-rey': {
+        address: '0xC1890C46342AA706929Bdc32691eb60342135689',
+        init_block: '78107427',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
 
     },
     enabled: true,
