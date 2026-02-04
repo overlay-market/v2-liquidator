@@ -521,5 +521,16 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'gold-silver': {
+    workers: 1,
+    cron_schedule: '17 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xe45Ac085F79a6719D5754431f922332E9e73C4A9',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }

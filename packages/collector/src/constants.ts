@@ -247,6 +247,11 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         init_block: '78107427',
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
+      'gold-silver': {
+        address: '0xe45Ac085F79a6719D5754431f922332E9e73C4A9',
+        init_block: '79159346',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
 
     },
     enabled: true,
