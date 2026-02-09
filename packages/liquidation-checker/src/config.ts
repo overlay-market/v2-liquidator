@@ -532,5 +532,27 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'ETH Dominance': {
+    workers: 1,
+    cron_schedule: '19 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xF6914FD389300Ba0f6e1f858BB1Fb53794e18476',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'Billie Eilish': {
+    workers: 1,
+    cron_schedule: '21 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xDd0fF285568C459b4C30F6179E6baAA44bF1aDA8',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }
