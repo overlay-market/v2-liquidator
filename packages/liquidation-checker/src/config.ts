@@ -554,5 +554,16 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'RealEstateDom': {
+    workers: 1,
+    cron_schedule: '23 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x43D1DB2c2c4b9A322A551F9cB3ba45d800b60e5E',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }

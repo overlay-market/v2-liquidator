@@ -262,6 +262,11 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         init_block: '79776993',
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
+      'RealEstateDom': {
+        address: '0x43D1DB2c2c4b9A322A551F9cB3ba45d800b60e5E',
+        init_block: '80993497',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
 
     },
     enabled: true,
