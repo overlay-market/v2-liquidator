@@ -565,5 +565,16 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'Bad Bunny': {
+    workers: 1,
+    cron_schedule: '25 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x28Fe0c28B02D7f01B9B1b142Cbf3c179aC9a61bE',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }

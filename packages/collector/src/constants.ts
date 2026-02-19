@@ -267,6 +267,11 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         init_block: '80993497',
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
+      'Bad Bunny': {
+        address: '0x28Fe0c28B02D7f01B9B1b142Cbf3c179aC9a61bE',
+        init_block: '82146943',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
 
     },
     enabled: true,
