@@ -576,5 +576,38 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'Prediction 1': {
+    workers: 1,
+    cron_schedule: '27 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x94e93e0cC490Ece23915493cF0191C45718682aC',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'Prediction 2': {
+    workers: 1,
+    cron_schedule: '29 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x15e97526F6F4C3a42c5D4Cf5ca3EaA7b72F0874a',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'Prediction 3': {
+    workers: 1,
+    cron_schedule: '31 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x09d720fC4337DD2B8f7a79A4ea0845155769a3d3',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }
