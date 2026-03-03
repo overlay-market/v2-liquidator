@@ -287,6 +287,11 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         init_block: '83278518',
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
+      'Prediction 4': {
+        address: '0x4ab88F473F2a8c638d1fA7318F7C8946d8857B9D',
+        init_block: '84476392',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
 
     },
     enabled: true,

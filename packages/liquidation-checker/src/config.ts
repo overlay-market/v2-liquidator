@@ -609,5 +609,16 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'Prediction 4': {
+    workers: 1,
+    cron_schedule: '33 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x4ab88F473F2a8c638d1fA7318F7C8946d8857B9D',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }
