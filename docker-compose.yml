@@ -916,6 +916,125 @@ services:
           cpus: '0.65'
           memory: 768M
 
+  liquidation-oil-usd:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: OIL / USD
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-prediction-5:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: PREDICTION 5
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-prediction-6:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: PREDICTION 6
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-prediction-7:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: PREDICTION 7
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-prediction-8:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: PREDICTION 8
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-prediction-9:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: PREDICTION 9
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
+  liquidation-dash-usd:
+    build:
+      context: .
+      dockerfile: packages/liquidation-checker/Dockerfile
+    environment:
+      <<: *common-environment
+      MARKET: DASH / USD
+      NODE_OPTIONS: --max_old_space_size=614
+    depends_on:
+      - redis-server
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.65'
+          memory: 768M
+
 
   executor-1:
     build:

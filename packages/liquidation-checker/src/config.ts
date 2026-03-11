@@ -620,5 +620,82 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'OIL / USD': {
+    workers: 1,
+    cron_schedule: '35 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x3914ec7F837fc44F09c8F4520Ab3afCdED24857F',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'PREDICTION 5': {
+    workers: 1,
+    cron_schedule: '37 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x6962bC1876D10268Aa2aF209d1C05c4a92Bb78BD',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'PREDICTION 6': {
+    workers: 1,
+    cron_schedule: '39 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x0f0e0E8d16cB7975Af985cBA2f4411bcb2D338A6',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'PREDICTION 7': {
+    workers: 1,
+    cron_schedule: '41 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x8230C9209C8F316597b45b7DBF3B361bEf0441ea',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'PREDICTION 8': {
+    workers: 1,
+    cron_schedule: '43 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x8179AefF0b1e3207AC862A27f78D00dBe5e9D114',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'PREDICTION 9': {
+    workers: 1,
+    cron_schedule: '45 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x1869b4818ff2D111102126f235cfCd0A8468f558',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'DASH / USD': {
+    workers: 1,
+    cron_schedule: '47 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x2596D270c74c56a6EC5D56c944BdD5f647093aE1',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }
