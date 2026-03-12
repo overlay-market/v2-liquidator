@@ -697,5 +697,16 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'aero/usd': {
+    workers: 1,
+    cron_schedule: '49 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x5465671Ff8a4e1260c36b9390b308733becd11CE',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }

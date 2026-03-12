@@ -327,6 +327,11 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         init_block: '85961191',
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
+      'aero/usd': {
+        address: '0x5465671Ff8a4e1260c36b9390b308733becd11CE',
+        init_block: '86204249',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
 
     },
     enabled: true,
