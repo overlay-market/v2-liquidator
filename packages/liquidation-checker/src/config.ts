@@ -708,5 +708,27 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'CHZ / USD': {
+    workers: 1,
+    cron_schedule: '51 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xB29dcc22DB4017115C771E301ea9F1Fc56c371bE',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'PLUME / USD': {
+    workers: 1,
+    cron_schedule: '53 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x9e25FBFa246A7AdF36805700cc12b93e9310be2e',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }

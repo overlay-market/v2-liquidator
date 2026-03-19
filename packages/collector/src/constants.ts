@@ -332,6 +332,16 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         init_block: '86204249',
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
+      'CHZ / USD': {
+        address: '0xB29dcc22DB4017115C771E301ea9F1Fc56c371bE',
+        init_block: '87497855',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+      'PLUME / USD': {
+        address: '0x9e25FBFa246A7AdF36805700cc12b93e9310be2e',
+        init_block: '87497855',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
 
     },
     enabled: true,
