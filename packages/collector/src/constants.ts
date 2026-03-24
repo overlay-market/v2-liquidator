@@ -342,6 +342,11 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         init_block: '87497855',
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
+      'MOCA / USD': {
+        address: '0xb7684a79951Ab4f9c4Aa7d620CB9FBEaD71f5Ce8',
+        init_block: '88518065',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
 
     },
     enabled: true,

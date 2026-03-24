@@ -730,5 +730,16 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'MOCA / USD': {
+    workers: 1,
+    cron_schedule: '55 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xb7684a79951Ab4f9c4Aa7d620CB9FBEaD71f5Ce8',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }
