@@ -741,5 +741,16 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'BAND / USD': {
+    workers: 1,
+    cron_schedule: '57 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x83a2CAE9c20C82ffd47A7DAB42b39d97dEA2213f',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }
