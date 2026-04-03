@@ -352,6 +352,11 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         init_block: '88903149',
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
+      'VVV': {
+        address: '0xF41316eB0c76AE742e58FD09D226419aDe1A76B3',
+        init_block: '90337694',
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
 
     },
     enabled: true,

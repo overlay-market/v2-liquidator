@@ -752,5 +752,16 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'VVV': {
+    workers: 1,
+    cron_schedule: '59 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xF41316eB0c76AE742e58FD09D226419aDe1A76B3',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }
