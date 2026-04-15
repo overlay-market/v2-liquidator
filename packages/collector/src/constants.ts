@@ -333,8 +333,8 @@ export const networksConfig: Record<Networks, NetworksConfig> = {
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
       'CHZ / USD': {
-        address: '0xB29dcc22DB4017115C771E301ea9F1Fc56c371bE',
-        init_block: '87497855',
+        address: '0x0f0e82b2987DE7cD6bd17db0c279e7596fCe72d8',
+        init_block: '92701300',
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
       'PLUME / USD': {

@@ -713,7 +713,7 @@ export const config: Record<string, MarketConfig> = {
     cron_schedule: '51 */2 * * * *',
     networks: {
       [Networks.BSC_MAINNET]: {
-        address: '0xB29dcc22DB4017115C771E301ea9F1Fc56c371bE',
+        address: '0x0f0e82b2987DE7cD6bd17db0c279e7596fCe72d8',
         positions_per_run: 500,
         factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
       },
