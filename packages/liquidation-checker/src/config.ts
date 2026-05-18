@@ -763,5 +763,27 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'FRAX/USD': {
+    workers: 1,
+    cron_schedule: '01 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0xA56D63442B2639A118C1F6Fa625e8D9423AA0eEb',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
+  'EUL/USD': {
+    workers: 1,
+    cron_schedule: '03 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x128CD7F76ea19888daF4a528011516aee15b15F4',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }
