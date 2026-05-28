@@ -252,8 +252,7 @@ async function fetchEvents(network: Networks, rpcUrl: string, useFork = false) {
 
       } catch (error) {
         log(chalk.bold.red(`Error processing ranges starting at ${block} on network ${network}: ${error}`))
-        // Abort the entire network processing to avoid skipping events or advancing block height incorrectly
-        return
+        throw error
       }
     }
   }
@@ -282,6 +281,7 @@ export async function fetchAndProcessEventsForAllMarkets(network: Networks) {
   } catch (error) {
     log(chalk.bold.red(`Critical error in collector for network ${network}: ${error}`))
     if (networkConfig.useFork) stopAnvil()
+    throw error
   }
 
   await redis.set(`${network}:first_collector_run`, 'true')

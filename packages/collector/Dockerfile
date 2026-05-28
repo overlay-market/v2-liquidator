@@ -1,27 +1,16 @@
 FROM node:18-bookworm-slim
 
-# Create directory to install Foundry
-WORKDIR /root
+ARG INSTALL_FOUNDRY=false
 
-# Install Foundry dependencies
-RUN apt-get update && apt-get install -y \
-    bash \
-    curl \
-    git \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Foundry
-RUN curl -L https://foundry.paradigm.xyz | bash
-
-# Run Foundryup and ensure it is added to PATH
-RUN /root/.foundry/bin/foundryup
-
-# Add Foundry to PATH
 ENV PATH="/root/.foundry/bin:$PATH"
 
-# Validate Foundry installation
-RUN forge --version
-RUN anvil --version
+RUN if [ "$INSTALL_FOUNDRY" = "true" ]; then \
+    apt-get update && apt-get install -y bash curl git && rm -rf /var/lib/apt/lists/* && \
+    curl -L https://foundry.paradigm.xyz | bash && \
+    /root/.foundry/bin/foundryup && \
+    forge --version && \
+    anvil --version; \
+  fi
 
 # Create app directory
 WORKDIR /usr/src/app

@@ -5,8 +5,8 @@ const app = express();
 const port = process.env.PORT || 2025;
 
 async function getExecutors() {
-  const keys = await redis.keys(`total_liquidated_positions_by_executor:${"berachain"}:*`)
-  const executorAddresses = keys.map((key) => key.split(':')[2])
+  const keys = await redis.keys('total_liquidated_positions_by_executor:*')
+  const executorAddresses = [...new Set(keys.map((key) => key.split(':')[2]))]
   return executorAddresses
 }
 

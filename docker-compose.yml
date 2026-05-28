@@ -1,5 +1,3 @@
-version: '3.8'
-
 x-common-environment: &common-environment
   NODE_ENV: production
   RPC_URLS: ${RPC_URLS}
@@ -14,7 +12,7 @@ services:
     mem_limit: 350m
     ports:
       - '6379:6379'
-    command: redis-server --requirepass ${REDIS_PASSWORD}
+    command: redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes
     restart: unless-stopped
     volumes:
       - redis-data:/data
@@ -23,6 +21,8 @@ services:
     build:
       context: .
       dockerfile: packages/collector/Dockerfile
+      args:
+        INSTALL_FOUNDRY: ${INSTALL_FOUNDRY:-false}
     environment:
       <<: *common-environment
       FORK_RPC_URL: ${FORK_RPC_URL}
