@@ -785,5 +785,16 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'ALT/USD': {
+    workers: 1,
+    cron_schedule: '05 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x132db00ea3158AD6036b54ea9921E556AddF5e23',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }
