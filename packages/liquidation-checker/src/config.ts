@@ -796,5 +796,16 @@ export const config: Record<string, MarketConfig> = {
       },
     },
   },
+  'RED/USD': {
+    workers: 1,
+    cron_schedule: '07 */2 * * * *',
+    networks: {
+      [Networks.BSC_MAINNET]: {
+        address: '0x2550A9838aB71975290e3969EA7A41864A6f45D2',
+        positions_per_run: 500,
+        factory_address: '0xC35093f76fF3D31Af27A893CDcec585F1899eE54',
+      },
+    },
+  },
 
 }
