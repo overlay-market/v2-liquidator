@@ -8,13 +8,8 @@ const redisOptions: RedisOptions = {
   host: process.env.REDIS_HOST,
   password: process.env.REDIS_PASSWORD,
   connectTimeout: 10000, // 10 seconds timeout
-  maxRetriesPerRequest: 5, // limit the number of retries for each request
-  retryStrategy: (times: number) => {
-    if (times >= 5) {
-      return null // stop retrying after 5 attempts
-    }
-    return Math.min(times * 100 + Math.random() * 100, 2000) // Add jitter for better distribution
-  },
+  maxRetriesPerRequest: null,
+  retryStrategy: (times: number) => Math.min(times * 100 + Math.random() * 100, 2000),
   reconnectOnError: (err: Error) => {
     const targetError = "READONLY"
     if (err.message.includes(targetError)) {
